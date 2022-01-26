@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 # -*- coding: utf-8 -*-
 
 # comp_pp - compare 2 files
@@ -20,7 +19,14 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 
-import argparse
+# 2019-06-14 rtonsing: changes by rfrank to work on the pp workbench web site,
+# change by me to ignore bold text marking.
+
+# 2019-06-14 rtonsing: add "pageno" to list of page number classes to ignore.
+
+# 2019-08-03 rtonsing: remove transformation of 'abbr' and 'dfn' to '_' italics markup.
+
+import sys
 import os
 import re
 import subprocess
@@ -208,8 +214,7 @@ class SourceFile(object):
                                       if parser.error_log[0].type != 513]
 
         if len(self.parser_errlog):
-            raise SyntaxError("Parsing errors in document: " +
-                              os.path.basename(name))
+            raise SyntaxError("Parsing errors in document: " +  os.path.basename(name))
 
         self.tree = tree.getroottree()
         self.text = text.splitlines()
@@ -248,7 +253,6 @@ class SourceFile(object):
             if re.match(r".*?\*\*\* START OF THIS PROJECT GUTENBERG EBOOK.*?\*\*\*(.*)",
                         text, flags=re.MULTILINE | re.DOTALL):
                 clear_element(element)
-
             elif text.startswith("End of the Project Gutenberg") or text.startswith("End of Project Gutenberg"):
                 clear_element(element)
 
@@ -260,33 +264,26 @@ class SourceFile(object):
             return
 
         self.count_ending_empty_lines(text)
-
         self.text = text.splitlines()
         self.encoding = encoding
-
         self.strip_pg_boilerplate()
 
 
 def get_block(pp_text):
-    """Generator to get a block of text, followed by the number of empty
-    lines.
-
+    """Generator to get a block of text, followed by the number of empty lines.
     """
 
     empty_lines = 0
     block = []
 
     for line in pp_text:
-
         if len(line):
             # One or more empty lines will stop a block
             if empty_lines:
                 yield block, empty_lines
                 block = []
                 empty_lines = 0
-
             block += [line]
-
         else:
             empty_lines += 1
 
@@ -400,26 +397,36 @@ def extract_footnotes_pp(pp_text, fn_regexes):
 
 
 DEFAULT_TRANSFORM_CSS = '''
-                i:before, cite:before, em:before, abbr:before, dfn:before,
-                i:after, cite:after, em:after, abbr:after, dfn:after      { content: "_"; }
+        /* Italics */
+        i:before, cite:before, em:before, abbr:before, dfn:before,
+        i:after, cite:after, em:after, abbr:after, dfn:after      { content: "_"; }
 
-                /* line breaks with <br /> will be ignored by
-                 *  normalize-space(). Add a space in all of them to work
-                 *  around. */
-                br:before { content: " "; }
+        /* Bold */
+        b:before, bold:before,
+        b:after, bold:after         { content: "="; }
+        /* line breaks with <br /> will be ignored by normalize-space().
+         * Add a space in all of them to work around. */
+        br:before { content: " "; }
 
-                /* Add spaces around td tags. */
-                td:after, td:after { content: " "; }
+        /* Add spaces around td tags. */
+        td:before, td:after { content: " "; }
 
-                /* Remove page numbers. It seems every PP has a different way. */
-                span[class^="pagenum"] { display: none }
-                p[class^="pagenum"] { display: none }
-                p[class^="page"] { display: none }
-                span[class^="pgnum"] { display: none }
-                div[id^="Page_"] { display: none }
-                div[class^="pagenum"] { display: none }
-            '''
-
+        /* Remove page numbers. It seems every PP has a different way. */
+        span[class^="pagenum"],
+        p[class^="pagenum"],
+        div[class^="pagenum"],
+        span[class^="pageno"],
+        p[class^="pageno"],
+        div[class^="pageno"],
+        p[class^="page"],
+        span[class^="pgnum"],
+        div[id^="Page_"] { display: none }
+			
+        /* Superscripts, Subscripts */
+        sup:before              { content: "^{"; }
+        sub:before              { content: "_{"; }
+        sup:after, sub:after    { content: "}"; }
+    '''
 
 def clear_element(element):
     """In an XHTML tree, remove all sub-elements of a given element.
@@ -491,8 +498,7 @@ class pgdp_file_text(pgdp_file):
         self.from_pgdp_rounds = self.myfile.basename.startswith('projectID')
 
     def analyze(self):
-        """Clean then analyse the content of a file. Decides if it is PP version,
-        a DP version, ..."""
+        """Clean then analyse the content of a file. Decides if it is PP version, a DP version, ..."""
 
         # Remember which line the text started
         self.start_line = self.myfile.start
@@ -535,9 +541,13 @@ class pgdp_file_text(pgdp_file):
             if self.args.ignore_format:
                 self.text = self.text.replace("<i>", "")
                 self.text = self.text.replace("</i>", "")
+                self.text = self.text.replace("<b>", "")
+                self.text = self.text.replace("</b>", "")
             else:
                 self.text = self.text.replace("<i>", "_")
                 self.text = self.text.replace("</i>", "_")
+                self.text = self.text.replace("<b>", "=")
+                self.text = self.text.replace("</b>", "=")
 
             self.text = re.sub("<.*?>", '', self.text)
             self.text = re.sub("</.*?>", '', self.text)
@@ -554,6 +564,7 @@ class pgdp_file_text(pgdp_file):
         else:
             if self.args.ignore_format:
                 self.text = self.text.replace("_", "")
+                self.text = self.text.replace("=", "")
 
             # Horizontal separation
             self.text = self.text.replace("*       *       *       *       *", "")
@@ -587,7 +598,6 @@ class pgdp_file_text(pgdp_file):
         footnotes = []
 
         for line in self.text.splitlines():
-
             # New footnote
             if "[Footnote" in line:
 
@@ -615,7 +625,6 @@ class pgdp_file_text(pgdp_file):
                     cur_fnote[1] = cur_fnote[1][:-2]
                     footnotes.append(cur_fnote)
                     in_fnote = False
-
             else:
                 text.append(line)
 
@@ -707,8 +716,7 @@ class pgdp_file_html(pgdp_file):
             if clear_after:
                 element.text = ""
                 element.tail = ""
-            elif element.tag == "p" and element.text and element.text.startswith(
-                    "***END OF THE PROJECT GUTENBERG EBOOK"):
+            elif element.tag == "p" and element.text and element.text.startswith("***END OF THE PROJECT GUTENBERG EBOOK"):
                 element.text = ""
                 element.tail = ""
                 clear_after = True
@@ -801,21 +809,17 @@ class pgdp_file_html(pgdp_file):
         stylesheet = tinycss.make_parser().parse_stylesheet(self.mycss)
         property_errors = []
         for rule in stylesheet.rules:
-
             # Extract values we care about
             f_transform = None
             f_replace_with_attr = None
-            # f_replace_regex = None
             f_text_replace = None
             f_element_func = None
             f_move = None
 
             for val in rule.declarations:
-
                 if val.name == 'content':
                     # result depends on element and pseudo elements.
                     pass
-
                 elif val.name == "text-transform":
                     if len(val.value) != 1:
                         property_errors += [(val.line, val.column, val.name + " takes 1 argument")]
@@ -830,10 +834,8 @@ class pgdp_file_html(pgdp_file):
                         else:
                             property_errors += [(val.line, val.column,
                                                  val.name + " accepts only 'uppercase', 'lowercase' or 'capitalize'")]
-
                 elif val.name == "_replace_with_attr":
                     f_replace_with_attr = lambda el: el.attrib[val.value[0].value]
-
                 elif val.name == "text-replace":
                     # Skip S (spaces) tokens.
                     values = [v for v in val.value if v.type != "S"]
@@ -843,11 +845,9 @@ class pgdp_file_html(pgdp_file):
                         v1 = values[0].value
                         v2 = values[1].value
                         f_text_replace = lambda x: x.replace(v1, v2)
-
                 elif val.name == "display":
                     # Support display none only. So ignore "none" argument.
                     f_element_func = clear_element
-
                 elif val.name == "_graft":
                     values = [v for v in val.value if v.type != "S"]
                     if len(values) < 1:
@@ -869,26 +869,18 @@ class pgdp_file_html(pgdp_file):
 
                     if not f_move:
                         continue
-
-                #                elif val.name == "_replace_regex":
-                #                    f_replace_regex = partial(re.sub, r"(\d)\u00A0(\d)", r"\1\2")
-                #                    f_replace_regex = partial(re.sub, val.value[0].value, val.value[1].value)
-
                 else:
                     property_errors += [(val.line, val.column, "Unsupported property " + val.name)]
                     continue
 
                 # Iterate through each selectors in the rule
                 for selector in cssselect.parse(rule.selector.as_css()):
-
                     pseudo_element = selector.pseudo_element
-
                     xpath = cssselect.HTMLTranslator().selector_to_xpath(selector)
                     find = etree.XPath(xpath)
 
                     # Find each matching element in the HTML/XHTML document
                     for element in find(self.myfile.tree):
-
                         # Replace text with content of an attribute.
                         if f_replace_with_attr:
                             element.text = f_replace_with_attr(element)
@@ -931,9 +923,6 @@ class pgdp_file_html(pgdp_file):
                             parent.remove(element)
                             new.append(element)
 
-                    # if f_replace_regex and element.text:
-                    #     element.text = f_replace_regex(element.text)
-
         css_errors = ""
         if stylesheet.errors or property_errors:
             # There is transformation CSS errors. If the default css
@@ -954,7 +943,7 @@ class pgdp_file_html(pgdp_file):
         # Find footnotes, then remove them
 
         def strip_note_tag(string, keep_num=False):
-            """Remove not tag and only keep the number.  For instance
+            """Remove note tag and only keep the number.  For instance
             "Note 123: lorem ipsum" becomes "123 lorem ipsum" or just
             "lorem ipsum".
             """
@@ -993,12 +982,9 @@ class pgdp_file_html(pgdp_file):
                 element.getparent().remove(element)
             else:
                 for find in ["//div[@id[starts-with(.,'FN_')]]",
-                             #  "//div[p/a[@id[starts-with(.,'Footnote_')]]]",
                              "//p[a[@id[starts-with(.,'Footnote_')]]]",
                              "//div/p[span/a[@id[starts-with(.,'Footnote_')]]]",
                              "//div/p[span/a[@id[starts-with(.,'Footnote_')]]]",
-                             # "//p[a[@id[not(starts-with(.,'footnotetag')) and starts-with(.,'footnote')]]]",
-                             # "//p[a[@id[starts-with(.,'footnote')]]]",
                              "//p[@class='footnote']",
                              "//div[@class='footnote']"]:
                     for element in etree.XPath(find)(self.myfile.tree):
@@ -1017,10 +1003,6 @@ class pgdp_file_html(pgdp_file):
     def transform(self):
         """Transform html into text. Do a final cleanup."""
         self.text = etree.XPath("string(/)")(self.myfile.tree)
-
-        #        ff=open("compfilehtml.txt", "w")
-        #        ff.write(self.text)
-        #        ff.close()
 
         # Apply transform function to the main text
         for func in self.transform_func:
@@ -1064,23 +1046,16 @@ class CompPP(object):
         text = text.replace("‘", "'")
         text = text.replace('“', '"')
         text = text.replace('”', '"')
-
-        #    text = text.replace('in-4º', 'in-4o')
-        #    text = text.replace('in-8º', 'in-8o')
-        #    text = text.replace('in-fº', 'in-fo')
         text = text.replace('º', 'o')
-
         return text
 
     def convert_to_words(self, text):
         """Split the text into a list of words from the text."""
 
-        # Split into list of words
         words = []
 
         for line in re.findall(r'([\w-]+|\W)', text):
             line = line.strip()
-
             if line != '':
                 words.append(line)
 
@@ -1103,10 +1078,8 @@ class CompPP(object):
             f.close()
 
         with tempfile.NamedTemporaryFile(mode='wb') as t1, tempfile.NamedTemporaryFile(mode='wb') as t2:
-
             t1.write(text1.encode('utf-8'))
             t2.write(text2.encode('utf-8'))
-
             t1.flush()
             t2.flush()
 
@@ -1159,7 +1132,6 @@ class CompPP(object):
             if text:
                 text = "<hr /><pre>\n" + text
             text = text.replace("\n--\n", "\n</pre><hr /><pre>\n")
-
             text = re.sub(r"^\s*(\d+):(\d+)",
                           lambda m: "<span class='lineno'>{0} : {1}</span>".format(int(m.group(1)) + start0,
                                                                                    int(m.group(2)) + start1),
@@ -1181,8 +1153,7 @@ class CompPP(object):
         # Text, with correct (?) line numbers
         text = massage_input(text, files[0].start_line, files[1].start_line)
 
-        # Footnotes - line numbers are meaningless right now. We could fix
-        # that.
+        # Footnotes - line numbers are meaningless right now. We could fix that.
         footnotes = massage_input(footnotes, 0, 0)
 
         html_content = "<div>"
@@ -1221,8 +1192,7 @@ class CompPP(object):
         return html_content
 
     def check_char(self, files, char_best, char_other):
-        """Check whether each file has the best character. If not, add a
-        conversion request.
+        """Check whether each file has the best character. If not, add a conversion request.
 
         This is used for instance if one version uses ’ while the other
         uses '. In that case, we need to convert one into the other, to
@@ -1274,7 +1244,6 @@ class CompPP(object):
                 files[1].transform_func.append(lambda text: text.replace("[OE]", "OE"))
 
     def do_process(self):
-
         files = [None, None]
 
         # Load files
@@ -1287,7 +1256,6 @@ class CompPP(object):
                 files[i] = pgdp_file_text(self.args)
 
             f = files[i]
-
             f.load(fname)
             f.process_args(self.args)
             f.analyze()
@@ -1370,11 +1338,9 @@ class CompPP(object):
         return err_message, html_content, files[0].myfile.basename, files[1].myfile.basename
 
     def simple_html(self):
-        """For debugging purposes. Transform the html and print the
-        text output."""
+        """For debugging purposes. Transform the html and print the text output."""
 
         fname = self.args.filename[0]
-
         if fname.lower().endswith(('.html', '.htm')):
             f = pgdp_file_html(self.args)
         else:
