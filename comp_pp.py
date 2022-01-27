@@ -35,14 +35,19 @@ import cssselect
 import tinycss
 from lxml import etree
 
+PG_EBOOK_START = "*** START OF THE PROJECT GUTENBERG EBOOK"
+PG_EBOOK_END = "*** END OF THE PROJECT GUTENBERG EBOOK"
+PG_EBOOK_START_REGEX = r".*?\*\*\* START OF THE PROJECT GUTENBERG EBOOK.*?\*\*\*(.*)"
+
 
 class SourceFile(object):
-    """Represent a file in memory.
-    """
+    """Represent a file in memory."""
+    is_html4 = False
+    is_html5 = False
+    is_xhtml = False
 
     def load_file(self, fname, encoding=None):
-        """Load a file (text ot html) and finds its encoding.
-        """
+        """Load a file (text ot html) and finds its encoding."""
 
         # Keep the full name, the file name and its path
         self.fullname = fname
@@ -93,23 +98,17 @@ class SourceFile(object):
                 break
 
     def strip_pg_boilerplate(self):
-        """Remove the PG header and footer from a text version if present.
-        """
+        """Remove the PG header and footer from a text version if present."""
         new_text = []
         self.start = 0
         for lineno, line in enumerate(self.text, start=1):
             # Find the markers. Unfortunately PG lacks consistency
-            if line.startswith(("*** START OF THIS PROJECT GUTENBERG EBOOK",
-                                "*** START OF THE PROJECT GUTENBERG EBOOK",
-                                "***START OF THE PROJECT GUTENBERG EBOOK")):
+            if line.startswith((PG_EBOOK_START,
+                                "*** START OF THIS PROJECT GUTENBERG EBOOK")):
                 new_text = []
                 self.start = lineno
-            elif line.startswith(("*** END OF THIS PROJECT GUTENBERG EBOOK",
-                                  "***END OF THIS PROJECT GUTENBERG EBOOK",
-                                  "*** END OF THE PROJECT GUTENBERG EBOOK",
-                                  "End of the Project Gutenberg EBook of",
-                                  "End of Project Gutenberg's",
-                                  "***END OF THE PROJECT GUTENBERG EBOOK")):
+            elif line.startswith((PG_EBOOK_END,
+                                  "*** END OF THIS PROJECT GUTENBERG EBOOK")):
                 break
             else:
                 new_text.append(line)
@@ -124,7 +123,6 @@ class SourceFile(object):
         If relax is True, then the lax html parser is used, even for
         XHTML, so the parsing will almost always succeed.
         """
-
         parser = None
         tree = None
 
@@ -133,12 +131,13 @@ class SourceFile(object):
 
         if any(["DTD XHTML" in x for x in header]):
             parser = etree.XMLParser(dtd_validation=True)
+            self.is_xhtml = True
         if any(["DTD HTML" in x for x in header]):
             parser = etree.HTMLParser()
+            self.is_html4 = True
 
         if parser is None:
-            raise SyntaxError("No parser found for that type of document: " +
-                              os.path.basename(name))
+            raise SyntaxError("No parser found for that type of document: " + os.path.basename(name))
 
         # Try the decoded file first.
         try:
@@ -164,7 +163,7 @@ class SourceFile(object):
 
         # The XHTML file may have some errors. If the caller really
         # wants a result then use the HTML parser.
-        if relax and any(["DTD XHTML" in x for x in header]):
+        if relax and self.is_xhtml:
             parser = etree.HTMLParser()
             try:
                 tree = etree.fromstring(text, parser)
@@ -175,8 +174,7 @@ class SourceFile(object):
             else:
                 return parser, tree
 
-        raise SyntaxError("File cannot be parsed: " +
-                          os.path.basename(name))
+        raise SyntaxError("File cannot be parsed: " + os.path.basename(name))
 
     def load_xhtml(self, name, encoding=None, relax=False):
         """Load an html/xhtml file. If it is an XHTML file, get rid of the
@@ -233,8 +231,8 @@ class SourceFile(object):
             element.tag = element.tag.replace(self.xmlns, "")
 
         # Find type of xhtml (10 or 11 for 1.0 and 1.1). 0=html or
-        # unknown. So far, no need to differentiate 1.0 strict and
-        # transitional.
+        # unknown. So far, no need to differentiate 1.0 strict and transitional.
+        # RT: self.xhtml is never used
         if "DTD/xhtml1-strict.dtd" in self.tree.docinfo.doctype or "DTD/xhtml1-transitional.dtd" in self.tree.docinfo.doctype:
             self.xhtml = 10
         elif "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" in self.tree.docinfo.doctype:
@@ -250,10 +248,9 @@ class SourceFile(object):
 
             text = element.text.strip()
 
-            if re.match(r".*?\*\*\* START OF THIS PROJECT GUTENBERG EBOOK.*?\*\*\*(.*)",
-                        text, flags=re.MULTILINE | re.DOTALL):
+            if re.match(PG_EBOOK_START_REGEX, text, flags=re.MULTILINE | re.DOTALL):
                 clear_element(element)
-            elif text.startswith("End of the Project Gutenberg") or text.startswith("End of Project Gutenberg"):
+            elif text.startswith(PG_EBOOK_END):
                 clear_element(element)
 
     def load_text(self, fname, encoding=None):
@@ -270,9 +267,7 @@ class SourceFile(object):
 
 
 def get_block(pp_text):
-    """Generator to get a block of text, followed by the number of empty lines.
-    """
-
+    """Generator to get a block of text, followed by the number of empty lines."""
     empty_lines = 0
     block = []
 
@@ -432,7 +427,7 @@ def clear_element(element):
     """In an XHTML tree, remove all sub-elements of a given element.
 
     We can't properly remove an XML element while traversing the
-    tree. But we can clean it. Remove its text and children. However
+    tree. But we can clear it. Remove its text and children. However,
     the tail must be preserved because it belongs to the next element,
     so re-attach."""
     tail = element.tail
@@ -441,8 +436,7 @@ def clear_element(element):
 
 
 class pgdp_file(object):
-    """Stores and process a DP/text/html file.
-    """
+    """Abstract class: Store and process a DP text or html file."""
 
     def __init__(self, args):
         self.text = None
@@ -450,8 +444,7 @@ class pgdp_file(object):
         self.myfile = SourceFile()
         self.args = args
 
-        # œ ligature - has_oe_ligature and has_oe_dp are mutually
-        # exclusive
+        # œ ligature - has_oe_ligature and has_oe_dp are mutually exclusive
         self.has_oe_ligature = False  # the real thing
         self.has_oe_dp = False  # DP type: [oe]
 
@@ -486,6 +479,7 @@ class pgdp_file(object):
 
 
 class pgdp_file_text(pgdp_file):
+    """Store and process a DP text file."""
 
     def __init__(self, args):
         super().__init__(args)
@@ -658,10 +652,10 @@ class pgdp_file_text(pgdp_file):
 
 
 class pgdp_file_html(pgdp_file):
+    """Store and process a DP html file."""
 
     def __init__(self, args):
         super().__init__(args)
-
         self.mycss = ""
         self.char_text = None
 
@@ -716,7 +710,7 @@ class pgdp_file_html(pgdp_file):
             if clear_after:
                 element.text = ""
                 element.tail = ""
-            elif element.tag == "p" and element.text and element.text.startswith("***END OF THE PROJECT GUTENBERG EBOOK"):
+            elif element.tag == "p" and element.text and element.text.startswith(PG_EBOOK_END):
                 element.text = ""
                 element.tail = ""
                 clear_after = True
@@ -730,15 +724,14 @@ class pgdp_file_html(pgdp_file):
             text = element.text.strip()
 
             # Header - Remove everything until start of book.
-            m = re.match(r".*?\*\*\* START OF THIS PROJECT GUTENBERG EBOOK.*?\*\*\*(.*)", text,
-                         flags=re.MULTILINE | re.DOTALL)
+            m = re.match(PG_EBOOK_START_REGEX, text, flags=re.MULTILINE | re.DOTALL)
             if m:
                 # Found the header. Keep only the text after the
                 # start tag (usually the credits)
                 element.text = m.group(1)
                 continue
 
-            if text.startswith("End of the Project Gutenberg") or text.startswith("End of Project Gutenberg"):
+            if text.startswith(PG_EBOOK_END) or text.startswith("End of Project Gutenberg"):
                 clear_element(element)
 
         # Remove PG footer, 3rd method -- header and footer are normal
@@ -873,7 +866,7 @@ class pgdp_file_html(pgdp_file):
                     property_errors += [(val.line, val.column, "Unsupported property " + val.name)]
                     continue
 
-                # Iterate through each selectors in the rule
+                # Iterate through each selector in the rule
                 for selector in cssselect.parse(rule.selector.as_css()):
                     pseudo_element = selector.pseudo_element
                     xpath = cssselect.HTMLTranslator().selector_to_xpath(selector)
@@ -1018,8 +1011,7 @@ class pgdp_file_html(pgdp_file):
 
 
 class CompPP(object):
-    """Compare two files.
-    """
+    """Compare two files."""
 
     def __init__(self, args):
         self.args = args
@@ -1265,16 +1257,16 @@ class CompPP(object):
 
         # How to process punctuation
         # Add more as needed
-        self.check_char(files, "’", "'")  # curly quote to straight
-        self.check_char(files, "‘", "'")  # curly quote to straight
+        self.check_char(files, "’", "'")  # close curly quote to straight
+        self.check_char(files, "‘", "'")  # open curly quote to straight
+        self.check_char(files, '”', '"')  # close curly quotes to straight
+        self.check_char(files, '“', '"')  # open curly quotes to straight
         self.check_char(files, "º", "o")  # ordinal o to letter o
         self.check_char(files, "ª", "a")  # ordinal a to letter a
         self.check_char(files, "–", "-")  # ndash to regular dash
         self.check_char(files, "½", "-1/2")
         self.check_char(files, "¼", "-1/4")
         self.check_char(files, "¾", "-3/4")
-        self.check_char(files, '”', '"')
-        self.check_char(files, '“', '"')
         self.check_char(files, '⁄', '/')  # fraction
         self.check_char(files, "′", "'")  # prime
         self.check_char(files, "″", "''")  # double prime
@@ -1312,7 +1304,7 @@ class CompPP(object):
 
         err_message = ""
 
-        # Apply the various convertions
+        # Apply the various conversions
         for f in files:
             err_message += f.convert() or ""
 
