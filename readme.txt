@@ -16,3 +16,5 @@ Your original code shows no differences for the italics, and this for the bold:
     35 : 354       employment, have compiled from their log-books and their recollection
 
 With my code the above difference no longer occurs.
+
+python3 comp_pp.py bierce_x.txt bierce_x.html >test_pp.html
