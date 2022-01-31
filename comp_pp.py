@@ -463,7 +463,7 @@ class pgdp_file(object):
     def load(self, filename):
         pass
 
-    def process_args(self, args):
+    def process_args(self):
         """Process command line arguments"""
         pass
 
@@ -664,9 +664,9 @@ class pgdp_file_html(pgdp_file):
         """Load the file"""
         self.myfile.load_xhtml(filename, relax=True)
 
-    def process_args(self, args):
+    def process_args(self):
         # Load default CSS for transformations
-        if args.css_no_default is False:
+        if self.args.css_no_default is False:
             self.mycss = DEFAULT_TRANSFORM_CSS
 
         # Process command line arguments
@@ -1237,11 +1237,11 @@ class CompPP(object):
                 files[1].transform_func.append(lambda text: text.replace("[OE]", "OE"))
 
     def do_process(self):
+        """Main routine: load & process the files"""
         files = [None, None]
 
         # Load files
         for i, fname in enumerate(self.args.filename):
-
             # Look for file type.
             if fname.lower().endswith(('.html', '.htm')):
                 files[i] = pgdp_file_html(self.args)
@@ -1250,7 +1250,7 @@ class CompPP(object):
 
             f = files[i]
             f.load(fname)
-            f.process_args(self.args)
+            f.process_args()
             f.analyze()
 
         # How to process oe ligature
@@ -1420,8 +1420,8 @@ hr:before {
 """
 
 
-# Describe how to use the diffs
 def html_usage(filename1, filename2):
+    # Describe how to use the diffs
     return """
     <div class="bbox">
       <p class="center">— Note —</p>
