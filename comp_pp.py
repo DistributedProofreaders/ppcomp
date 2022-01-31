@@ -26,10 +26,9 @@
 
 # 2019-08-03 rtonsing: remove transformation of 'abbr' and 'dfn' to '_' italics markup.
 
-import sys
+import argparse
 import os
 import re
-import argparse
 import subprocess
 import tempfile
 import cssselect
@@ -213,7 +212,7 @@ class SourceFile(object):
                                       if parser.error_log[0].type != 513]
 
         if len(self.parser_errlog):
-            raise SyntaxError("Parsing errors in document: " +  os.path.basename(name))
+            raise SyntaxError("Parsing errors in document: " + os.path.basename(name))
 
         self.tree = tree.getroottree()
         self.text = text.splitlines()
@@ -324,7 +323,6 @@ def extract_footnotes_pp(pp_text, fn_regexes):
     prev_block = None
 
     for block, empty_lines in get_block(pp_text):
-
         # Is the block a new footnote?
         next_fn_type = 0
         if len(block):
@@ -423,6 +421,7 @@ DEFAULT_TRANSFORM_CSS = '''
         sub:before              { content: "_{"; }
         sup:after, sub:after    { content: "}"; }
     '''
+
 
 def clear_element(element):
     """In an XHTML tree, remove all sub-elements of a given element.
@@ -553,7 +552,7 @@ class pgdp_file_text(pgdp_file):
                 self.text = re.sub(r"(\w+)-\*_(\n\n)_\*", r"\2\1", self.text)
                 self.text = re.sub(r"(\w+)-\*(\w+)", r"\1\2", self.text)
 
-        else:   # Processed text file
+        else:  # Processed text file
             if self.args.ignore_format:
                 self.text = self.text.replace("_", "")
                 self.text = self.text.replace("=", "")
@@ -611,7 +610,7 @@ class pgdp_file_text(pgdp_file):
                     current_fnote[1] = current_fnote[1][:-1]
                     footnotes.append(current_fnote)
                     in_footnote = False
-                elif line.endswith("]*"): # Footnote continuation
+                elif line.endswith("]*"):  # Footnote continuation
                     current_fnote[1] = current_fnote[1][:-2]
                     footnotes.append(current_fnote)
                     in_footnote = False
