@@ -1016,17 +1016,6 @@ class CompPP(object):
     def __init__(self, args):
         self.args = args
 
-    def convert_to_words(self, text):
-        """Split the text into a list of words from the text."""
-        words = []
-
-        for line in re.findall(r'([\w-]+|\W)', text):
-            line = line.strip()
-            if line != '':
-                words.append(line)
-
-        return words
-
     def compare_texts(self, text1, text2):
         # Compare two sources
         # We could have used the difflib module, but it's too slow:
