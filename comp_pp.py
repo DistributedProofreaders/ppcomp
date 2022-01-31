@@ -1016,22 +1016,6 @@ class CompPP(object):
     def __init__(self, args):
         self.args = args
 
-    def oelig_convert(self, convert_oelig, text):
-        # Do the required oelig conversion
-        if convert_oelig == 1:
-            text = text.replace(r"[oe]", "oe")
-            text = text.replace(r"[OE]", "OE")
-
-        elif convert_oelig == 2:
-            text = text.replace(r"[oe]", "œ")
-            text = text.replace(r"[OE]", "Œ")
-
-        elif convert_oelig == 3:
-            text = text.replace("œ", "oe")
-            text = text.replace("Œ", "OE")
-
-        return text
-
     def convert_to_words(self, text):
         """Split the text into a list of words from the text."""
         words = []
