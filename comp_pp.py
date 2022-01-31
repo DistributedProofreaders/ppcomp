@@ -449,9 +449,7 @@ class pgdp_file(object):
         self.has_oe_ligature = False  # the real thing
         self.has_oe_dp = False  # DP type: [oe]
 
-        # Conversion to latin1 ?
-        self.convert_to_latin1 = False
-
+        # List of transforms to perform
         self.transform_func = []
 
         # Footnotes, if extracted
@@ -1166,6 +1164,7 @@ class CompPP(object):
         else:
             files[1].transform_func.append(lambda text: text.replace(char_best, char_other))
 
+    # RT: This should be obsolete, but maybe doesn't hurt for old files
     def check_oelig(self, files):
         """Similar to check_char, but for oe ligatures."""
         if files[0].has_oe_ligature and files[1].has_oe_ligature:
@@ -1215,6 +1214,7 @@ class CompPP(object):
 
         # How to process punctuation
         # Add more as needed
+        # RT: I would rather see diffs on most or all of these. Option?
         self.check_char(files, "’", "'")  # close curly quote to straight
         self.check_char(files, "‘", "'")  # open curly quote to straight
         self.check_char(files, '”', '"')  # close curly quotes to straight
@@ -1251,14 +1251,6 @@ class CompPP(object):
         func = lambda text: re.sub(r"\u00AD", r"", text)
         files[0].transform_func.append(func)
         files[1].transform_func.append(func)
-
-        # If the original encoding of them is latin1, we must convert a
-        # few UTF8 characters. We assume the default is utf-8. No
-        # provision for any other format.
-        if files[0].myfile.encoding == "iso-8859-1" or files[1].myfile.encoding == "iso-8859-1":
-            for f in files:
-                if f.myfile.encoding != "iso-8859-1":
-                    f.convert_to_latin1 = True
 
         err_message = ""
 
