@@ -287,7 +287,7 @@ def get_block(pp_text):
 
 
 def extract_footnotes_pp(pp_text, fn_regexes):
-    """Extract footnotes from a text file. text is iterable. Returns
+    """Extract footnotes from a PP text file. text is iterable. Returns
     the text as an iterable, without the footnotes, and footnotes as a
     list of (footnote string id, line number of the start of the
     footnote, list of strings comprising the footnote).
@@ -511,21 +511,19 @@ class pgdp_file_text(pgdp_file):
             self.has_oe_dp = True
 
     def convert(self):
-        """Remove markers from the text."""
+        """Remove markup from the text."""
 
-        if self.args.txt_cleanup_type == "n":
+        """Don't see anywhere these are set or used
+        if self.args.txt_cleanup_type == "n" or self.args.txt_cleanup_type == "p":
             return
+        """
 
+        # Original text file from rounds?
         if self.from_pgdp_rounds:
-            # Clean proofers
+            # Remove page markers
             self.text = re.sub(r"-----File: \w+.png.*", '', self.text)
 
-        if self.args.txt_cleanup_type == "p":
-            # Proofers only. Done.
-            return
-
-        # Clean all.
-        if self.from_pgdp_rounds:
+            # Remove block markup
             self.text = self.text.replace("\n/*\n", '\n\n')
             self.text = self.text.replace("\n*/\n", '\n\n')
             self.text = self.text.replace("\n/#\n", '\n\n')
@@ -533,6 +531,7 @@ class pgdp_file_text(pgdp_file):
             self.text = self.text.replace("\n/P\n", '\n\n')
             self.text = self.text.replace("\nP/\n", '\n\n')
 
+            # Ignore or replace italics and bold html
             if self.args.ignore_format:
                 self.text = self.text.replace("<i>", "")
                 self.text = self.text.replace("</i>", "")
@@ -556,12 +555,12 @@ class pgdp_file_text(pgdp_file):
                 self.text = re.sub(r"(\w+)-\*_(\n\n)_\*", r"\2\1", self.text)
                 self.text = re.sub(r"(\w+)-\*(\w+)", r"\1\2", self.text)
 
-        else:
+        else:   # Processed text file
             if self.args.ignore_format:
                 self.text = self.text.replace("_", "")
                 self.text = self.text.replace("=", "")
 
-            # Horizontal separation
+            # Remove thought breaks
             self.text = self.text.replace("*       *       *       *       *", "")
             self.text = self.text.replace("*     *     *     *     *", "")
 
@@ -584,42 +583,40 @@ class pgdp_file_text(pgdp_file):
         # Extract the footnotes from an F round
         # Start with [Footnote ... and finish with ] at the end of a line
 
-        # Note: this is really dirty code. Should rewrite. Don't use
-        # cur_fnote[0].
+        # Note: this is really dirty code. Should rewrite. Don't use current_fnote[0].
 
-        in_fnote = False  # currently processing a footnote
-        cur_fnote = []  # keeping current footnote
+        in_footnote = False  # currently processing a footnote
+        current_fnote = []  # keeping current footnote
         text = []  # new text without footnotes
         footnotes = []
 
         for line in self.text.splitlines():
-            # New footnote
+            # New footnote?
             if "[Footnote" in line:
+                in_footnote = True
 
                 if "*[Footnote" in line:
-                    # Join to previous - Remove the last from the existing
-                    # footnotes.
+                    # Join to previous - Remove the last from the existing footnotes.
                     line = line.replace("*[Footnote: ", "")
-                    cur_fnote, footnotes = footnotes[-1], footnotes[:-1]
+                    current_fnote, footnotes = footnotes[-1], footnotes[:-1]
                 else:
                     line = re.sub(r"\[Footnote \d+: ", "", line)
-                    cur_fnote = [-1, ""]
+                    current_fnote = [-1, ""]
 
-                in_fnote = True
+            # Inside a footnote?
+            if in_footnote:
+                current_fnote[1] = "\n".join([current_fnote[1], line])
 
-            if in_fnote:
-                cur_fnote[1] = "\n".join([cur_fnote[1], line])
-
-                # Footnote continuation: ] or ]*
+                # End of footnote?
                 # We don't try to regroup yet
                 if line.endswith(']'):
-                    cur_fnote[1] = cur_fnote[1][:-1]
-                    footnotes.append(cur_fnote)
-                    in_fnote = False
-                elif line.endswith("]*"):
-                    cur_fnote[1] = cur_fnote[1][:-2]
-                    footnotes.append(cur_fnote)
-                    in_fnote = False
+                    current_fnote[1] = current_fnote[1][:-1]
+                    footnotes.append(current_fnote)
+                    in_footnote = False
+                elif line.endswith("]*"): # Footnote continuation
+                    current_fnote[1] = current_fnote[1][:-2]
+                    footnotes.append(current_fnote)
+                    in_footnote = False
             else:
                 text.append(line)
 
@@ -630,6 +627,8 @@ class pgdp_file_text(pgdp_file):
     def extract_footnotes_pp(self):
         # Extract the footnotes from a PP text version
         # Convert to lines and back
+
+        # Call root function. Move it here?
         text, footnotes = extract_footnotes_pp(self.text.splitlines(), None)
 
         # Rebuild text, now without footnotes
@@ -1033,18 +1032,8 @@ class CompPP(object):
 
         return text
 
-    def latin1_convert(self, text):
-        # Convert some UTF8 characters to latin1
-        text = text.replace("’", "'")
-        text = text.replace("‘", "'")
-        text = text.replace('“', '"')
-        text = text.replace('”', '"')
-        text = text.replace('º', 'o')
-        return text
-
     def convert_to_words(self, text):
         """Split the text into a list of words from the text."""
-
         words = []
 
         for line in re.findall(r'([\w-]+|\W)', text):
@@ -1054,33 +1043,30 @@ class CompPP(object):
 
         return words
 
-    def compare_texts(self, text1, text2, debug=False):
+    def compare_texts(self, text1, text2):
         # Compare two sources
         # We could have used the difflib module, but it's too slow:
         #    for line in difflib.unified_diff(f1.words, f2.words):
         #        print(line)
-        # Use diff instead.
-
-        # Some debug code
-        if False and debug:
-            f = open("/tmp/text1", "wb")
-            f.write(text1.encode('utf-8'))
-            f.close()
-            f = open("/tmp/text2", "wb")
-            f.write(text2.encode('utf-8'))
-            f.close()
+        # Use dwdiff instead.
 
         with tempfile.NamedTemporaryFile(mode='wb') as t1, tempfile.NamedTemporaryFile(mode='wb') as t2:
             t1.write(text1.encode('utf-8'))
             t2.write(text2.encode('utf-8'))
             t1.flush()
             t2.flush()
-
             repo_dir = os.environ.get("OPENSHIFT_DATA_DIR", "")
             if repo_dir:
                 dwdiff_path = os.path.join(repo_dir, "bin", "dwdiff")
             else:
                 dwdiff_path = "dwdiff"
+
+            """
+            -P Use punctuation characters as delimiters.
+            -R Repeat the begin and end markers at the start and end of line if a change crosses a newline.
+            -C 2 Show <num> lines of context before and after each changes.
+            -L Show line numbers at the start of each line.
+            """
 
             cmd = [dwdiff_path,
                    "-P",
@@ -1097,19 +1083,17 @@ class CompPP(object):
 
             cmd += [t1.name, t2.name]
 
-            # That shouldn't be needed if openshift was utf8 by default.
+            # This shouldn't be needed if openshift was utf8 by default.
             env = os.environ.copy()
             env["LANG"] = "en_US.UTF-8"
 
-            p = subprocess.Popen(cmd,
-                                 stdout=subprocess.PIPE,
-                                 env=env)
+            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env)
 
-            # The output is raw, so we have to decode it to UTF-8, which
-            # is the default under Ubuntu.
+            # The output is raw, so we have to decode it to UTF-8, which is the default under Ubuntu.
             return p.stdout.read().decode('utf-8')
 
     def create_html(self, files, text, footnotes):
+        """Create the output html file"""
 
         def massage_input(text, start0, start1):
             # Massage the input
@@ -1332,7 +1316,6 @@ class CompPP(object):
 
     def simple_html(self):
         """For debugging purposes. Transform the html and print the text output."""
-
         fname = self.args.filename[0]
         if fname.lower().endswith(('.html', '.htm')):
             f = pgdp_file_html(self.args)
