@@ -36,7 +36,9 @@ import tinycss
 from lxml import etree
 
 PG_EBOOK_START = "*** START OF THE PROJECT GUTENBERG EBOOK"
+PG_EBOOK_START2 = "*** START OF THIS PROJECT GUTENBERG EBOOK"
 PG_EBOOK_END = "*** END OF THE PROJECT GUTENBERG EBOOK"
+PG_EBOOK_END2 = "*** END OF THIS PROJECT GUTENBERG EBOOK"
 PG_EBOOK_START_REGEX = r".*?\*\*\* START OF THE PROJECT GUTENBERG EBOOK.*?\*\*\*(.*)"
 
 
@@ -103,18 +105,17 @@ class SourceFile(object):
         self.start = 0
         for lineno, line in enumerate(self.text, start=1):
             # Find the markers. Unfortunately PG lacks consistency
-            if line.startswith((PG_EBOOK_START,
-                                "*** START OF THIS PROJECT GUTENBERG EBOOK")):
+            if line.startswith((PG_EBOOK_START, PG_EBOOK_START2)):
                 new_text = []
                 self.start = lineno
-            elif line.startswith((PG_EBOOK_END,
-                                  "*** END OF THIS PROJECT GUTENBERG EBOOK")):
+            elif line.startswith((PG_EBOOK_END, PG_EBOOK_END2)):
                 break
             else:
                 new_text.append(line)
 
         self.text = new_text
 
+    # relax currently always True
     def parse_html_xhtml(self, name, raw, text, relax=False):
         """Parse a byte array. Find the correct parser. Returns both the
         parser, which contains the error log, and the resulting tree,
@@ -143,18 +144,25 @@ class SourceFile(object):
         try:
             tree = etree.fromstring(text, parser)
         except etree.XMLSyntaxError:
-            if relax == False:
+            if relax == False:  # no
                 return parser, tree
         except Exception:
             pass
+
         else:
             return parser, tree
 
+        """
+        etree.XMLParser fails both text & raw every time.
+        etree.HTMLParser text passes
+        <string>: 2:57: ERROR:DTD: DTD_NO_DTD: Validation failed: no DTD found !
+        <string>: 8:79: ERROR:PARSER: WAR_UNDECLARED_ENTITY: Entity 'mdash' not defined
+        """
         # Try raw string. This will decode files with <?xml ...
         try:
             tree = etree.fromstring(raw, parser)
         except etree.XMLSyntaxError:
-            if relax == False:
+            if relax == False:  # no
                 return parser, tree
         except Exception:
             pass
@@ -163,7 +171,7 @@ class SourceFile(object):
 
         # The XHTML file may have some errors. If the caller really
         # wants a result then use the HTML parser.
-        if relax and self.is_xhtml:
+        if relax and self.is_xhtml:  # always here
             parser = etree.HTMLParser()
             try:
                 tree = etree.fromstring(text, parser)
@@ -200,11 +208,6 @@ class SourceFile(object):
         self.count_ending_empty_lines(text)
 
         if len(self.parser_errlog):
-            # Cleanup some errors
-            # print(parser.error_log[0].domain_name)
-            # print(parser.error_log[0].type_name)
-            # print(parser.error_log[0].level_name)
-
             if type(parser) == etree.HTMLParser:
                 # HTML parser rejects tags with both id and name
                 #   (513 == DTD_ID_REDEFINED)
@@ -232,15 +235,23 @@ class SourceFile(object):
 
         # Find type of xhtml (10 or 11 for 1.0 and 1.1). 0=html or
         # unknown. So far, no need to differentiate 1.0 strict and transitional.
-        # RT: self.xhtml is never used
+        """ RT: self.xhtml is never used
         if "DTD/xhtml1-strict.dtd" in self.tree.docinfo.doctype or "DTD/xhtml1-transitional.dtd" in self.tree.docinfo.doctype:
             self.xhtml = 10
         elif "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" in self.tree.docinfo.doctype:
             self.xhtml = 11
         else:
             self.xhtml = 0
+        """
 
         # Remove PG boilerplate. These are kept in a <pre> tag.
+        """ RT: this has changed:
+        old: <pre save_image_to_download="true">
+            <pre> at end
+        new: <body save_image_to_download="true">
+          to <div>*** START OF THE PROJECT GUTENBERG EBOOK 
+          <div>*** END OF THE PROJECT GUTENBERG EBOOK 
+        """
         find = etree.XPath("//pre")
         for element in find(self.tree):
             if element.text is None:
@@ -256,7 +267,6 @@ class SourceFile(object):
     def load_text(self, fname, encoding=None):
         """Load the file as text."""
         raw, text, encoding = self.load_file(fname, encoding)
-
         if raw is None:
             return
 
@@ -510,11 +520,6 @@ class pgdp_file_text(pgdp_file):
     def convert(self):
         """Remove markup from the text."""
 
-        """Don't see anywhere these are set or used
-        if self.args.txt_cleanup_type == "n" or self.args.txt_cleanup_type == "p":
-            return
-        """
-
         # Original text file from rounds?
         if self.from_pgdp_rounds:
             # Remove page markers
@@ -723,16 +728,14 @@ class pgdp_file_html(pgdp_file):
             # Header - Remove everything until start of book.
             m = re.match(PG_EBOOK_START_REGEX, text, flags=re.MULTILINE | re.DOTALL)
             if m:
-                # Found the header. Keep only the text after the
-                # start tag (usually the credits)
+                # Found the header. Keep only the text after the start tag (usually the credits)
                 element.text = m.group(1)
                 continue
 
             if text.startswith(PG_EBOOK_END) or text.startswith("End of Project Gutenberg"):
                 clear_element(element)
 
-        # Remove PG footer, 3rd method -- header and footer are normal
-        # html, not text in <pre> tag.
+        # Remove PG footer, 3rd method -- header and footer are normal html, not text in <pre> tag.
         try:
             # Look for one element
             (element,) = etree.XPath("//p[@id='pg-end-line']")(self.myfile.tree)
@@ -751,8 +754,7 @@ class pgdp_file_html(pgdp_file):
         self.has_oe_ligature = True
 
     def text_apply(self, element, func):
-        """Apply a function to every sub element's .text and .tail,
-        and element's .text."""
+        """Apply a function to every sub element's .text and .tail, and element's .text."""
         if element.text:
             element.text = func(element.text)
         for el in element.iter():
@@ -765,7 +767,6 @@ class pgdp_file_html(pgdp_file):
 
     def convert(self):
         """Remove HTML and PGDP marker from the text."""
-
         escaped_unicode_re = re.compile(r"\\u[0-9a-fA-F]{4}")
 
         def escaped_unicode(m):
@@ -777,8 +778,7 @@ class pgdp_file_html(pgdp_file):
             return newstr
 
         def new_content(element):
-            """Process the "content:" property
-            """
+            """Process the "content:" property"""
             retstr = ""
             for token in val.value:
                 if token.type == "STRING":
@@ -915,7 +915,7 @@ class pgdp_file_html(pgdp_file):
 
         css_errors = ""
         if stylesheet.errors or property_errors:
-            # There is transformation CSS errors. If the default css
+            # There are transformation CSS errors. If the default css
             # is included, take the offset into account.
             i = 0
             if self.args.css_no_default is False:
@@ -980,7 +980,6 @@ class pgdp_file_html(pgdp_file):
                     for element in etree.XPath(find)(self.myfile.tree):
                         # Grab the text and remove the footnote number
                         footnotes += [strip_note_tag(element.xpath("string()"))]
-
                         # Remove the footnote from the main document
                         element.getparent().remove(element)
 
@@ -1037,7 +1036,6 @@ class CompPP(object):
             -C 2 Show <num> lines of context before and after each changes.
             -L Show line numbers at the start of each line.
             """
-
             cmd = [dwdiff_path,
                    "-P",
                    "-R",
@@ -1211,9 +1209,8 @@ class CompPP(object):
         # How to process oe ligature
         self.check_oelig(files)
 
-        # How to process punctuation
+        # How to process punctuation IF files don't match
         # Add more as needed
-        # RT: I would rather see diffs on most or all of these. Option?
         self.check_char(files, "’", "'")  # close curly quote to straight
         self.check_char(files, "‘", "'")  # open curly quote to straight
         self.check_char(files, '”', '"')  # close curly quotes to straight
