@@ -1,23 +1,28 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# comp_pp - compare 2 files
+"""
+ppcomp - compare text from 2 files, ignoring html and formatting differences
+"""
 
-# Copyright (C) 2012-2013 bibimbop at pgdp
+"""
+Copyright (C) 2012-2013 bibimbop at pgdp
+Copyright 2019-2022 Robert Tonsing
 
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+The ppcomp program program was originally written as the standalone program comp_pp.py by bibimbop
+at PGDP as part of his PPTOOLS program. It is used as part of the PP Workbench with permission.
+ 
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU
+General Public License as published by the Free Software Foundation, either version 3 of the License,
+or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program. If not,
+see <https://www.gnu.org/licenses/>.
+"""
 
 # 2019-06-14 rtonsing: changes by rfrank to work on the pp workbench web site,
 # change by me to ignore bold text marking.
