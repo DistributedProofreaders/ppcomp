@@ -5,4 +5,5 @@
 *.bk1
 *.bk2
 .idea/
+.vscode/
 __pycache__/
