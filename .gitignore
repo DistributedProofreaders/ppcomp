@@ -5,3 +5,4 @@
 *.bk1
 *.bk2
 .idea/
+__pycache__/
