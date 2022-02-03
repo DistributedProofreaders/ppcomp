@@ -1,0 +1,22 @@
+Superscript Zero (U+2070) ⁰
+Superscript One (U+00B9) ¹
+Superscript Two (U+00B2) ²
+Superscript Three (U+00B3) ³
+Superscript Four (U+2074) ⁴
+Superscript Five (U+2075) ⁵
+Superscript Six (U+2076) ⁶
+Superscript Seven (U+2077) ⁷
+Superscript Eight (U+2078) ⁸
+Superscript Nine (U+2079) ⁹
+
+
+Subscript Zero (U+2080) ₀
+Subscript One (U+2081) ₁
+Subscript Two (U+2082) ₂
+Subscript Three (U+2083) ₃
+Subscript Four (U+2084) ₄
+Subscript Five (U+2085) ₅
+Subscript Six (U+2086) ₆
+Subscript Seven (U+2087) ₇
+Subscript Eight (U+2088) ₈
+Subscript Nine (U+2089) ₉

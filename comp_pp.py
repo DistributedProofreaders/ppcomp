@@ -31,6 +31,8 @@ import os
 import re
 import subprocess
 import tempfile
+from io import StringIO
+
 import cssselect
 import tinycss
 from lxml import etree
@@ -130,12 +132,13 @@ class SourceFile(object):
         # Get the first 5 lines and find the DTD
         header = text.splitlines()[:5]
 
-        if any(["DTD XHTML" in x for x in header]):
-            parser = etree.XMLParser(dtd_validation=True)
-            self.is_xhtml = True
-        if any(["DTD HTML" in x for x in header]):
-            parser = etree.HTMLParser()
-            self.is_html4 = True
+        # etree.XMLParser can't handle &mdash; and other entities, don't bother
+        #if any(["DTD XHTML" in x for x in header]):
+        #    parser = etree.XMLParser(load_dtd =True)
+        #    self.is_xhtml = True
+        #if any(["DTD HTML" in x for x in header]):
+        parser = etree.HTMLParser()
+        self.is_html4 = True
 
         if parser is None:
             raise SyntaxError("No parser found for that type of document: " + os.path.basename(name))
@@ -148,7 +151,6 @@ class SourceFile(object):
                 return parser, tree
         except Exception:
             pass
-
         else:
             return parser, tree
 
@@ -159,28 +161,28 @@ class SourceFile(object):
         <string>: 8:79: ERROR:PARSER: WAR_UNDECLARED_ENTITY: Entity 'mdash' not defined
         """
         # Try raw string. This will decode files with <?xml ...
-        try:
-            tree = etree.fromstring(raw, parser)
-        except etree.XMLSyntaxError:
-            if relax == False:  # no
-                return parser, tree
-        except Exception:
-            pass
-        else:
-            return parser, tree
-
-        # The XHTML file may have some errors. If the caller really
-        # wants a result then use the HTML parser.
-        if relax and self.is_xhtml:  # always here
-            parser = etree.HTMLParser()
-            try:
-                tree = etree.fromstring(text, parser)
-            except etree.XMLSyntaxError:
-                return parser, tree
-            except Exception:
-                pass
-            else:
-                return parser, tree
+        # try:
+        #     tree = etree.fromstring(raw, parser)
+        # except etree.XMLSyntaxError:
+        #     if relax == False:  # no
+        #         return parser, tree
+        # except Exception:
+        #     pass
+        # else:
+        #     return parser, tree
+        #
+        # # The XHTML file may have some errors. If the caller really
+        # # wants a result then use the HTML parser.
+        # if relax and self.is_xhtml:  # always here
+        #     parser = etree.HTMLParser()
+        #     try:
+        #         tree = etree.fromstring(text, parser)
+        #     except etree.XMLSyntaxError:
+        #         return parser, tree
+        #     except Exception:
+        #         pass
+        #     else:
+        #         return parser, tree
 
         raise SyntaxError("File cannot be parsed: " + os.path.basename(name))
 
@@ -408,6 +410,7 @@ DEFAULT_TRANSFORM_CSS = '''
         /* Bold */
         b:before, bold:before,
         b:after, bold:after         { content: "="; }
+        
         /* line breaks with <br /> will be ignored by normalize-space().
          * Add a space in all of them to work around. */
         br:before { content: " "; }
@@ -522,40 +525,39 @@ class pgdp_file_text(pgdp_file):
 
         # Original text file from rounds?
         if self.from_pgdp_rounds:
-            # Remove page markers
-            self.text = re.sub(r"-----File: \w+.png.*", '', self.text)
-
             # Remove block markup
-            self.text = self.text.replace("\n/*\n", '\n\n')
-            self.text = self.text.replace("\n*/\n", '\n\n')
-            self.text = self.text.replace("\n/#\n", '\n\n')
-            self.text = self.text.replace("\n#/\n", '\n\n')
-            self.text = self.text.replace("\n/P\n", '\n\n')
-            self.text = self.text.replace("\nP/\n", '\n\n')
+            block_markup = ["/*", "*/",
+                            "/#", "#/",
+                            "/P", "P/",
+                            "/F", "F/",
+                            "/X", "X/"]
+            for x in block_markup:
+                self.text = self.text.replace("\n" + x + "\n", "\n\n")
 
             # Ignore or replace italics and bold html
             if self.args.ignore_format:
-                self.text = self.text.replace("<i>", "")
-                self.text = self.text.replace("</i>", "")
-                self.text = self.text.replace("<b>", "")
-                self.text = self.text.replace("</b>", "")
+                for x in ["<i>", "</i>", "<b>", "</b>"]:
+                    self.text = self.text.replace(x, "")
             else:
-                self.text = self.text.replace("<i>", "_")
-                self.text = self.text.replace("</i>", "_")
-                self.text = self.text.replace("<b>", "=")
-                self.text = self.text.replace("</b>", "=")
+                for x in ["<i>", "</i>"]:
+                    self.text = self.text.replace(x, "_")
+                for x in ["<b>", "</b>"]:
+                    self.text = self.text.replace(x, "=")
 
-            self.text = re.sub("<.*?>", '', self.text)
-            self.text = re.sub("</.*?>", '', self.text)
-            self.text = re.sub(r"\[Blank Page\]", '', self.text)
-
+            # Remove page markers & other markup
+            pgdp_markup = ["<.*?>", "</.*?>", r"\[Blank Page\]", r"-----File: \w+.png.*"]
             if self.args.suppress_proofers_notes:
-                self.text = re.sub(r"\[\*\*[^]]*?\]", '', self.text)
+                pgdp_markup += r"\[\*\*[^]]*?\]"
+
+            for x in pgdp_markup:
+                self.text = re.sub(x, '', self.text)
 
             if self.args.regroup_split_words:
-                self.text = re.sub(r"(\w+)-\*(\n+)\*", r'\2\1', self.text)
-                self.text = re.sub(r"(\w+)-\*_(\n\n)_\*", r"\2\1", self.text)
-                self.text = re.sub(r"(\w+)-\*(\w+)", r"\1\2", self.text)
+                word_splits = {r"(\w+)-\*(\n+)\*": r'\2\1',
+                               r"(\w+)-\*_(\n\n)_\*": r"\2\1",
+                               r"(\w+)-\*(\w+)": r"\1\2"}
+                for x in word_splits:
+                    self.text = re.sub(x, word_splits[x], self.text)
 
         else:  # Processed text file
             if self.args.ignore_format:
@@ -577,9 +579,6 @@ class pgdp_file_text(pgdp_file):
 
         if self.args.ignore_format or self.args.suppress_sidenote_tags:
             self.text = re.sub(r"\[Sidenote:([^]]*?)\]", r'\1', self.text, flags=re.MULTILINE)
-
-        # Replace -- with real mdash
-        self.text = self.text.replace("--", "—")
 
     def extract_footnotes_pgdp(self):
         # Extract the footnotes from an F round
@@ -957,9 +956,8 @@ class pgdp_file_html(pgdp_file):
         if self.args.extract_footnotes:
             footnotes = []
 
-            # Special case for PPers who do not keep the marking
-            # around the whole footnote. They only mark the first
-            # paragraph.
+            # Special case for PPers who do not keep the marking around
+            # the whole footnote. They only mark the first paragraph.
             elements = etree.XPath("//div[@class='footnote']")(self.myfile.tree)
             if len(elements) == 1:
                 element = elements[0]
@@ -1018,7 +1016,6 @@ class CompPP(object):
         #    for line in difflib.unified_diff(f1.words, f2.words):
         #        print(line)
         # Use dwdiff instead.
-
         with tempfile.NamedTemporaryFile(mode='wb') as t1, tempfile.NamedTemporaryFile(mode='wb') as t2:
             t1.write(text1.encode('utf-8'))
             t2.write(text2.encode('utf-8'))
@@ -1056,7 +1053,6 @@ class CompPP(object):
             env["LANG"] = "en_US.UTF-8"
 
             p = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env)
-
             # The output is raw, so we have to decode it to UTF-8, which is the default under Ubuntu.
             return p.stdout.read().decode('utf-8')
 
@@ -1218,6 +1214,7 @@ class CompPP(object):
         self.check_char(files, "º", "o")  # ordinal o to letter o
         self.check_char(files, "ª", "a")  # ordinal a to letter a
         self.check_char(files, "–", "-")  # ndash to regular dash
+        self.check_char(files, "—", "--")  # mdash to regular dashes
         self.check_char(files, "½", "-1/2")
         self.check_char(files, "¼", "-1/4")
         self.check_char(files, "¾", "-3/4")
