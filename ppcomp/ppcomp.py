@@ -2,7 +2,11 @@
 # -*- coding: utf-8 -*-
 
 """
-ppcomp - compare text from 2 files, ignoring html and formatting differences
+ppcomp - compare text from 2 files, ignoring html and formatting differences,
+for use by users of Distributed Profreaders (https://www.pgdp.net)
+
+It applies various transformations according to program options before passing
+the files to the Linux program dwdiff.
 """
 
 """
@@ -24,12 +28,11 @@ You should have received a copy of the GNU General Public License along with thi
 see <https://www.gnu.org/licenses/>.
 """
 
-# 2019-06-14 rtonsing: changes by rfrank to work on the pp workbench web site,
-# change by me to ignore bold text marking.
-
-# 2019-06-14 rtonsing: add "pageno" to list of page number classes to ignore.
-
-# 2019-08-03 rtonsing: remove transformation of 'abbr' and 'dfn' to '_' italics markup.
+""" Changes
+2019-06-14 rtonsing: changes by rfrank to work on the pp workbench web site, change by me to ignore bold text marking.
+2019-06-14 rtonsing: add "pageno" to list of page number classes to ignore.
+2019-08-03 rtonsing: remove transformation of 'abbr' and 'dfn' to '_' italics markup.
+"""
 
 import argparse
 import os
@@ -1009,7 +1012,7 @@ class pgdp_file_html(pgdp_file):
             self.text = self.text.replace(chr(0x200b), "")
 
 
-class CompPP(object):
+class PPComp(object):
     """Compare two files."""
 
     def __init__(self, args):
@@ -1422,7 +1425,7 @@ def main():
     parser = argparse.ArgumentParser(description='Diff text document for PGDP PP.')
 
     parser.add_argument('filename', metavar='FILENAME', type=str,
-                        help='input text file', nargs=2)
+                        help='input files', nargs=2)
     parser.add_argument('--ignore-format', action='store_true', default=False,
                         help='Silence formating differences')
     parser.add_argument('--suppress-footnote-tags', action='store_true', default=False,
@@ -1466,7 +1469,7 @@ def main():
 
     args = parser.parse_args()
 
-    x = CompPP(args)
+    x = PPComp(args)
     if args.simple_html:
         x.simple_html()
     else:

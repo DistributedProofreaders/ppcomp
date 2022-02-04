@@ -1,35 +1,31 @@
 =================================
-COMP_PP - Compare 2 files for DP.
+ppcomp - Compare 2 files for Distributed Profreaders (https://www.pgdp.net).
 =================================
-
 
 Introduction
 ------------
-
-comp_pp can be used to compare 2 different files and generate an
+Used to compare 2 different files and generate an
 exploitable output. Its goal is to look for discrepancies between the
 text and html version produced at PGDP. However it can also be used to
 compare a PGDP source with an external source (wikisource, ...) in
 either text or html format.
 
 The sources can be:
-
   - a text version or
   - an html version or
   - a text version coming from the P or F rounds or
   - a text/html coming from an external source (wikisource, internet, ...).
 
 The text versions are identified by the .txt extension; the html by the
-.htm or .html extension; and the Px or Fx version by its projectID
-prefix.
+.htm or .html extension; and the Px or Fx version by its projectID prefix.
 
+It applies various transformations according to program options before passing
+the files to the Linux program dwdiff. There does not seem to be any Windows
+equivalent of dwdiff.
 
 Requirements
 ------------
-
-comp_pp needs python 3 (not 2) to run, as well as the following
-packages:
-
+comp_pp needs python 3 (not 2) to run, as well as the following packages:
   - lxml
   - dwdiff             (http://os.ghalkes.nl/dwdiff.html)
   - python tinycss 0.3 (https://pypi.python.org/pypi/tinycss)
@@ -40,9 +36,7 @@ Installation
 
 On Debian /  Ubuntu
 ~~~~~~~~~~~~~~~~~~~~
-
 To install on Linux (Debian or Ubuntu):
-::
 
   sudo apt-get install w3c-dtd-xhtml python3-lxml dwdiff
 
@@ -58,64 +52,6 @@ then install the missing packages:
 
   pip3 install tinycss
   pip3 install cssselect
-
-
-On RedHat EL 6, CentOS 6, Scientific Linux 6
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Follow the procedures mentionned at
-
-  http://linuxsysconfig.com/2013/03/running-multiple-python-versions-on-centos6rhel6sl6/
-
-and
-
-  http://wiki.centos.org/AdditionalResources/Repositories/RPMForge
-
-to setup the PUIAS and RPMforge repositories.
-
-Then install python 3 and dependencies:
-::
-
-  yum install python3  python3-tools  python3-devel
-  yum install dwdiff
-
-  wget http://python-distribute.org/distribute_setup.py
-  python3 distribute_setup.py
-  easy_install pip
-  pip-3.3 install tinycss
-  pip-3.3 install cssselect
-  pip-3.3 install lxml
-  pip-3.3 install roman
-  pip-3.3 install cssutils
-  pip-3.3 install jinja2
-
-Note that pip requires gcc to build modules, so that may have to be installed too.
-
-
-On Fedora 19
-~~~~~~~~~~~~
-
-To install, type:
-::
-
-  yum install python3  python3-tools  python3-devel dwdiff
-  wget http://python-distribute.org/distribute_setup.py
-  python3 distribute_setup.py
-  easy_install pip
-  pip-3.3 install tinycss
-  pip-3.3 install cssselect
-  yum install libxml2-devel libxslt-devel
-  pip-3.3 install lxml
-  pip-3.3 install roman
-  pip-3.3 install cssutils
-  pip-3.3 install jinja2
-
-
-On anything else (Windows, OSX, ...)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-No idea.
-
 
 Usage
 -----
