@@ -4,6 +4,8 @@
 *.mobi
 *.bk1
 *.bk2
+./*.txt
+./*.html
 .idea/
 .vscode/
 __pycache__/
