@@ -1293,7 +1293,6 @@ class PPComp(object):
             print("Couldn't load file:", fname)
             return
 
-        f.process_args(self.args)
         f.analyze()
 
         # Remove non-breakable spaces between numbers. For instance, a
