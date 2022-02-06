@@ -94,18 +94,6 @@ class SourceFile(object):
 
         return raw, text, enc
 
-
-    def count_ending_empty_lines(self, text):
-        """Count the number of ending empty lines."""
-        self.ending_empty_lines = 0
-        for mychar in text[::-1]:
-            if mychar == "\n":
-                self.ending_empty_lines += 1
-            elif mychar == "\r":
-                continue
-            else:
-                break
-
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from a text version if present."""
         new_text = []
@@ -222,7 +210,6 @@ class SourceFile(object):
         else:
             self.parser_errlog = parser.error_log
         self.encoding = encoding
-        self.count_ending_empty_lines(text)
 
         if len(self.parser_errlog):
             if type(parser) == etree.HTMLParser:
@@ -287,7 +274,6 @@ class SourceFile(object):
         if raw is None:
             return
 
-        self.count_ending_empty_lines(text)
         self.text = text.splitlines()
         self.encoding = encoding
         self.strip_pg_boilerplate()
