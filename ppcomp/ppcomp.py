@@ -61,14 +61,9 @@ class SourceFile(object):
     is_html5 = False
     is_xhtml = False
 
-    def load_file(self, fname, encoding=None):
+    @staticmethod
+    def load_file(fname, encoding=None):
         """Load a file (text ot html) and finds its encoding."""
-
-        # Keep the full name, the file name and its path
-        self.fullname = fname
-        self.basename = os.path.basename(fname)
-        self.dirname = os.path.dirname(fname)
-
         try:
             with open(fname, "rb") as f:
                 raw = f.read()
@@ -78,9 +73,10 @@ class SourceFile(object):
         if len(raw) < 10:
             raise SyntaxError("File is too short: " + os.path.basename(fname))
 
-        # Remove BOM if present
-        if raw[0] == 0xef and raw[1] == 0xbb and raw[2] == 0xbf:
+        # Remove UTF-8 BOM if present
+        if raw[0:3] == b'\xef\xbb\xbf':
             raw = raw[3:]
+            encoding = 'utf-8'
 
         # Try various encodings. Much faster than using chardet
         if encoding is None:
@@ -90,16 +86,14 @@ class SourceFile(object):
 
         for enc in encodings:
             try:
-                # Encode the raw data string into an internal unicode
-                # string, according to the discovered encoding.
+                # Encode the raw data string into an internal string, using the discovered encoding.
                 text = raw.decode(enc)
+                break
             except Exception:
-                continue
-            else:
-                return raw, text, enc
+                raise SyntaxError("Encoding cannot be found for: " + os.path.basename(fname))
 
-        raise SyntaxError("Encoding cannot be found for: " +
-                          os.path.basename(fname))
+        return raw, text, enc
+
 
     def count_ending_empty_lines(self, text):
         """Count the number of ending empty lines."""
@@ -148,7 +142,7 @@ class SourceFile(object):
         #    parser = etree.XMLParser(load_dtd =True)
         #    self.is_xhtml = True
         #if any(["DTD HTML" in x for x in header]):
-        self.is_html5 = True
+        self.is_html5 = False
         if self.is_html5:
             parser = html5parser.HTMLParser()
         else:
@@ -544,6 +538,17 @@ class pgdp_file_text(pgdp_file):
     def convert(self):
         """Remove markup from the text."""
 
+        if self.args.txt_cleanup_type == "n":
+            return
+
+        if self.from_pgdp_rounds:
+            # Clean proofers
+            self.text = re.sub(r"-----File: \w+.png.*", '', self.text)
+
+        if self.args.txt_cleanup_type == "p":
+            # Proofers only. Done.
+            return
+
         # Original text file from rounds?
         if self.from_pgdp_rounds:
             # Remove block markup
@@ -565,8 +570,8 @@ class pgdp_file_text(pgdp_file):
                 for x in ["<b>", "</b>"]:
                     self.text = self.text.replace(x, "=")
 
-            # Remove page markers & other markup
-            pgdp_markup = ["<.*?>", "</.*?>", r"\[Blank Page\]", r"-----File: \w+.png.*"]
+            # Remove other markup
+            pgdp_markup = ["<.*?>", "</.*?>", r"\[Blank Page\]"]
             if self.args.suppress_proofers_notes:
                 pgdp_markup += r"\[\*\*[^]]*?\]"
 
@@ -1481,8 +1486,8 @@ def main():
     # NO HANDLER!
     #parser.add_argument('--without-html-header', action='store_true', default=False,
     #                    help="HTML: do not output html header and footer")
-    #parser.add_argument('--txt-cleanup-type', type=str, default='b',
-    #                    help="TXT: Type of text cleaning -- (b)est effort, (n)one, (p)roofers")
+    parser.add_argument('--txt-cleanup-type', type=str, default='b',
+                        help="TXT: Type of text cleaning -- (b)est effort, (n)one, (p)roofers")
     parser.add_argument('--simple-html', action='store_true', default=False,
                         help="HTML: Process the html file and print the output (debug)")
 
