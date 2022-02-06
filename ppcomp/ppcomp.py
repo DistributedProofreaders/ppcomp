@@ -15,7 +15,7 @@ Copyright 2019-2022 Robert Tonsing
 
 The ppcomp program program was originally written as the standalone program comp_pp.py by bibimbop
 at PGDP as part of his PPTOOLS program. It is used as part of the PP Workbench with permission.
- 
+
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU
 General Public License as published by the Free Software Foundation, either version 3 of the License,
 or (at your option) any later version.
@@ -40,10 +40,13 @@ import re
 import subprocess
 import tempfile
 from io import StringIO
+from xmlrpc.client import TRANSPORT_ERROR
 
 import cssselect
 import tinycss
 from lxml import etree
+from lxml.html import tostring, html5parser
+from lxml import html
 
 PG_EBOOK_START = "*** START OF THE PROJECT GUTENBERG EBOOK"
 PG_EBOOK_START2 = "*** START OF THIS PROJECT GUTENBERG EBOOK"
@@ -145,19 +148,26 @@ class SourceFile(object):
         #    parser = etree.XMLParser(load_dtd =True)
         #    self.is_xhtml = True
         #if any(["DTD HTML" in x for x in header]):
-        parser = etree.HTMLParser()
-        self.is_html4 = True
+        self.is_html5 = True
+        if self.is_html5:
+            parser = html5parser.HTMLParser()
+        else:
+            parser = etree.HTMLParser()
 
         if parser is None:
             raise SyntaxError("No parser found for that type of document: " + os.path.basename(name))
 
         # Try the decoded file first.
         try:
-            tree = etree.fromstring(text, parser)
+            if self.is_html5:
+                tree = html5parser.document_fromstring (text)
+            else:
+                tree = etree.fromstring(text, parser)
         except etree.XMLSyntaxError:
-            if relax == False:  # no
+            if not relax:  # no
                 return parser, tree
-        except Exception:
+        except Exception as e:
+            print(repr(e))
             pass
         else:
             return parser, tree
@@ -213,7 +223,10 @@ class SourceFile(object):
 
         parser, tree = self.parse_html_xhtml(name, raw, text, relax)
 
-        self.parser_errlog = parser.error_log
+        if self.is_html5:
+            self.parser_errlog = parser.errors
+        else:
+            self.parser_errlog = parser.error_log
         self.encoding = encoding
         self.count_ending_empty_lines(text)
 
@@ -259,8 +272,8 @@ class SourceFile(object):
         old: <pre save_image_to_download="true">
             <pre> at end
         new: <body save_image_to_download="true">
-          to <div>*** START OF THE PROJECT GUTENBERG EBOOK 
-          <div>*** END OF THE PROJECT GUTENBERG EBOOK 
+          to <div>*** START OF THE PROJECT GUTENBERG EBOOK
+          <div>*** END OF THE PROJECT GUTENBERG EBOOK
         """
         find = etree.XPath("//pre")
         for element in find(self.tree):
@@ -418,7 +431,7 @@ DEFAULT_TRANSFORM_CSS = '''
         /* Bold */
         b:before, bold:before,
         b:after, bold:after         { content: "="; }
-        
+
         /* line breaks with <br /> will be ignored by normalize-space().
          * Add a space in all of them to work around. */
         br:before { content: " "; }
@@ -436,7 +449,7 @@ DEFAULT_TRANSFORM_CSS = '''
         p[class^="page"],
         span[class^="pgnum"],
         div[id^="Page_"] { display: none }
-			
+
         /* Superscripts, Subscripts */
         sup:before              { content: "^{"; }
         sub:before              { content: "_{"; }
@@ -1147,16 +1160,13 @@ class PPComp(object):
         uses '. In that case, we need to convert one into the other, to
         get a smaller diff.
         """
-
         in_0 = files[0].char_text.find(char_best)
         in_1 = files[1].char_text.find(char_best)
 
-        if in_0 >= 0 and in_1 >= 0:
-            # Both have it
+        if in_0 >= 0 and in_1 >= 0:     # Both have it
             return
 
-        if in_0 == -1 and in_1 == -1:
-            # None have it
+        if in_0 == -1 and in_1 == -1:   # None have it
             return
 
         # Downgrade one version
@@ -1222,14 +1232,15 @@ class PPComp(object):
         self.check_char(files, "º", "o")  # ordinal o to letter o
         self.check_char(files, "ª", "a")  # ordinal a to letter a
         self.check_char(files, "–", "-")  # ndash to regular dash
-        self.check_char(files, "—", "--")  # mdash to regular dashes
+        self.check_char(files, "—", "--") # mdash to regular dashes
         self.check_char(files, "½", "-1/2")
         self.check_char(files, "¼", "-1/4")
         self.check_char(files, "¾", "-3/4")
-        self.check_char(files, '⁄', '/')  # fraction
-        self.check_char(files, "′", "'")  # prime
+        self.check_char(files, '⁄', '/')   # fraction slash
+        self.check_char(files, "′", "'")   # prime
         self.check_char(files, "″", "''")  # double prime
-        self.check_char(files, "‴", "'''")  # triple prime
+        self.check_char(files, "‴", "'''") # triple prime
+        self.check_char(files, "₀", "0")  # subscript 0
         self.check_char(files, "₁", "1")  # subscript 1
         self.check_char(files, "₂", "2")  # subscript 2
         self.check_char(files, "₃", "3")  # subscript 3
@@ -1237,9 +1248,18 @@ class PPComp(object):
         self.check_char(files, "₅", "5")  # subscript 5
         self.check_char(files, "₆", "6")  # subscript 6
         self.check_char(files, "₇", "7")  # subscript 7
+        self.check_char(files, "₈", "8")  # subscript 8
+        self.check_char(files, "₉", "9")  # subscript 9
+        self.check_char(files, "⁰", "0")  # superscript 0
         self.check_char(files, "¹", "1")  # superscript 1
         self.check_char(files, "²", "2")  # superscript 2
         self.check_char(files, "³", "3")  # superscript 3
+        self.check_char(files, "⁴", "4")  # superscript 4
+        self.check_char(files, "⁵", "5")  # superscript 5
+        self.check_char(files, "⁶", "6")  # superscript 6
+        self.check_char(files, "⁷", "7")  # superscript 7
+        self.check_char(files, "⁸", "8")  # superscript 8
+        self.check_char(files, "⁹", "9")  # superscript 9
 
         # Remove non-breakable spaces between numbers. For instance, a
         # text file could have 250000, and the html could have 250 000.
@@ -1319,7 +1339,6 @@ class PPComp(object):
 
 
 ######################################
-
 # Sample CSS used to display the diffs.
 def diff_css():
     return """
@@ -1459,10 +1478,11 @@ def main():
                         help="HTML: add [Sidenote: ...]")
     parser.add_argument('--css-no-default', action='store_true', default=False,
                         help="HTML: do not use default transformation CSS")
-    parser.add_argument('--without-html-header', action='store_true', default=False,
-                        help="HTML: do not output html header and footer")
-    parser.add_argument('--txt-cleanup-type', type=str, default='b',
-                        help="TXT: Type of text cleaning -- (b)est effort, (n)one, (p)roofers")
+    # NO HANDLER!
+    #parser.add_argument('--without-html-header', action='store_true', default=False,
+    #                    help="HTML: do not output html header and footer")
+    #parser.add_argument('--txt-cleanup-type', type=str, default='b',
+    #                    help="TXT: Type of text cleaning -- (b)est effort, (n)one, (p)roofers")
     parser.add_argument('--simple-html', action='store_true', default=False,
                         help="HTML: Process the html file and print the output (debug)")
 

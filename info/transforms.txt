@@ -1,0 +1,156 @@
+check_char:
+"’", "'"	close curly quote to straight
+"‘", "'"	open curly quote to straight	
+'”', '"'	close curly quotes to straight
+'“', '"'	open curly quotes to straight
+"º", "o"	ordinal o to letter o
+"ª", "a"	ordinal a to letter a
+"–", "-"	ndash to regular dash
+"—", "--"	mdash to regular dashes
+'⁄', '/'	fraction slash
+"′", "'"	prime
+"″", "''"	double prime
+"‴", "'''"	triple prime
+"½", "-1/2"
+"¼", "-1/4"
+"¾", "-3/4"
+
+Superscripts
+ Zero (U+2070) ⁰
+ One (U+00B9) ¹
+ Two (U+00B2) ²
+ Three (U+00B3) ³
+ Four (U+2074) ⁴
+ Five (U+2075) ⁵
+ Six (U+2076) ⁶
+ Seven (U+2077) ⁷
+ Eight (U+2078) ⁸
+ Nine (U+2079) ⁹
+
+Subscripts
+ Zero (U+2080) ₀
+ One (U+2081) ₁
+ Two (U+2082) ₂
+ Three (U+2083) ₃
+ Four (U+2084) ₄
+ Five (U+2085) ₅
+ Six (U+2086) ₆
+ Seven (U+2087) ₇
+ Eight (U+2088) ₈
+ Nine (U+2089) ₉
+
+oe ligature:
+"[oe]", "œ"		has_oe_ligature & has_oe_dp
+"[OE]", "Œ"
+"œ", "oe"		has_oe_ligature
+"Œ", "OE"
+"[oe]", "oe"	has_oe_dp
+"[OE]", "OE"
+I think this is wrong, should only need real or [oe]
+
+italics or <i> to '_' (cite, em, abbr, dfn)
+bold or <b> to '='
+
+Superscripts <sup> to ^{}
+Subscripts <sub> to _{}
+
+Remove page numbers
+
+Remove block markup
+	"/*", "*/",
+    "/#", "#/",
+    "/P", "P/",
+    "/F", "F/",
+    "/X", "X/"]
+
+Remove page markers & other markup
+    r"\[Blank Page\]"
+	r"-----File: \w+.png.*"
+	
+Suppress_proofers_notes (option)
+
+Regroup_split_words (option)
+
+Strip PG boilerplate
+
+Extract footnotes (option)
+
+Handle small caps (option)
+
+Add illustrations (option)
+
+Add sidenotes (option)
+
+Remove non-breakable spaces (u00A0) between numbers. For instance,
+a text file could have 250000, and the html could have 250 000.
+
+Suppress shy (soft hyphen) \u00AD
+
+usage: [-h]
+	   [--ignore-format]			x x
+	   [--suppress-footnote-tags]	x x 
+	   [--suppress-illustration-tags]	x x
+       [--suppress-sidenote-tags]	x	# NOT ON WEB
+	   [--ignore-case]			x x
+	   [--extract-footnotes]	x x
+	   [--ignore-0-space]		x x
+       [--suppress-nbsp-num]	x x
+	   [--css-smcap CSS_SMCAP]	x # NOT ON WEB
+	   [--css-bold CSS_BOLD]	x # NOT ON WEB
+	   [--css CSS]				x # NOT ON WEB
+       [--suppress-proofers-notes]	x x
+	   [--regroup-split-words]	x x
+	   [--css-greek-title-plus]	x x
+	   [--css-add-illustration]	x x
+       [--css-add-sidenote]		x x
+	   [--css-no-default]		x # NOT ON WEB
+	   [--without-html-header]	# NO HANDLER!
+	   [--txt-cleanup-type TXT_CLEANUP_TYPE] (b, n, p) default b # NO HANDLER!
+       [--simple-html]	# test only
+       FILENAME FILENAME
+	   
+General options:
+	Ignore case when comparing
+	Extract and process footnotes separately
+
+Options for transforming an HTML file:
+	add [Illustration ] tag
+	add [Sidenote: ...]
+	use greek transliteration in title attribute
+	Suppress non-breakable spaces between numbers
+	suppress zero width space (U+200b)
+Options for transforming a text file:
+	Suppress "[Footnote ?:" marks
+	Suppress "[Illustration:" marks
+
+If comparing with a file from the rounds
+	In Px/Fx versions, remove [**proofreaders notes]
+	In Px/Fx versions, regroup split wo-* *rds
+	Silence formating differences
+	Type of text cleaning:     best effort    none    proofers 
+	
+
+HTML5 tags:
+article
+figure
+figcaption
+header
+footer
+main
+mark
+nav
+section
+summary
+
+Notes for DP:
+Workbench: txt-cleanup-type does nothing
+Guiguts: default header xml:lang not needed, warning
+	html5lib\_ihatexml.py:266: DataLossWarning: Coercing non-XML name: xml:lang
+	http://www.html-5.com/attributes/xml-attributes.htm:
+	"The HTML lang attribute serves the same purpose as the xml:lang attribute and should be used instead."
+
+ppcomp issue:
+The error is caused by lines 146, 150 and 156 in the source file. The file has <hr></hr>
+instead of <hr/> and that causes the XML parser to fail. At this point I only know why it
+fails. I don't know yet (1) how a user could detect that situation easily, or (2) what
+could be changed in ppcomp to either identify it or live with it.
