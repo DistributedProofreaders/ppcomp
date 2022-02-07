@@ -4,6 +4,7 @@
 *.mobi
 *.bk1
 *.bk2
+pp_test.*
 .idea/
 .vscode/
 __pycache__/
