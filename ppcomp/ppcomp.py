@@ -2,36 +2,19 @@
 # -*- coding: utf-8 -*-
 
 """
-ppcomp - compare text from 2 files, ignoring html and formatting differences,
-for use by users of Distributed Profreaders (https://www.pgdp.net)
+ppcomp.py - compare text from 2 files, ignoring html and formatting differences, for use by users
+of Distributed Profreaders (https://www.pgdp.net)
 
-It applies various transformations according to program options before passing
-the files to the Linux program dwdiff.
-"""
+Applies various transformations according to program options before passing the files to the Linux
+program dwdiff.
 
-"""
 Copyright (C) 2012-2013 bibimbop at pgdp
 Copyright 2019-2022 Robert Tonsing
 
-The ppcomp program program was originally written as the standalone program comp_pp.py by bibimbop
-at PGDP as part of his PPTOOLS program. It is used as part of the PP Workbench with permission.
+Originally written as the standalone program comp_pp.py by bibimbop at PGDP as part of his PPTOOLS
+program. It is used as part of the PP Workbench with permission.
 
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU
-General Public License as published by the Free Software Foundation, either version 3 of the License,
-or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
-even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with this program. If not,
-see <https://www.gnu.org/licenses/>.
-"""
-
-""" Changes
-2019-06-14 rtonsing: changes by rfrank to work on the pp workbench web site, change by me to ignore bold text marking.
-2019-06-14 rtonsing: add "pageno" to list of page number classes to ignore.
-2019-08-03 rtonsing: remove transformation of 'abbr' and 'dfn' to '_' italics markup.
+Distributable under the GNU General Public License Version 3 or newer.
 """
 
 import argparse
@@ -39,14 +22,10 @@ import os
 import re
 import subprocess
 import tempfile
-from io import StringIO
-from xmlrpc.client import TRANSPORT_ERROR
-
 import cssselect
 import tinycss
 from lxml import etree
-from lxml.html import tostring, html5parser
-from lxml import html
+from lxml.html import html5parser
 
 PG_EBOOK_START = "*** START OF THE PROJECT GUTENBERG EBOOK"
 PG_EBOOK_START2 = "*** START OF THIS PROJECT GUTENBERG EBOOK"
@@ -55,20 +34,29 @@ PG_EBOOK_END2 = "*** END OF THIS PROJECT GUTENBERG EBOOK"
 PG_EBOOK_START_REGEX = r".*?\*\*\* START OF THE PROJECT GUTENBERG EBOOK.*?\*\*\*(.*)"
 
 
-class SourceFile(object):
+class SourceFile():
     """Represent a file in memory."""
     is_html4 = False
     is_html5 = False
     is_xhtml = False
 
+    def __init__(self):
+        self.start = 0
+        self.parser_errlog = None
+        self.tree = None
+        self.text = None
+        self.encoding = None
+        self.parser_errlog = None
+        self.xmlns = ""
+
     @staticmethod
     def load_file(fname, encoding=None):
         """Load a file (text ot html) and finds its encoding."""
         try:
-            with open(fname, "rb") as f:
-                raw = f.read()
-        except Exception:
-            raise IOError("Cannot load file: " + os.path.basename(fname))
+            with open(fname, "rb") as file:
+                raw = file.read()
+        except Exception as exc:
+            raise IOError("Cannot load file: " + os.path.basename(fname)) from exc
 
         if len(raw) < 10:
             raise SyntaxError("File is too short: " + os.path.basename(fname))
@@ -88,16 +76,14 @@ class SourceFile(object):
             try:
                 # Encode the raw data string into an internal string, using the discovered encoding.
                 text = raw.decode(enc)
-                break
-            except Exception:
-                raise SyntaxError("Encoding cannot be found for: " + os.path.basename(fname))
-
-        return raw, text, enc
+                return raw, text, enc
+            except Exception as exc:
+                raise SyntaxError("Encoding cannot be found for: " + os.path.basename(fname))\
+                    from exc
 
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from a text version if present."""
         new_text = []
-        self.start = 0
         for lineno, line in enumerate(self.text, start=1):
             # Find the markers. Unfortunately PG lacks consistency
             if line.startswith((PG_EBOOK_START, PG_EBOOK_START2)):
@@ -111,7 +97,7 @@ class SourceFile(object):
         self.text = new_text
 
     # relax currently always True
-    def parse_html_xhtml(self, name, raw, text, relax=False):
+    def parse_html_xhtml(self, name, text, relax=False):
         """Parse a byte array. Find the correct parser. Returns both the
         parser, which contains the error log, and the resulting tree,
         if the parsing was successful.
@@ -123,7 +109,7 @@ class SourceFile(object):
         tree = None
 
         # Get the first 5 lines and find the DTD
-        header = text.splitlines()[:5]
+        #header = text.splitlines()[:5]
 
         # etree.XMLParser can't handle &mdash; and other entities, don't bother
         #if any(["DTD XHTML" in x for x in header]):
@@ -137,7 +123,8 @@ class SourceFile(object):
             parser = etree.HTMLParser()
 
         if parser is None:
-            raise SyntaxError("No parser found for that type of document: " + os.path.basename(name))
+            raise SyntaxError("No parser found for that type of document: "
+                              + os.path.basename(name))
 
         # Try the decoded file first.
         try:
@@ -150,16 +137,14 @@ class SourceFile(object):
                 return parser, tree
         except Exception as e:
             print(repr(e))
-            pass
         else:
             return parser, tree
 
-        """
-        etree.XMLParser fails both text & raw every time.
-        etree.HTMLParser text passes
-        <string>: 2:57: ERROR:DTD: DTD_NO_DTD: Validation failed: no DTD found !
-        <string>: 8:79: ERROR:PARSER: WAR_UNDECLARED_ENTITY: Entity 'mdash' not defined
-        """
+        # etree.XMLParser fails both text & raw every time.
+        # etree.HTMLParser text passes
+        # <string>: 2:57: ERROR:DTD: DTD_NO_DTD: Validation failed: no DTD found !
+        # <string>: 8:79: ERROR:PARSER: WAR_UNDECLARED_ENTITY: Entity 'mdash' not defined
+
         # Try raw string. This will decode files with <?xml ...
         # try:
         #     tree = etree.fromstring(raw, parser)
@@ -195,20 +180,17 @@ class SourceFile(object):
         If parsing succeeded, then self.tree is set, and
         self.parser_errlog is [].
         """
-        self.parser_errlog = None
-        self.tree = None
-        self.text = None
-
         raw, text, encoding = self.load_file(name, encoding)
         if raw is None:
             raise IOError("File loading failed for: " + os.path.basename(name))
 
-        parser, tree = self.parse_html_xhtml(name, raw, text, relax)
+        parser, tree = self.parse_html_xhtml(name, text, relax)
 
         if self.is_html5:
             self.parser_errlog = parser.errors
         else:
             self.parser_errlog = parser.error_log
+
         self.encoding = encoding
 
         if len(self.parser_errlog):
@@ -229,8 +211,6 @@ class SourceFile(object):
         xmlns = self.tree.getroot().nsmap.get(None, None)
         if xmlns:
             self.xmlns = '{' + xmlns + '}'
-        else:
-            self.xmlns = ""
 
         # Remove the namespace from the tags
         # (eg. {http://www.w3.org/1999/xhtml})
@@ -239,23 +219,21 @@ class SourceFile(object):
 
         # Find type of xhtml (10 or 11 for 1.0 and 1.1). 0=html or
         # unknown. So far, no need to differentiate 1.0 strict and transitional.
-        """ RT: self.xhtml is never used
-        if "DTD/xhtml1-strict.dtd" in self.tree.docinfo.doctype or "DTD/xhtml1-transitional.dtd" in self.tree.docinfo.doctype:
-            self.xhtml = 10
-        elif "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" in self.tree.docinfo.doctype:
-            self.xhtml = 11
-        else:
-            self.xhtml = 0
-        """
+        # RT: self.xhtml is never used
+        # if "DTD/xhtml1-strict.dtd" in self.tree.docinfo.doctype or "DTD/xhtml1-transitional.dtd" in self.tree.docinfo.doctype:
+        #     self.xhtml = 10
+        # elif "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" in self.tree.docinfo.doctype:
+        #     self.xhtml = 11
+        # else:
+        #     self.xhtml = 0
 
         # Remove PG boilerplate. These are kept in a <pre> tag.
-        """ RT: this has changed:
-        old: <pre save_image_to_download="true">
-            <pre> at end
-        new: <body save_image_to_download="true">
-          to <div>*** START OF THE PROJECT GUTENBERG EBOOK
-          <div>*** END OF THE PROJECT GUTENBERG EBOOK
-        """
+        # RT: this has changed:
+        # old: <pre save_image_to_download="true">
+        #     <pre> at end
+        # new: <body save_image_to_download="true">
+        #   to <div>*** START OF THE PROJECT GUTENBERG EBOOK
+        #   <div>*** END OF THE PROJECT GUTENBERG EBOOK
         find = etree.XPath("//pre")
         for element in find(self.tree):
             if element.text is None:
@@ -359,6 +337,7 @@ def extract_footnotes_pp(pp_text, fn_regexes):
                     break
 
         # Try to close previous footnote
+        next_fn_indent = None
         if cur_fn_type:
             if next_fn_type:
                 # New block is footnote, so it ends the previous footnote
@@ -501,10 +480,11 @@ class pgdp_file_text(pgdp_file):
     def load(self, filename):
         """Load the file"""
         self.myfile.load_text(filename)
-        self.from_pgdp_rounds = self.myfile.basename.startswith('projectID')
+        self.from_pgdp_rounds = os.path.basename(filename).startswith('projectID')
 
     def analyze(self):
-        """Clean then analyse the content of a file. Decides if it is PP version, a DP version, ..."""
+        """Clean then analyse the content of a file. Decides if it is PP version, a DP
+        version, ..."""
 
         # Remember which line the text started
         self.start_line = self.myfile.start
@@ -523,20 +503,18 @@ class pgdp_file_text(pgdp_file):
 
     def convert(self):
         """Remove markup from the text."""
-
-        if self.args.txt_cleanup_type == "n":
-            return
-
-        if self.from_pgdp_rounds:
-            # Clean proofers
-            self.text = re.sub(r"-----File: \w+.png.*", '', self.text)
-
-        if self.args.txt_cleanup_type == "p":
-            # Proofers only. Done.
+        if self.args.txt_cleanup_type == "n":  # none
             return
 
         # Original text file from rounds?
         if self.from_pgdp_rounds:
+            # Clean page numbers & blank pages
+            self.text = re.sub(r"-----File: \w+.png.*", '', self.text)
+            self.text = re.sub(r"\[Blank Page\]", '', self.text)
+
+            if self.args.txt_cleanup_type == "p":  # proofers, all done
+                return
+
             # Remove block markup
             block_markup = ["/*", "*/",
                             "/#", "#/",
@@ -547,7 +525,7 @@ class pgdp_file_text(pgdp_file):
                 self.text = self.text.replace("\n" + x + "\n", "\n\n")
 
             # Ignore or replace italics and bold html
-            if self.args.ignore_format:
+            if self.args.ignore_format:  # "Silence formatting differences"
                 for x in ["<i>", "</i>", "<b>", "</b>"]:
                     self.text = self.text.replace(x, "")
             else:
@@ -557,7 +535,7 @@ class pgdp_file_text(pgdp_file):
                     self.text = self.text.replace(x, "=")
 
             # Remove other markup
-            pgdp_markup = ["<.*?>", "</.*?>", r"\[Blank Page\]"]
+            pgdp_markup = ["<.*?>"]
             if self.args.suppress_proofers_notes:
                 pgdp_markup += r"\[\*\*[^]]*?\]"
 
@@ -776,6 +754,7 @@ class pgdp_file_html(pgdp_file):
             if el.tail:
                 el.tail = func(el.tail)
 
+    @property
     def convert(self):
         """Remove HTML and PGDP marker from the text."""
         escaped_unicode_re = re.compile(r"\\u[0-9a-fA-F]{4}")
@@ -834,14 +813,16 @@ class pgdp_file_html(pgdp_file):
                             f_transform = lambda x: x.title()
                         else:
                             property_errors += [(val.line, val.column,
-                                                 val.name + " accepts only 'uppercase', 'lowercase' or 'capitalize'")]
+                                                 val.name + " accepts only 'uppercase',"
+                                                            " 'lowercase' or 'capitalize'")]
                 elif val.name == "_replace_with_attr":
                     f_replace_with_attr = lambda el: el.attrib[val.value[0].value]
                 elif val.name == "text-replace":
                     # Skip S (spaces) tokens.
                     values = [v for v in val.value if v.type != "S"]
                     if len(values) != 2:
-                        property_errors += [(val.line, val.column, val.name + " takes 2 string arguments")]
+                        property_errors += [(val.line, val.column, val.name
+                                             + " takes 2 string arguments")]
                     else:
                         v1 = values[0].value
                         v2 = values[1].value
@@ -852,7 +833,8 @@ class pgdp_file_html(pgdp_file):
                 elif val.name == "_graft":
                     values = [v for v in val.value if v.type != "S"]
                     if len(values) < 1:
-                        property_errors += [(val.line, val.column, val.name + " takes at least one argument")]
+                        property_errors += [(val.line, val.column, val.name
+                                             + " takes at least one argument")]
                         continue
                     f_move = []
                     for v in values:
@@ -864,7 +846,8 @@ class pgdp_file_html(pgdp_file):
                         elif v.value == 'next-sib':
                             f_move.append(lambda el: el.getnext())
                         else:
-                            property_errors += [(val.line, val.column, val.name + " invalid value " + v.value)]
+                            property_errors += [(val.line, val.column, val.name
+                                                 + " invalid value " + v.value)]
                             f_move = None
                             break
 
@@ -931,7 +914,8 @@ class pgdp_file_html(pgdp_file):
             i = 0
             if self.args.css_no_default is False:
                 i = DEFAULT_TRANSFORM_CSS.count('\n')
-            css_errors = "<div class='error-border bbox'><p>Error(s) in the transformation CSS:</p><ul>"
+            css_errors = "<div class='error-border bbox'><p>Error(s) in the" \
+                         "  transformation CSS:</p><ul>"
             for err in stylesheet.errors:
                 css_errors += "<li>{0},{1}: {2}</li>".format(err.line - i, err.column, err.reason)
             for err in property_errors:
@@ -1028,7 +1012,8 @@ class PPComp(object):
         #    for line in difflib.unified_diff(f1.words, f2.words):
         #        print(line)
         # Use dwdiff instead.
-        with tempfile.NamedTemporaryFile(mode='wb') as t1, tempfile.NamedTemporaryFile(mode='wb') as t2:
+        with tempfile.NamedTemporaryFile(mode='wb') as t1,\
+                tempfile.NamedTemporaryFile(mode='wb') as t2:
             t1.write(text1.encode('utf-8'))
             t2.write(text2.encode('utf-8'))
             t1.flush()
@@ -1041,7 +1026,8 @@ class PPComp(object):
 
             """
             -P Use punctuation characters as delimiters.
-            -R Repeat the begin and end markers at the start and end of line if a change crosses a newline.
+            -R Repeat the begin and end markers at the start and end of line if a change crosses a
+               newline.
             -C 2 Show <num> lines of context before and after each changes.
             -L Show line numbers at the start of each line.
             """
@@ -1065,7 +1051,7 @@ class PPComp(object):
             env["LANG"] = "en_US.UTF-8"
 
             p = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env)
-            # The output is raw, so we have to decode it to UTF-8, which is the default under Ubuntu.
+            # The output is raw, so we have to decode it to UTF-8, which is the default under Ubuntu
             return p.stdout.read().decode('utf-8')
 
     def create_html(self, files, text, footnotes):
@@ -1086,8 +1072,10 @@ class PPComp(object):
                 text = "<hr /><pre>\n" + text
             text = text.replace("\n--\n", "\n</pre><hr /><pre>\n")
             text = re.sub(r"^\s*(\d+):(\d+)",
-                          lambda m: "<span class='lineno'>{0} : {1}</span>".format(int(m.group(1)) + start0,
-                                                                                   int(m.group(2)) + start1),
+                          lambda m: "<span class='lineno'>{0} : {1}</span>".format(int(m.group(1))
+                                                                                   + start0,
+                                                                                   int(m.group(2))
+                                                                                   + start1),
                           text, flags=re.MULTILINE)
             if text:
                 text = text + "</pre>\n"
@@ -1114,18 +1102,22 @@ class PPComp(object):
         if nb_diffs_text == 0:
             html_content += "<p>There is no diff section in the main text.</p>"
         elif nb_diffs_text == 1:
-            html_content += "<p>There is " + str(nb_diffs_text) + " diff section in the main text.</p>"
+            html_content += "<p>There is " + str(nb_diffs_text)\
+                            + " diff section in the main text.</p>"
         else:
-            html_content += "<p>There are " + str(nb_diffs_text) + " diff sections in the main text.</p>"
+            html_content += "<p>There are " + str(nb_diffs_text)\
+                            + " diff sections in the main text.</p>"
 
         if footnotes:
             html_content += "<p>Footnotes are diff'ed separately <a href='#footnotes'>here</a></p>"
             if nb_diffs_footnotes == 0:
                 html_content += "<p>There is no diff section in the footnotes.</p>"
             elif nb_diffs_footnotes == 1:
-                html_content += "<p>There is " + str(nb_diffs_footnotes) + " diff section in the footnotes.</p>"
+                html_content += "<p>There is " + str(nb_diffs_footnotes)\
+                                + " diff section in the footnotes.</p>"
             else:
-                html_content += "<p>There are " + str(nb_diffs_footnotes) + " diff sections in the footnotes.</p>"
+                html_content += "<p>There are " + str(nb_diffs_footnotes)\
+                                + " diff sections in the footnotes.</p>"
         else:
             if self.args.extract_footnotes:
                 html_content += "<p>There is no diff section in the footnotes.</p>"
@@ -1268,7 +1260,7 @@ class PPComp(object):
 
         # Apply the various conversions
         for f in files:
-            err_message += f.convert() or ""
+            err_message += f.convert or ""
 
         # Extract footnotes
         if self.args.extract_footnotes:
@@ -1317,7 +1309,7 @@ class PPComp(object):
         f.transform_func.append(func)
 
         # Apply the various convertions
-        f.convert()
+        f.convert
 
         # Extract footnotes
         if self.args.extract_footnotes:
@@ -1452,7 +1444,8 @@ def main():
     parser.add_argument('--suppress-nbsp-num', action='store_true', default=False,
                         help="Suppress non-breakable spaces between numbers")
     parser.add_argument('--css-smcap', type=str, default=None,
-                        help="HTML: Transform small caps into uppercase (U), lowercase (L) or title (T)")
+                        help="HTML: Transform small caps into uppercase (U), lowercase (L) or"
+                             " title (T)")
     parser.add_argument('--css-bold', type=str, default=None,
                         help="HTML: Surround bold strings with this string")
     parser.add_argument('--css', type=str, default=[], action='append',

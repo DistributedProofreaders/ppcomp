@@ -39,6 +39,9 @@ Subscripts
  Eight (U+2088) ₈
  Nine (U+2089) ₉
 
+==========================================
+What it does:
+
 oe ligature:
 "[oe]", "œ"		has_oe_ligature & has_oe_dp
 "[OE]", "Œ"
@@ -46,7 +49,7 @@ oe ligature:
 "Œ", "OE"
 "[oe]", "oe"	has_oe_dp
 "[OE]", "OE"
-I think this is wrong, should only need real or [oe]
+I think this is wrong, should now treat same as ae - nothing.
 
 italics or <i> to '_' (cite, em, abbr, dfn)
 bold or <b> to '='
@@ -54,26 +57,35 @@ bold or <b> to '='
 Superscripts <sup> to ^{}
 Subscripts <sub> to _{}
 
-Remove page numbers
+Text files:
+	File from rounds:
+		Remove page numbers, blank pages
+		if Silence formatting differences: remove <i> and <b>
+			else replace with _, =
+		Suppress_proofers_notes (option)
+		Regroup_split_words (option)
 
-Remove block markup
-	"/*", "*/",
-    "/#", "#/",
-    "/P", "P/",
-    "/F", "F/",
-    "/X", "X/"]
+		Remove block markup
+			"/*", "*/",
+			"/#", "#/",
+			"/P", "P/",
+			"/F", "F/",
+			"/X", "X/"]
 
-Remove page markers & other markup
-    r"\[Blank Page\]"
-	r"-----File: \w+.png.*"
-	
-Suppress_proofers_notes (option)
+	File not from rounds:
+		if Silence formatting differences: remove _ and +
+			BUG: these could be valid text
+		Remove asterisk though breaks (5, with 5 or 7 spaces)
 
-Regroup_split_words (option)
+	Both:
+		Suppress "[Footnote ?:" marks (option or ignore format)
+		Suppress "[Illustration:" marks (option or ignore format)
+		Suppress "[Sidenote:" marks (option or ignore format)
 
-Strip PG boilerplate
 
 Extract footnotes (option)
+
+Strip PG boilerplate
 
 Handle small caps (option)
 
@@ -149,8 +161,11 @@ Guiguts: default header xml:lang not needed, warning
 	http://www.html-5.com/attributes/xml-attributes.htm:
 	"The HTML lang attribute serves the same purpose as the xml:lang attribute and should be used instead."
 
-ppcomp issue:
+ppcomp issue: lettersfromandoldtimesalesman.zip
 The error is caused by lines 146, 150 and 156 in the source file. The file has <hr></hr>
 instead of <hr/> and that causes the XML parser to fail. At this point I only know why it
 fails. I don't know yet (1) how a user could detect that situation easily, or (2) what
 could be changed in ppcomp to either identify it or live with it.
+
+========================================
+Changes: eliminate oe ligature transforms, treat same as ae.
