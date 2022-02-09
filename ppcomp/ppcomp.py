@@ -264,8 +264,8 @@ def extract_footnotes_pp(pp_text):
     and end of a footnote. The fn_type is 1 when a ] terminates it, or
     2 when a new block terminates it.
     """
-    # Why is this different from extract_footnotes_pgdp, except
-    # tidied would be "[1] text" instead of [Footnote 1: text]. 1st regex?
+    # RT: Why is this different from extract_footnotes_pgdp, except
+    # tidied would be "[1] text" instead of [Footnote 1: text]? 1st regex?
 
     # If the caller didn't give a list of regex to identify the
     # footnotes, build one, taking only the most common.
@@ -607,9 +607,9 @@ class pgdp_file_text(pgdp_file):
         self.footnotes = '\n'.join(footnotes)
 
     def extract_footnotes(self):
-        if self.from_pgdp_rounds:
+        if self.from_pgdp_rounds:  # always [Footnote 1: text]
             self.extract_footnotes_pgdp()
-        else:
+        else:  # probably [1] text
             self.extract_footnotes_pp()
 
     def transform(self):
