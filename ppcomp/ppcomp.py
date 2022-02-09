@@ -255,7 +255,7 @@ def get_block(pp_text):
     yield block, empty_lines
 
 
-def extract_footnotes_pp(pp_text, fn_regexes):
+def extract_footnotes_pp(pp_text):
     """Extract footnotes from a PP text file. text is iterable. Returns
     the text as an iterable, without the footnotes, and footnotes as a
     list of (footnote string id, line number of the start of the
@@ -264,27 +264,28 @@ def extract_footnotes_pp(pp_text, fn_regexes):
     and end of a footnote. The fn_type is 1 when a ] terminates it, or
     2 when a new block terminates it.
     """
+    # Why is this different from extract_footnotes_pgdp, except
+    # tidied would be "[1] text" instead of [Footnote 1: text]. 1st regex?
 
     # If the caller didn't give a list of regex to identify the
     # footnotes, build one, taking only the most common.
-    if fn_regexes is None:
-        all_regexes = [(r"(\s*)\[([\w-]+)\](.*)", 1),
-                       (r"(\s*)\[Note (\d+):( .*|$)", 2),
-                       (r"(      )Note (\d+):( .*|$)", 1)]
-        regex_count = [0] * len(all_regexes)  # i.e. [0, 0, 0]
+    all_regexes = [(r"(\s*)\[([\w-]+)\](.*)", 1),
+                   (r"(\s*)\[Note (\d+):( .*|$)", 2),
+                   (r"(      )Note (\d+):( .*|$)", 1)]
+    regex_count = [0] * len(all_regexes)  # i.e. [0, 0, 0]
 
-        for block, empty_lines in get_block(pp_text):
-            if not len(block):
-                continue
+    for block, empty_lines in get_block(pp_text):
+        if not len(block):
+            continue
 
-            for i, (regex, fn_type) in enumerate(all_regexes):
-                matches = re.match(regex, block[0])
-                if matches:
-                    regex_count[i] += 1
-                    break
+        for i, (regex, fn_type) in enumerate(all_regexes):
+            matches = re.match(regex, block[0])
+            if matches:
+                regex_count[i] += 1
+                break
 
-        # Pick the regex with the most matches
-        fn_regexes = [all_regexes[regex_count.index(max(regex_count))]]
+    # Pick the regex with the most matches
+    fn_regexes = [all_regexes[regex_count.index(max(regex_count))]]
 
     # Different types of footnote. 0 means not in footnote.
     cur_fn_type, cur_fn_indent = 0, 0
@@ -599,7 +600,7 @@ class pgdp_file_text(pgdp_file):
         # Convert to lines and back
 
         # Call root function. Move it here?
-        text, footnotes = extract_footnotes_pp(self.text.splitlines(), None)
+        text, footnotes = extract_footnotes_pp(self.text.splitlines())
 
         # Rebuild text, now without footnotes
         self.text = '\n'.join(text)
