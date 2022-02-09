@@ -35,8 +35,8 @@ PG_EBOOK_END2 = "*** END OF THIS PROJECT GUTENBERG EBOOK"
 PG_EBOOK_START_REGEX = r".*?\*\*\* START OF THE PROJECT GUTENBERG EBOOK.*?\*\*\*(.*)"
 
 
-class SourceFile():
-    """Represent a file in memory."""
+class HtmlFile():
+    """Represent an HTML file in memory."""
     def __init__(self):
         self.is_html4 = False
         self.is_html5 = False
@@ -414,7 +414,7 @@ class PgdpFile(object):
     def __init__(self, args):
         self.text = None
         self.words = None
-        self.myfile = SourceFile()
+        self.myfile = HtmlFile()
         self.args = args
         # œ ligature - has_oe_ligature and has_oe_dp are mutually exclusive
         self.has_oe_ligature = False  # the real thing
