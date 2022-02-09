@@ -45,26 +45,23 @@ class SourceFile():
         self.parser_errlog = None
         self.tree = None
         self.text = None
-        self.encoding = None
         self.parser_errlog = None
         self.xmlns = ""
 
     @staticmethod
     def load_file(fname):
-        """Load a file (text or html) and finds its encoding."""
+        """Load a file (text or html)."""
         try:
             text = open(fname, 'r', encoding='utf-8').read()
-            encoding = 'utf-8'
         except UnicodeError:
             text = open(fname, 'r', encoding='latin-1').read()
-            encoding = 'latin-1'
-        except Exception:
+        except FileNotFoundError:
             raise IOError("Cannot load file: " + os.path.basename(fname))
 
         if len(text) < 10:
             raise SyntaxError("File is too short: " + os.path.basename(fname))
 
-        return text, encoding
+        return text
 
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from a text version if present."""
@@ -156,7 +153,7 @@ class SourceFile():
 
         raise SyntaxError("File cannot be parsed: " + os.path.basename(name))
 
-    def load_xhtml(self, name, encoding=None, relax=False):
+    def load_xhtml(self, name, relax=False):
         """Load an html/xhtml file. If it is an XHTML file, get rid of the
         namespace since that makes things much easier later.
 
@@ -165,7 +162,7 @@ class SourceFile():
         If parsing succeeded, then self.tree is set, and
         self.parser_errlog is [].
         """
-        text, encoding = self.load_file(name)
+        text = self.load_file(name)
         if text is None:
             raise IOError("File loading failed for: " + os.path.basename(name))
 
@@ -175,8 +172,6 @@ class SourceFile():
             self.parser_errlog = parser.errors
         else:
             self.parser_errlog = parser.error_log
-
-        self.encoding = encoding
 
         if len(self.parser_errlog):
             if type(parser) == etree.HTMLParser:
@@ -233,12 +228,11 @@ class SourceFile():
 
     def load_text(self, fname):
         """Load the file as text."""
-        text, encoding = self.load_file(fname)
+        text = self.load_file(fname)
         if text is None:
             return
 
         self.text = text.splitlines()
-        self.encoding = encoding
         self.strip_pg_boilerplate()
 
 
