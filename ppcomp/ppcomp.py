@@ -36,11 +36,11 @@ PG_EBOOK_START_REGEX = r".*?\*\*\* START OF THE PROJECT GUTENBERG EBOOK.*?\*\*\*
 
 class SourceFile():
     """Represent a file in memory."""
-    is_html4 = False
-    is_html5 = False
-    is_xhtml = False
 
     def __init__(self):
+        self.is_html4 = False
+        self.is_html5 = False
+        self.is_xhtml = False
         self.start = 0
         self.parser_errlog = None
         self.tree = None
@@ -50,36 +50,21 @@ class SourceFile():
         self.xmlns = ""
 
     @staticmethod
-    def load_file(fname, encoding=None):
-        """Load a file (text ot html) and finds its encoding."""
+    def load_file(fname):
+        """Load a file (text or html) and finds its encoding."""
         try:
-            with open(fname, "rb") as file:
-                raw = file.read()
-        except Exception as exc:
-            raise IOError("Cannot load file: " + os.path.basename(fname)) from exc
+            text = open(fname, 'r', encoding='utf-8').read()
+            encoding = 'utf-8'
+        except UnicodeError:
+            text = open(fname, 'r', encoding='latin-1').read()
+            encoding = 'latin-1'
+        except Exception:
+            raise IOError("Cannot load file: " + os.path.basename(fname))
 
-        if len(raw) < 10:
+        if len(text) < 10:
             raise SyntaxError("File is too short: " + os.path.basename(fname))
 
-        # Remove UTF-8 BOM if present
-        if raw[0:3] == b'\xef\xbb\xbf':
-            raw = raw[3:]
-            encoding = 'utf-8'
-
-        # Try various encodings. Much faster than using chardet
-        if encoding is None:
-            encodings = ['utf-8', 'iso-8859-1']
-        else:
-            encodings = [encoding]
-
-        for enc in encodings:
-            try:
-                # Encode the raw data string into an internal string, using the discovered encoding.
-                text = raw.decode(enc)
-                return raw, text, enc
-            except Exception as exc:
-                raise SyntaxError("Encoding cannot be found for: " + os.path.basename(fname))\
-                    from exc
+        return text, encoding
 
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from a text version if present."""
@@ -180,8 +165,8 @@ class SourceFile():
         If parsing succeeded, then self.tree is set, and
         self.parser_errlog is [].
         """
-        raw, text, encoding = self.load_file(name, encoding)
-        if raw is None:
+        text, encoding = self.load_file(name)
+        if text is None:
             raise IOError("File loading failed for: " + os.path.basename(name))
 
         parser, tree = self.parse_html_xhtml(name, text, relax)
@@ -246,10 +231,10 @@ class SourceFile():
             elif text.startswith(PG_EBOOK_END):
                 clear_element(element)
 
-    def load_text(self, fname, encoding=None):
+    def load_text(self, fname):
         """Load the file as text."""
-        raw, text, encoding = self.load_file(fname, encoding)
-        if raw is None:
+        text, encoding = self.load_file(fname)
+        if text is None:
             return
 
         self.text = text.splitlines()
