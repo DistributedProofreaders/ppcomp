@@ -27,6 +27,7 @@ import tinycss
 from lxml import etree
 from lxml.html import html5parser
 
+# move to PgdpFile class
 PG_EBOOK_START = "*** START OF THE PROJECT GUTENBERG EBOOK"
 PG_EBOOK_START2 = "*** START OF THIS PROJECT GUTENBERG EBOOK"
 PG_EBOOK_END = "*** END OF THE PROJECT GUTENBERG EBOOK"
@@ -36,7 +37,6 @@ PG_EBOOK_START_REGEX = r".*?\*\*\* START OF THE PROJECT GUTENBERG EBOOK.*?\*\*\*
 
 class SourceFile():
     """Represent a file in memory."""
-
     def __init__(self):
         self.is_html4 = False
         self.is_html5 = False
@@ -401,32 +401,28 @@ def clear_element(element):
 
     We can't properly remove an XML element while traversing the
     tree. But we can clear it. Remove its text and children. However,
-    the tail must be preserved because it belongs to the next element,
+    the tail must be preserved because it points to the next element,
     so re-attach."""
     tail = element.tail
     element.clear()
     element.tail = tail
 
 
-class pgdp_file(object):
-    """Abstract class: Store and process a DP text or html file."""
+class PgdpFile(object):
+    """Base class: Store and process a DP text or html file."""
 
     def __init__(self, args):
         self.text = None
         self.words = None
         self.myfile = SourceFile()
         self.args = args
-
         # œ ligature - has_oe_ligature and has_oe_dp are mutually exclusive
         self.has_oe_ligature = False  # the real thing
         self.has_oe_dp = False  # DP type: [oe]
-
         # List of transforms to perform
         self.transform_func = []
-
         # Footnotes, if extracted
         self.footnotes = ""
-
         # First line of the text. This is where <body> is for html.
         self.start_line = 0
 
@@ -449,9 +445,8 @@ class pgdp_file(object):
         pass
 
 
-class pgdp_file_text(pgdp_file):
+class PgdpFileText(PgdpFile):
     """Store and process a DP text file."""
-
     def __init__(self, args):
         super().__init__(args)
         self.from_pgdp_rounds = False
@@ -622,9 +617,8 @@ class pgdp_file_text(pgdp_file):
             self.footnotes = func(self.footnotes)
 
 
-class pgdp_file_html(pgdp_file):
+class PgdpFileHtml(PgdpFile):
     """Store and process a DP html file."""
-
     def __init__(self, args):
         super().__init__(args)
         self.mycss = ""
@@ -1174,9 +1168,9 @@ class PPComp(object):
         for i, fname in enumerate(self.args.filename):
             # Look for file type.
             if fname.lower().endswith(('.html', '.htm')):
-                files[i] = pgdp_file_html(self.args)
+                files[i] = PgdpFileHtml(self.args)
             else:
-                files[i] = pgdp_file_text(self.args)
+                files[i] = PgdpFileText(self.args)
 
             f = files[i]
             f.load(fname)
@@ -1267,7 +1261,7 @@ class PPComp(object):
         """For debugging purposes. Transform the html and print the text output."""
         fname = self.args.filename[0]
         if fname.lower().endswith(('.html', '.htm')):
-            f = pgdp_file_html(self.args)
+            f = PgdpFileHtml(self.args)
         else:
             print("Error: not an html file")
 
