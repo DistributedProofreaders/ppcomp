@@ -98,7 +98,7 @@ class HtmlFile():
         #    parser = etree.XMLParser(load_dtd =True)
         #    self.is_xhtml = True
         #if any(["DTD HTML" in x for x in header]):
-        self.is_html5 = False
+        self.is_html5 = True
         if self.is_html5:
             parser = html5parser.HTMLParser()
         else:
@@ -111,7 +111,7 @@ class HtmlFile():
         # Try the decoded file first.
         try:
             if self.is_html5:
-                tree = html5parser.document_fromstring (text)
+                tree = html5parser.fromstring(text)
             else:
                 tree = etree.fromstring(text, parser)
         except etree.XMLSyntaxError:
@@ -616,6 +616,16 @@ class PgdpFileText(PgdpFile):
         for func in self.transform_func:
             self.footnotes = func(self.footnotes)
 
+def remove_namespace(tree):
+    # Remove a namespace URI in elements names
+    # "{http://www.w3.org/1999/xhtml}html" -> "html"
+    for elem in tree.iter():
+        #elem.tag = elem.tag.replace("{http://www.w3.org/1999/xhtml}", '')
+        if not (isinstance(elem, etree._Comment)
+                or isinstance(elem, etree._ProcessingInstruction)):
+            elem.tag = etree.QName(elem).localname
+    # Remove unused namespace declarations
+    etree.cleanup_namespaces(tree)
 
 class PgdpFileHtml(PgdpFile):
     """Store and process a DP html file."""
@@ -663,6 +673,8 @@ class PgdpFileHtml(PgdpFile):
 
     def analyze(self):
         """Clean then analyse the content of a file."""
+        if self.myfile.is_html5:
+            remove_namespace(self.myfile.tree)
         # Empty the head - we only want the body
         self.myfile.tree.find('head').clear()
 
@@ -1046,10 +1058,8 @@ class PPComp(object):
                 text = "<hr /><pre>\n" + text
             text = text.replace("\n--\n", "\n</pre><hr /><pre>\n")
             text = re.sub(r"^\s*(\d+):(\d+)",
-                          lambda m: "<span class='lineno'>{0} : {1}</span>".format(int(m.group(1))
-                                                                                   + start0,
-                                                                                   int(m.group(2))
-                                                                                   + start1),
+                lambda m: "<span class='lineno'>{0} : {1}</span>".format(int(m.group(1)) + start0,
+                                                                         int(m.group(2)) + start1),
                           text, flags=re.MULTILINE)
             if text:
                 text = text + "</pre>\n"
