@@ -79,6 +79,7 @@ class HtmlFile():
         self.text = new_text
 
     # relax currently always True
+    # name is only used for error messages
     def parse_html_xhtml(self, name, text, relax=False):
         """Parse a byte array. Find the correct parser. Returns both the
         parser, which contains the error log, and the resulting tree,
@@ -87,17 +88,8 @@ class HtmlFile():
         If relax is True, then the lax html parser is used, even for
         XHTML, so the parsing will almost always succeed.
         """
-        parser = None
         tree = None
 
-        # Get the first 5 lines and find the DTD
-        #header = text.splitlines()[:5]
-
-        # etree.XMLParser can't handle &mdash; and other entities, don't bother
-        #if any(["DTD XHTML" in x for x in header]):
-        #    parser = etree.XMLParser(load_dtd =True)
-        #    self.is_xhtml = True
-        #if any(["DTD HTML" in x for x in header]):
         self.is_html5 = True
         if self.is_html5:
             parser = html5parser.HTMLParser()
@@ -111,7 +103,8 @@ class HtmlFile():
         # Try the decoded file first.
         try:
             if self.is_html5:
-                tree = html5parser.fromstring(text)
+                tree = html5parser.document_fromstring(text)
+                #tree = html5parser.parse(name)
             else:
                 tree = etree.fromstring(text, parser)
         except etree.XMLSyntaxError:
@@ -121,35 +114,6 @@ class HtmlFile():
             print(repr(e))
         else:
             return parser, tree
-
-        # etree.XMLParser fails both text & raw every time.
-        # etree.HTMLParser text passes
-        # <string>: 2:57: ERROR:DTD: DTD_NO_DTD: Validation failed: no DTD found !
-        # <string>: 8:79: ERROR:PARSER: WAR_UNDECLARED_ENTITY: Entity 'mdash' not defined
-
-        # Try raw string. This will decode files with <?xml ...
-        # try:
-        #     tree = etree.fromstring(raw, parser)
-        # except etree.XMLSyntaxError:
-        #     if relax == False:  # no
-        #         return parser, tree
-        # except Exception:
-        #     pass
-        # else:
-        #     return parser, tree
-        #
-        # # The XHTML file may have some errors. If the caller really
-        # # wants a result then use the HTML parser.
-        # if relax and self.is_xhtml:  # always here
-        #     parser = etree.HTMLParser()
-        #     try:
-        #         tree = etree.fromstring(text, parser)
-        #     except etree.XMLSyntaxError:
-        #         return parser, tree
-        #     except Exception:
-        #         pass
-        #     else:
-        #         return parser, tree
 
         raise SyntaxError("File cannot be parsed: " + os.path.basename(name))
 
@@ -197,16 +161,6 @@ class HtmlFile():
         for element in self.tree.iter(tag=etree.Element):
             element.tag = element.tag.replace(self.xmlns, "")
 
-        # Find type of xhtml (10 or 11 for 1.0 and 1.1). 0=html or
-        # unknown. So far, no need to differentiate 1.0 strict and transitional.
-        # RT: self.xhtml is never used
-        # if "DTD/xhtml1-strict.dtd" in self.tree.docinfo.doctype or "DTD/xhtml1-transitional.dtd" in self.tree.docinfo.doctype:
-        #     self.xhtml = 10
-        # elif "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" in self.tree.docinfo.doctype:
-        #     self.xhtml = 11
-        # else:
-        #     self.xhtml = 0
-
         # Remove PG boilerplate. These are kept in a <pre> tag.
         # RT: this has changed:
         # old: <pre save_image_to_download="true">
@@ -225,15 +179,6 @@ class HtmlFile():
                 clear_element(element)
             elif text.startswith(PG_EBOOK_END):
                 clear_element(element)
-
-    def load_text(self, fname):
-        """Load the file as text."""
-        text = self.load_file(fname)
-        if text is None:
-            return
-
-        self.text = text.splitlines()
-        self.strip_pg_boilerplate()
 
 
 def get_block(pp_text):
@@ -454,8 +399,14 @@ class PgdpFileText(PgdpFile):
 
     def load(self, filename):
         """Load the file"""
-        self.myfile.load_text(filename)
+        text = self.load_file(filename)
+        if text is None:
+            return
+
+        self.text = text.splitlines()
         self.from_pgdp_rounds = os.path.basename(filename).startswith('projectID')
+        if not self.from_pgdp_rounds:
+            self.strip_pg_boilerplate()
 
     def analyze(self):
         """Clean then analyse the content of a file. Decides if it is PP version, a DP
@@ -620,7 +571,6 @@ def remove_namespace(tree):
     # Remove a namespace URI in elements names
     # "{http://www.w3.org/1999/xhtml}html" -> "html"
     for elem in tree.iter():
-        #elem.tag = elem.tag.replace("{http://www.w3.org/1999/xhtml}", '')
         if not (isinstance(elem, etree._Comment)
                 or isinstance(elem, etree._ProcessingInstruction)):
             elem.tag = etree.QName(elem).localname
