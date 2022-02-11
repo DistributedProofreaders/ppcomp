@@ -26,6 +26,7 @@ import cssselect
 import tinycss
 from lxml import etree
 from lxml.html import html5parser
+#import html5lib as html5parser
 
 # move to PgdpFile class
 PG_EBOOK_START = "*** START OF THE PROJECT GUTENBERG EBOOK"
@@ -35,7 +36,7 @@ PG_EBOOK_END2 = "*** END OF THIS PROJECT GUTENBERG EBOOK"
 PG_EBOOK_START_REGEX = r".*?\*\*\* START OF THE PROJECT GUTENBERG EBOOK.*?\*\*\*(.*)"
 
 
-class HtmlFile():
+class SourceFile():
     """Represent an HTML file in memory."""
     def __init__(self):
         self.is_html4 = False
@@ -47,10 +48,11 @@ class HtmlFile():
         self.text = None
         self.parser_errlog = None
         self.xmlns = ""
+        self.basename = ""
 
-    @staticmethod
-    def load_file(fname):
+    def load_file(self, fname):
         """Load a file (text or html)."""
+        self.basename = os.path.basename(fname)
         try:
             text = open(fname, 'r', encoding='utf-8').read()
         except UnicodeError:
@@ -62,21 +64,6 @@ class HtmlFile():
             raise SyntaxError("File is too short: " + os.path.basename(fname))
 
         return text
-
-    def strip_pg_boilerplate(self):
-        """Remove the PG header and footer from a text version if present."""
-        new_text = []
-        for lineno, line in enumerate(self.text, start=1):
-            # Find the markers. Unfortunately PG lacks consistency
-            if line.startswith((PG_EBOOK_START, PG_EBOOK_START2)):
-                new_text = []
-                self.start = lineno
-            elif line.startswith((PG_EBOOK_END, PG_EBOOK_END2)):
-                break
-            else:
-                new_text.append(line)
-
-        self.text = new_text
 
     # relax currently always True
     # name is only used for error messages
@@ -104,7 +91,6 @@ class HtmlFile():
         try:
             if self.is_html5:
                 tree = html5parser.document_fromstring(text)
-                #tree = html5parser.parse(name)
             else:
                 tree = etree.fromstring(text, parser)
         except etree.XMLSyntaxError:
@@ -150,16 +136,8 @@ class HtmlFile():
         self.tree = tree.getroottree()
         self.text = text.splitlines()
 
-        # Find the namespace - HOW ?
-        # self.tree.getroot().nsmap -> {None: 'http://www.w3.org/1999/xhtml'}
-        xmlns = self.tree.getroot().nsmap.get(None, None)
-        if xmlns:
-            self.xmlns = '{' + xmlns + '}'
-
         # Remove the namespace from the tags
-        # (eg. {http://www.w3.org/1999/xhtml})
-        for element in self.tree.iter(tag=etree.Element):
-            element.tag = element.tag.replace(self.xmlns, "")
+        remove_namespace(self.tree)
 
         # Remove PG boilerplate. These are kept in a <pre> tag.
         # RT: this has changed:
@@ -179,6 +157,11 @@ class HtmlFile():
                 clear_element(element)
             elif text.startswith(PG_EBOOK_END):
                 clear_element(element)
+
+    def load_text(self, fname, encoding=None):
+        """Load the file as text."""
+        text = self.load_file(fname)
+        self.text = text.splitlines()
 
 
 def get_block(pp_text):
@@ -359,7 +342,7 @@ class PgdpFile(object):
     def __init__(self, args):
         self.text = None
         self.words = None
-        self.myfile = HtmlFile()
+        self.myfile = SourceFile()
         self.args = args
         # œ ligature - has_oe_ligature and has_oe_dp are mutually exclusive
         self.has_oe_ligature = False  # the real thing
@@ -399,14 +382,25 @@ class PgdpFileText(PgdpFile):
 
     def load(self, filename):
         """Load the file"""
-        text = self.load_file(filename)
-        if text is None:
-            return
-
-        self.text = text.splitlines()
+        self.myfile.load_text(filename)
         self.from_pgdp_rounds = os.path.basename(filename).startswith('projectID')
-        if not self.from_pgdp_rounds:
-            self.strip_pg_boilerplate()
+        #if not self.from_pgdp_rounds:
+        #    self.strip_pg_boilerplate()
+
+    def strip_pg_boilerplate(self):
+        """Remove the PG header and footer from a text version if present."""
+        new_text = []
+        for lineno, line in enumerate(self.text, start=1):
+            # Find the markers. Unfortunately PG lacks consistency
+            if line.startswith((PG_EBOOK_START, PG_EBOOK_START2)):
+                new_text = []
+                self.start = lineno
+            elif line.startswith((PG_EBOOK_END, PG_EBOOK_END2)):
+                break
+            else:
+                new_text.append(line)
+
+        self.text = new_text
 
     def analyze(self):
         """Clean then analyse the content of a file. Decides if it is PP version, a DP
@@ -577,6 +571,7 @@ def remove_namespace(tree):
     # Remove unused namespace declarations
     etree.cleanup_namespaces(tree)
 
+
 class PgdpFileHtml(PgdpFile):
     """Store and process a DP html file."""
     def __init__(self, args):
@@ -623,13 +618,17 @@ class PgdpFileHtml(PgdpFile):
 
     def analyze(self):
         """Clean then analyse the content of a file."""
-        if self.myfile.is_html5:
-            remove_namespace(self.myfile.tree)
         # Empty the head - we only want the body
         self.myfile.tree.find('head').clear()
 
         # Remember which line <body> was.
-        self.start_line = self.myfile.tree.find('body').sourceline - 2
+        lineno = 0
+        for line in self.myfile.text:
+            if '<body' in line:
+                break
+            lineno = lineno + 1
+
+#        self.start_line = self.myfile.tree.find('body').sourceline - 2
 
         # Remove PG footer, 1st method
         clear_after = False
@@ -690,7 +689,6 @@ class PgdpFileHtml(PgdpFile):
             if el.tail:
                 el.tail = func(el.tail)
 
-    @property
     def convert(self):
         """Remove HTML and PGDP marker from the text."""
         escaped_unicode_re = re.compile(r"\\u[0-9a-fA-F]{4}")
@@ -1194,7 +1192,7 @@ class PPComp(object):
 
         # Apply the various conversions
         for f in files:
-            err_message += f.convert or ""
+            err_message += f.convert() or ""
 
         # Extract footnotes
         if self.args.extract_footnotes:
@@ -1242,8 +1240,8 @@ class PPComp(object):
         func = lambda text: re.sub(r"\u00AD", r"", text)
         f.transform_func.append(func)
 
-        # Apply the various convertions
-        f.convert
+        # Apply the various conversions
+        f.convert()
 
         # Extract footnotes
         if self.args.extract_footnotes:
