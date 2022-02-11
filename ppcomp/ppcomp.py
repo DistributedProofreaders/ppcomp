@@ -26,7 +26,6 @@ import cssselect
 import tinycss
 from lxml import etree
 from lxml.html import html5parser
-#import html5lib as html5parser
 
 # move to PgdpFile class
 PG_EBOOK_START = "*** START OF THE PROJECT GUTENBERG EBOOK"
@@ -39,7 +38,6 @@ PG_EBOOK_START_REGEX = r".*?\*\*\* START OF THE PROJECT GUTENBERG EBOOK.*?\*\*\*
 class SourceFile():
     """Represent an HTML or text file in memory."""
     def __init__(self):
-        self.is_html5 = False
         self.start = 0
         self.parser_errlog = None
         self.tree = None
@@ -69,22 +67,14 @@ class SourceFile():
         parser, which contains the error log, and the resulting tree,
         if the parsing was successful.
         """
-        self.is_html5 = True
-        if self.is_html5:
-            parser = html5parser.HTMLParser()
-        else:
-            parser = etree.HTMLParser()
-
+        parser = html5parser.HTMLParser()
         if parser is None:
             raise SyntaxError("No parser found for that type of document: "
                               + os.path.basename(name))
 
         # Try the decoded file first.
         try:
-            if self.is_html5:
-                tree = html5parser.document_fromstring(text)
-            else:
-                tree = etree.fromstring(text, parser)
+            tree = html5parser.document_fromstring(text)
         except Exception as e:
             print(repr(e))
         else:
@@ -106,11 +96,7 @@ class SourceFile():
             raise IOError("File loading failed for: " + os.path.basename(name))
 
         parser, tree = self.parse_html_xhtml(name, text)
-
-        if self.is_html5:
-            self.parser_errlog = parser.errors
-        else:
-            self.parser_errlog = parser.error_log
+        self.parser_errlog = parser.errors
 
         if len(self.parser_errlog):
             if type(parser) == etree.HTMLParser:
