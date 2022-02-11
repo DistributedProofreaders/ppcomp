@@ -37,11 +37,9 @@ PG_EBOOK_START_REGEX = r".*?\*\*\* START OF THE PROJECT GUTENBERG EBOOK.*?\*\*\*
 
 
 class SourceFile():
-    """Represent an HTML file in memory."""
+    """Represent an HTML or text file in memory."""
     def __init__(self):
-        self.is_html4 = False
         self.is_html5 = False
-        self.is_xhtml = False
         self.start = 0
         self.parser_errlog = None
         self.tree = None
@@ -65,18 +63,12 @@ class SourceFile():
 
         return text
 
-    # relax currently always True
     # name is only used for error messages
-    def parse_html_xhtml(self, name, text, relax=False):
+    def parse_html_xhtml(self, name, text):
         """Parse a byte array. Find the correct parser. Returns both the
         parser, which contains the error log, and the resulting tree,
         if the parsing was successful.
-
-        If relax is True, then the lax html parser is used, even for
-        XHTML, so the parsing will almost always succeed.
         """
-        tree = None
-
         self.is_html5 = True
         if self.is_html5:
             parser = html5parser.HTMLParser()
@@ -93,9 +85,6 @@ class SourceFile():
                 tree = html5parser.document_fromstring(text)
             else:
                 tree = etree.fromstring(text, parser)
-        except etree.XMLSyntaxError:
-            if not relax:  # no
-                return parser, tree
         except Exception as e:
             print(repr(e))
         else:
@@ -103,7 +92,7 @@ class SourceFile():
 
         raise SyntaxError("File cannot be parsed: " + os.path.basename(name))
 
-    def load_xhtml(self, name, relax=False):
+    def load_xhtml(self, name):
         """Load an html/xhtml file. If it is an XHTML file, get rid of the
         namespace since that makes things much easier later.
 
@@ -116,7 +105,7 @@ class SourceFile():
         if text is None:
             raise IOError("File loading failed for: " + os.path.basename(name))
 
-        parser, tree = self.parse_html_xhtml(name, text, relax)
+        parser, tree = self.parse_html_xhtml(name, text)
 
         if self.is_html5:
             self.parser_errlog = parser.errors
@@ -581,7 +570,7 @@ class PgdpFileHtml(PgdpFile):
 
     def load(self, filename):
         """Load the file"""
-        self.myfile.load_xhtml(filename, relax=True)
+        self.myfile.load_xhtml(filename)
 
     def process_args(self):
         # Load default CSS for transformations
