@@ -44,8 +44,6 @@ class SourceFile():
         self.parser_errlog = None
         self.tree = None
         self.text = None
-        self.parser_errlog = None
-        self.xmlns = ""
         self.basename = ""
 
     # RT: move to PgdpFile
@@ -64,29 +62,6 @@ class SourceFile():
 
         return text
 
-    # RT: name is only used for error messages.
-    # RT: html only.
-    # RT: move to PgdpFileHtml
-    def parse_html_xhtml(self, name, text):
-        """Parse a byte array. Find the correct parser. Returns both the
-        parser, which contains the error log, and the resulting tree,
-        if the parsing was successful.
-        """
-        parser = html5parser.HTMLParser()
-        if parser is None:
-            raise SyntaxError("No parser found for that type of document: "
-                              + os.path.basename(name))
-
-        # Try the decoded file first.
-        try:
-            tree = html5parser.document_fromstring(text)
-        except Exception as e:
-            print(repr(e))
-        else:
-            return parser, tree
-
-        raise SyntaxError("File cannot be parsed: " + name)
-
     # RT: html only.
     # RT: move to PgdpFileHtml
     def load_xhtml(self, name):
@@ -102,7 +77,12 @@ class SourceFile():
         if text is None:
             raise IOError("File loading failed for: " + os.path.basename(name))
 
-        parser, tree = self.parse_html_xhtml(name, text)
+        parser = html5parser.HTMLParser()
+        try:
+            tree = html5parser.document_fromstring(text)
+        except Exception as e:
+            raise SyntaxError("File cannot be parsed: " + name + repr(e))
+
         self.parser_errlog = parser.errors
 
         if len(self.parser_errlog):
@@ -315,7 +295,6 @@ def clear_element(element):
 
 class PgdpFile(object):
     """Base class: Store and process a DP text or html file."""
-
     def __init__(self, args):
         self.text = None
         self.words = None
@@ -324,12 +303,9 @@ class PgdpFile(object):
         # œ ligature - has_oe_ligature and has_oe_dp are mutually exclusive
         self.has_oe_ligature = False  # the real thing
         self.has_oe_dp = False  # DP type: [oe]
-        # List of transforms to perform
-        self.transform_func = []
-        # Footnotes, if extracted
-        self.footnotes = ""
-        # First line of the text. This is where <body> is for html.
-        self.start_line = 0
+        self.transform_func = []  # List of transforms to perform
+        self.footnotes = ""  # Footnotes, if extracted
+        self.start_line = 0  # First line of the text. This is where <body> is for html.
 
     def load(self, filename):
         """Load the file"""
