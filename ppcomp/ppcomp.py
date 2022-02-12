@@ -22,6 +22,7 @@ import os
 import re
 import subprocess
 import tempfile
+
 import cssselect
 import tinycss
 from lxml import etree
@@ -37,6 +38,7 @@ PG_EBOOK_START_REGEX = r".*?\*\*\* START OF THE PROJECT GUTENBERG EBOOK.*?\*\*\*
 # RT: Combine with PgdpFile
 class SourceFile():
     """Represent an HTML or text file in memory."""
+
     def __init__(self):
         self.start = 0
         self.parser_errlog = None
@@ -356,6 +358,7 @@ class PgdpFile(object):
 
 class PgdpFileText(PgdpFile):
     """Store and process a DP text file."""
+
     def __init__(self, args):
         super().__init__(args)
         self.from_pgdp_rounds = False
@@ -365,7 +368,7 @@ class PgdpFileText(PgdpFile):
         """Load the file"""
         self.myfile.text = self.myfile.load_file(filename).splitlines()
         self.from_pgdp_rounds = os.path.basename(filename).startswith('projectID')
-        #if not self.from_pgdp_rounds:
+        # if not self.from_pgdp_rounds:
         #    self.strip_pg_boilerplate()
 
     def strip_pg_boilerplate(self):
@@ -543,6 +546,7 @@ class PgdpFileText(PgdpFile):
         for func in self.transform_func:
             self.footnotes = func(self.footnotes)
 
+
 def remove_namespace(tree):
     """Remove a namespace URI in elements names
     "{http://www.w3.org/1999/xhtml}html" -> "html"
@@ -557,6 +561,7 @@ def remove_namespace(tree):
 
 class PgdpFileHtml(PgdpFile):
     """Store and process a DP html file."""
+
     def __init__(self, args):
         super().__init__(args)
         self.mycss = ""
@@ -611,7 +616,7 @@ class PgdpFileHtml(PgdpFile):
                 break
             lineno = lineno + 1
 
-#        self.start_line = self.myfile.tree.find('body').sourceline - 2
+        #        self.start_line = self.myfile.tree.find('body').sourceline - 2
 
         # Remove PG footer, 1st method
         clear_after = False
@@ -919,6 +924,7 @@ class PgdpFileHtml(PgdpFile):
 
 class PPComp(object):
     """Compare two files."""
+
     def __init__(self, args):
         self.args = args
 
@@ -929,7 +935,7 @@ class PPComp(object):
                print(line)
         Use dwdiff instead.
         """
-        with tempfile.NamedTemporaryFile(mode='wb') as t1,\
+        with tempfile.NamedTemporaryFile(mode='wb') as t1, \
                 tempfile.NamedTemporaryFile(mode='wb') as t2:
             t1.write(text1.encode('utf-8'))
             t2.write(text2.encode('utf-8'))
@@ -989,8 +995,9 @@ class PPComp(object):
                 text = "<hr /><pre>\n" + text
             text = text.replace("\n--\n", "\n</pre><hr /><pre>\n")
             text = re.sub(r"^\s*(\d+):(\d+)",
-                lambda m: "<span class='lineno'>{0} : {1}</span>".format(int(m.group(1)) + start0,
-                                                                         int(m.group(2)) + start1),
+                          lambda m: "<span class='lineno'>{0} : {1}</span>".format(
+                              int(m.group(1)) + start0,
+                              int(m.group(2)) + start1),
                           text, flags=re.MULTILINE)
             if text:
                 text = text + "</pre>\n"
@@ -1017,10 +1024,10 @@ class PPComp(object):
         if nb_diffs_text == 0:
             html_content += "<p>There is no diff section in the main text.</p>"
         elif nb_diffs_text == 1:
-            html_content += "<p>There is " + str(nb_diffs_text)\
+            html_content += "<p>There is " + str(nb_diffs_text) \
                             + " diff section in the main text.</p>"
         else:
-            html_content += "<p>There are " + str(nb_diffs_text)\
+            html_content += "<p>There are " + str(nb_diffs_text) \
                             + " diff sections in the main text.</p>"
 
         if footnotes:
@@ -1028,10 +1035,10 @@ class PPComp(object):
             if nb_diffs_footnotes == 0:
                 html_content += "<p>There is no diff section in the footnotes.</p>"
             elif nb_diffs_footnotes == 1:
-                html_content += "<p>There is " + str(nb_diffs_footnotes)\
+                html_content += "<p>There is " + str(nb_diffs_footnotes) \
                                 + " diff section in the footnotes.</p>"
             else:
-                html_content += "<p>There are " + str(nb_diffs_footnotes)\
+                html_content += "<p>There are " + str(nb_diffs_footnotes) \
                                 + " diff sections in the footnotes.</p>"
         else:
             if self.args.extract_footnotes:
@@ -1061,10 +1068,10 @@ class PPComp(object):
         in_0 = files[0].char_text.find(char_best)
         in_1 = files[1].char_text.find(char_best)
 
-        if in_0 >= 0 and in_1 >= 0:     # Both have it
+        if in_0 >= 0 and in_1 >= 0:  # Both have it
             return
 
-        if in_0 == -1 and in_1 == -1:   # None have it
+        if in_0 == -1 and in_1 == -1:  # None have it
             return
 
         # Downgrade one version
@@ -1130,14 +1137,14 @@ class PPComp(object):
         self.check_char(files, "º", "o")  # ordinal o to letter o
         self.check_char(files, "ª", "a")  # ordinal a to letter a
         self.check_char(files, "–", "-")  # ndash to regular dash
-        self.check_char(files, "—", "--") # mdash to regular dashes
+        self.check_char(files, "—", "--")  # mdash to regular dashes
         self.check_char(files, "½", "-1/2")
         self.check_char(files, "¼", "-1/4")
         self.check_char(files, "¾", "-3/4")
-        self.check_char(files, '⁄', '/')   # fraction slash
-        self.check_char(files, "′", "'")   # prime
+        self.check_char(files, '⁄', '/')  # fraction slash
+        self.check_char(files, "′", "'")  # prime
         self.check_char(files, "″", "''")  # double prime
-        self.check_char(files, "‴", "'''") # triple prime
+        self.check_char(files, "‴", "'''")  # triple prime
         self.check_char(files, "₀", "0")  # subscript 0
         self.check_char(files, "₁", "1")  # subscript 1
         self.check_char(files, "₂", "2")  # subscript 2
