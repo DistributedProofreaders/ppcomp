@@ -20,11 +20,6 @@ class SourceFile():
         """Load an html/xhtml file"""
         pass
 
-    # RT: text only.
-    def load_text(self, fname, encoding=None):
-        """Load the file as text."""
-        pass
-
 
 class PgdpFile(object):
     """Base class: Store and process a DP text or html file."""

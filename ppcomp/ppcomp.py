@@ -138,13 +138,6 @@ class SourceFile():
             elif text.startswith(PG_EBOOK_END1):
                 clear_element(element)
 
-    # RT: text only.
-    # RT: move to PgdpFileText
-    def load_text(self, fname, encoding=None):
-        """Load the file as text."""
-        text = self.load_file(fname)
-        self.text = text.splitlines()
-
 
 def get_block(pp_text):
     """Generator to get a block of text, followed by the number of empty lines."""
@@ -370,9 +363,7 @@ class PgdpFileText(PgdpFile):
 
     def load(self, filename):
         """Load the file"""
-        text = self.myfile.load_file(filename)
-        self.myfile.text = text.splitlines()
-
+        self.myfile.text = self.myfile.load_file(filename).splitlines()
         self.from_pgdp_rounds = os.path.basename(filename).startswith('projectID')
         #if not self.from_pgdp_rounds:
         #    self.strip_pg_boilerplate()
