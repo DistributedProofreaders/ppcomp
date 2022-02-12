@@ -62,6 +62,17 @@ class SourceFile():
 
         return text
 
+    def remove_namespace(self):
+        """Remove a namespace URI in elements names
+        "{http://www.w3.org/1999/xhtml}html" -> "html"
+        """
+        for elem in self.tree.iter():
+            if not (isinstance(elem, etree._Comment)
+                    or isinstance(elem, etree._ProcessingInstruction)):
+                elem.tag = etree.QName(elem).localname
+        # Remove unused namespace declarations
+        etree.cleanup_namespaces(self.tree)
+
     # RT: html only.
     # RT: move to PgdpFileHtml
     def load_xhtml(self, name):
@@ -99,7 +110,7 @@ class SourceFile():
         self.text = text.splitlines()
 
         # Remove the namespace from the tags
-        remove_namespace(self.tree)
+        self.remove_namespace()
 
         # Remove PG boilerplate. These are kept in a <pre> tag.
         # RT: this has changed:
@@ -521,18 +532,6 @@ class PgdpFileText(PgdpFile):
         # Apply transform function to the footnotes
         for func in self.transform_func:
             self.footnotes = func(self.footnotes)
-
-
-def remove_namespace(tree):
-    """Remove a namespace URI in elements names
-    "{http://www.w3.org/1999/xhtml}html" -> "html"
-    """
-    for elem in tree.iter():
-        if not (isinstance(elem, etree._Comment)
-                or isinstance(elem, etree._ProcessingInstruction)):
-            elem.tag = etree.QName(elem).localname
-    # Remove unused namespace declarations
-    etree.cleanup_namespaces(tree)
 
 
 class PgdpFileHtml(PgdpFile):
