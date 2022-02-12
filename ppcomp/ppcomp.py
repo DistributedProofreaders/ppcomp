@@ -27,14 +27,14 @@ import tinycss
 from lxml import etree
 from lxml.html import html5parser
 
-# move to PgdpFile class
-PG_EBOOK_START = "*** START OF THE PROJECT GUTENBERG EBOOK"
+PG_EBOOK_START1 = "*** START OF THE PROJECT GUTENBERG EBOOK"
 PG_EBOOK_START2 = "*** START OF THIS PROJECT GUTENBERG EBOOK"
-PG_EBOOK_END = "*** END OF THE PROJECT GUTENBERG EBOOK"
+PG_EBOOK_END1 = "*** END OF THE PROJECT GUTENBERG EBOOK"
 PG_EBOOK_END2 = "*** END OF THIS PROJECT GUTENBERG EBOOK"
 PG_EBOOK_START_REGEX = r".*?\*\*\* START OF THE PROJECT GUTENBERG EBOOK.*?\*\*\*(.*)"
 
 
+# RT: Combine with PgdpFile
 class SourceFile():
     """Represent an HTML or text file in memory."""
     def __init__(self):
@@ -46,6 +46,7 @@ class SourceFile():
         self.xmlns = ""
         self.basename = ""
 
+    # RT: move to PgdpFile
     def load_file(self, fname):
         """Load a file (text or html)."""
         self.basename = os.path.basename(fname)
@@ -54,14 +55,16 @@ class SourceFile():
         except UnicodeError:
             text = open(fname, 'r', encoding='latin-1').read()
         except FileNotFoundError:
-            raise IOError("Cannot load file: " + os.path.basename(fname))
+            raise IOError("Cannot load file: " + fname)
 
         if len(text) < 10:
-            raise SyntaxError("File is too short: " + os.path.basename(fname))
+            raise SyntaxError("File is too short: " + fname)
 
         return text
 
-    # name is only used for error messages
+    # RT: name is only used for error messages.
+    # RT: html only.
+    # RT: move to PgdpFileHtml
     def parse_html_xhtml(self, name, text):
         """Parse a byte array. Find the correct parser. Returns both the
         parser, which contains the error log, and the resulting tree,
@@ -80,8 +83,10 @@ class SourceFile():
         else:
             return parser, tree
 
-        raise SyntaxError("File cannot be parsed: " + os.path.basename(name))
+        raise SyntaxError("File cannot be parsed: " + name)
 
+    # RT: html only.
+    # RT: move to PgdpFileHtml
     def load_xhtml(self, name):
         """Load an html/xhtml file. If it is an XHTML file, get rid of the
         namespace since that makes things much easier later.
@@ -130,9 +135,11 @@ class SourceFile():
 
             if re.match(PG_EBOOK_START_REGEX, text, flags=re.MULTILINE | re.DOTALL):
                 clear_element(element)
-            elif text.startswith(PG_EBOOK_END):
+            elif text.startswith(PG_EBOOK_END1):
                 clear_element(element)
 
+    # RT: text only.
+    # RT: move to PgdpFileText
     def load_text(self, fname, encoding=None):
         """Load the file as text."""
         text = self.load_file(fname)
@@ -301,11 +308,11 @@ DEFAULT_TRANSFORM_CSS = '''
 
 def clear_element(element):
     """In an XHTML tree, remove all sub-elements of a given element.
-
     We can't properly remove an XML element while traversing the
     tree. But we can clear it. Remove its text and children. However,
     the tail must be preserved because it points to the next element,
-    so re-attach."""
+    so re-attach.
+    """
     tail = element.tail
     element.clear()
     element.tail = tail
@@ -330,21 +337,27 @@ class PgdpFile(object):
         self.start_line = 0
 
     def load(self, filename):
+        """Load the file"""
         pass
 
     def process_args(self):
         """Process command line arguments"""
         pass
 
+    def convert(self):
+        """Remove markup from the file"""
+        pass
+
     def analyze(self):
+        """Clean then analyse the contents of a file"""
         pass
 
     def extract_footnotes(self):
-        """Extract the footnotes."""
+        """Extract the footnotes"""
         pass
 
     def transform(self):
-        """Final transformation pass."""
+        """Final transformation pass"""
         pass
 
 
@@ -357,7 +370,9 @@ class PgdpFileText(PgdpFile):
 
     def load(self, filename):
         """Load the file"""
-        self.myfile.load_text(filename)
+        text = self.myfile.load_file(filename)
+        self.myfile.text = text.splitlines()
+
         self.from_pgdp_rounds = os.path.basename(filename).startswith('projectID')
         #if not self.from_pgdp_rounds:
         #    self.strip_pg_boilerplate()
@@ -367,14 +382,13 @@ class PgdpFileText(PgdpFile):
         new_text = []
         for lineno, line in enumerate(self.text, start=1):
             # Find the markers. Unfortunately PG lacks consistency
-            if line.startswith((PG_EBOOK_START, PG_EBOOK_START2)):
+            if line.startswith((PG_EBOOK_START1, PG_EBOOK_START2)):
                 new_text = []
                 self.start = lineno
-            elif line.startswith((PG_EBOOK_END, PG_EBOOK_END2)):
+            elif line.startswith((PG_EBOOK_END1, PG_EBOOK_END2)):
                 break
             else:
                 new_text.append(line)
-
         self.text = new_text
 
     def analyze(self):
@@ -466,8 +480,9 @@ class PgdpFileText(PgdpFile):
             self.text = re.sub(r"\[Sidenote:([^]]*?)\]", r'\1', self.text, flags=re.MULTILINE)
 
     def extract_footnotes_pgdp(self):
-        # Extract the footnotes from an F round
-        # Start with [Footnote ... and finish with ] at the end of a line
+        """ Extract the footnotes from an F round
+        Start with [Footnote ... and finish with ] at the end of a line
+        """
 
         # Note: this is really dirty code. Should rewrite. Don't use current_fnote[0].
 
@@ -511,8 +526,9 @@ class PgdpFileText(PgdpFile):
         self.footnotes = "\n".join([x[1] for x in footnotes])
 
     def extract_footnotes_pp(self):
-        # Extract the footnotes from a PP text version
-        # Convert to lines and back
+        """Extract the footnotes from a PP text version
+        Convert to lines and back
+        """
 
         # Call root function. Move it here?
         text, footnotes = extract_footnotes_pp(self.text.splitlines())
@@ -537,8 +553,9 @@ class PgdpFileText(PgdpFile):
             self.footnotes = func(self.footnotes)
 
 def remove_namespace(tree):
-    # Remove a namespace URI in elements names
-    # "{http://www.w3.org/1999/xhtml}html" -> "html"
+    """Remove a namespace URI in elements names
+    "{http://www.w3.org/1999/xhtml}html" -> "html"
+    """
     for elem in tree.iter():
         if not (isinstance(elem, etree._Comment)
                 or isinstance(elem, etree._ProcessingInstruction)):
@@ -611,7 +628,7 @@ class PgdpFileHtml(PgdpFile):
             if clear_after:
                 element.text = ""
                 element.tail = ""
-            elif element.tag == "p" and element.text and element.text.startswith(PG_EBOOK_END):
+            elif element.tag == "p" and element.text and element.text.startswith(PG_EBOOK_END1):
                 element.text = ""
                 element.tail = ""
                 clear_after = True
@@ -631,7 +648,7 @@ class PgdpFileHtml(PgdpFile):
                 element.text = m.group(1)
                 continue
 
-            if text.startswith(PG_EBOOK_END) or text.startswith("End of Project Gutenberg"):
+            if text.startswith(PG_EBOOK_END1) or text.startswith("End of Project Gutenberg"):
                 clear_element(element)
 
         # Remove PG footer, 3rd method -- header and footer are normal html, not text in <pre> tag.
@@ -834,7 +851,7 @@ class PgdpFileHtml(PgdpFile):
         return css_errors
 
     def extract_footnotes(self):
-        # Find footnotes, then remove them
+        """Find footnotes, then remove them"""
 
         def strip_note_tag(string, keep_num=False):
             """Remove note tag and only keep the number.  For instance
@@ -911,16 +928,16 @@ class PgdpFileHtml(PgdpFile):
 
 class PPComp(object):
     """Compare two files."""
-
     def __init__(self, args):
         self.args = args
 
     def compare_texts(self, text1, text2):
-        # Compare two sources
-        # We could have used the difflib module, but it's too slow:
-        #    for line in difflib.unified_diff(f1.words, f2.words):
-        #        print(line)
-        # Use dwdiff instead.
+        """Compare two sources
+        We could have used the difflib module, but it's too slow:
+           for line in difflib.unified_diff(f1.words, f2.words):
+               print(line)
+        Use dwdiff instead.
+        """
         with tempfile.NamedTemporaryFile(mode='wb') as t1,\
                 tempfile.NamedTemporaryFile(mode='wb') as t2:
             t1.write(text1.encode('utf-8'))
@@ -1278,7 +1295,7 @@ hr:before {
 
 
 def html_usage(filename1, filename2):
-    # Describe how to use the diffs
+    """Describe how to use the diffs"""
     return """
     <div class="bbox">
       <p class="center">— Note —</p>
@@ -1296,7 +1313,7 @@ def html_usage(filename1, filename2):
 
 
 def output_html(args, html_content, filename1, filename2):
-    # Outputs a complete HTML file
+    """Outputs a complete HTML file"""
     print("""
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -1331,52 +1348,48 @@ def output_html(args, html_content, filename1, filename2):
 
 def main():
     parser = argparse.ArgumentParser(description='Diff text document for PGDP PP.')
-
     parser.add_argument('filename', metavar='FILENAME', type=str,
                         help='input files', nargs=2)
-    parser.add_argument('--ignore-format', action='store_true', default=False,
-                        help='Silence formating differences')
-    parser.add_argument('--suppress-footnote-tags', action='store_true', default=False,
-                        help='Suppress "[Footnote ?:" marks')
-    parser.add_argument('--suppress-illustration-tags', action='store_true', default=False,
-                        help='Suppress "[Illustration:" marks')
-    parser.add_argument('--suppress-sidenote-tags', action='store_true', default=False,
-                        help='Suppress "[Sidenote:" marks')
     parser.add_argument('--ignore-case', action='store_true', default=False,
                         help='Ignore case when comparing')
     parser.add_argument('--extract-footnotes', action='store_true', default=False,
                         help='Extract and process footnotes separately')
-    parser.add_argument('--ignore-0-space', action='store_true', default=False,
-                        help='HTML: suppress zero width space (U+200b)')
-    parser.add_argument('--suppress-nbsp-num', action='store_true', default=False,
-                        help="Suppress non-breakable spaces between numbers")
-    parser.add_argument('--css-smcap', type=str, default=None,
-                        help="HTML: Transform small caps into uppercase (U), lowercase (L) or"
-                             " title (T)")
-    parser.add_argument('--css-bold', type=str, default=None,
-                        help="HTML: Surround bold strings with this string")
-    parser.add_argument('--css', type=str, default=[], action='append',
-                        help="HTML: Insert transformation CSS")
+    parser.add_argument('--suppress-footnote-tags', action='store_true', default=False,
+                        help='TXT: Suppress "[Footnote ?:" marks')
+    parser.add_argument('--suppress-illustration-tags', action='store_true', default=False,
+                        help='TXT: Suppress "[Illustration:" marks')
+    parser.add_argument('--suppress-sidenote-tags', action='store_true', default=False,
+                        help='TXT: Suppress "[Sidenote:" marks')
+    parser.add_argument('--ignore-format', action='store_true', default=False,
+                        help='In Px/Fx versions, silence formatting differences')
     parser.add_argument('--suppress-proofers-notes', action='store_true', default=False,
                         help="In Px/Fx versions, remove [**proofreaders notes]")
     parser.add_argument('--regroup-split-words', action='store_true', default=False,
                         help="In Px/Fx versions, regroup split wo-* *rds")
-    parser.add_argument('--css-greek-title-plus', action='store_true', default=False,
-                        help="HTML: use greek transliteration in title attribute")
+    parser.add_argument('--txt-cleanup-type', type=str, default='b',
+                        help="TXT: In Px/Fx versions, type of text cleaning -- (b)est effort,"
+                             " (n)one, (p)roofers")
     parser.add_argument('--css-add-illustration', action='store_true', default=False,
                         help="HTML: add [Illustration ] tag")
     parser.add_argument('--css-add-sidenote', action='store_true', default=False,
                         help="HTML: add [Sidenote: ...]")
+    parser.add_argument('--css-smcap', type=str, default=None,
+                        help="HTML: Transform small caps into uppercase (U), lowercase (L) or"
+                             " title case (T)")
+    parser.add_argument('--css-bold', type=str, default=None,
+                        help="HTML: Surround bold strings with this string")
+    parser.add_argument('--css', type=str, default=[], action='append',
+                        help="HTML: Insert transformation CSS")
     parser.add_argument('--css-no-default', action='store_true', default=False,
                         help="HTML: do not use default transformation CSS")
-    # NO HANDLER!
-    #parser.add_argument('--without-html-header', action='store_true', default=False,
-    #                    help="HTML: do not output html header and footer")
-    parser.add_argument('--txt-cleanup-type', type=str, default='b',
-                        help="TXT: Type of text cleaning -- (b)est effort, (n)one, (p)roofers")
+    parser.add_argument('--suppress-nbsp-num', action='store_true', default=False,
+                        help="HTML: Suppress non-breakable spaces between numbers")
+    parser.add_argument('--ignore-0-space', action='store_true', default=False,
+                        help='HTML: suppress zero width space (U+200b)')
+    parser.add_argument('--css-greek-title-plus', action='store_true', default=False,
+                        help="HTML: use greek transliteration in title attribute")
     parser.add_argument('--simple-html', action='store_true', default=False,
                         help="HTML: Process the html file and print the output (debug)")
-
     args = parser.parse_args()
 
     x = PPComp(args)
@@ -1384,7 +1397,6 @@ def main():
         x.simple_html()
     else:
         _, html_content, fn1, fn2 = x.do_process()
-
         output_html(args, html_content, fn1, fn2)
 
 
