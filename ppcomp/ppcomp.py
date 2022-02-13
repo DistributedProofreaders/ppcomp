@@ -35,7 +35,7 @@ PG_EBOOK_END2 = "*** END OF THIS PROJECT GUTENBERG EBOOK"
 PG_EBOOK_START_REGEX = r".*?\*\*\* START OF THE PROJECT GUTENBERG EBOOK.*?\*\*\*(.*)"
 
 
-class PgdpFile(object):
+class PgdpFile:
     """Base class: Store and process a DP text or html file."""
     def __init__(self, args):
         self.basename = ""
@@ -144,7 +144,7 @@ class PgdpFileText(PgdpFile):
         if self.from_pgdp_rounds:
             # Clean page numbers & blank pages
             self.text = re.sub(r"-----File: \w+.png.*", '', self.text)
-            self.text = re.sub(r"\[Blank Page\]", '', self.text)
+            self.text = re.sub(r"\[Blank Page]", '', self.text)
 
             if self.args.txt_cleanup_type == "p":  # proofers, all done
                 return
@@ -155,33 +155,33 @@ class PgdpFileText(PgdpFile):
                             "/P", "P/",
                             "/F", "F/",
                             "/X", "X/"]
-            for x in block_markup:
-                self.text = self.text.replace("\n" + x + "\n", "\n\n")
+            for item in block_markup:
+                self.text = self.text.replace("\n" + item + "\n", "\n\n")
 
             # Ignore or replace italics and bold html
             if self.args.ignore_format:  # "Silence formatting differences"
-                for x in ["<i>", "</i>", "<b>", "</b>"]:
-                    self.text = self.text.replace(x, "")
+                for item in ["<i>", "</i>", "<b>", "</b>"]:
+                    self.text = self.text.replace(item, "")
             else:
-                for x in ["<i>", "</i>"]:
-                    self.text = self.text.replace(x, "_")
-                for x in ["<b>", "</b>"]:
-                    self.text = self.text.replace(x, "=")
+                for item in ["<i>", "</i>"]:
+                    self.text = self.text.replace(item, "_")
+                for item in ["<b>", "</b>"]:
+                    self.text = self.text.replace(item, "=")
 
             # Remove other markup
             pgdp_markup = ["<.*?>"]
             if self.args.suppress_proofers_notes:
                 pgdp_markup += r"\[\*\*[^]]*?\]"
 
-            for x in pgdp_markup:
-                self.text = re.sub(x, '', self.text)
+            for item in pgdp_markup:
+                self.text = re.sub(item, '', self.text)
 
             if self.args.regroup_split_words:
                 word_splits = {r"(\w+)-\*(\n+)\*": r'\2\1',
                                r"(\w+)-\*_(\n\n)_\*": r"\2\1",
                                r"(\w+)-\*(\w+)": r"\1\2"}
-                for x in word_splits:
-                    self.text = re.sub(x, word_splits[x], self.text)
+                for item in word_splits:
+                    self.text = re.sub(item, word_splits[item], self.text)
 
         else:  # Processed text file
             if self.args.ignore_format:
@@ -198,11 +198,11 @@ class PgdpFileText(PgdpFile):
             self.text = re.sub(r"\*\[Footnote: ", '', self.text)
 
         if self.args.ignore_format or self.args.suppress_illustration_tags:
-            self.text = re.sub(r"\[Illustrations?:([^]]*?)\]", r'\1', self.text, flags=re.MULTILINE)
-            self.text = re.sub(r"\[Illustration\]", '', self.text)
+            self.text = re.sub(r"\[Illustrations?:([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
+            self.text = re.sub(r"\[Illustration]", '', self.text)
 
         if self.args.ignore_format or self.args.suppress_sidenote_tags:
-            self.text = re.sub(r"\[Sidenote:([^]]*?)\]", r'\1', self.text, flags=re.MULTILINE)
+            self.text = re.sub(r"\[Sidenote:([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
 
     def extract_footnotes(self):
         if self.from_pgdp_rounds:  # always [Footnote 1: text]
@@ -215,7 +215,7 @@ class PgdpFileText(PgdpFile):
         Convert to lines and back
         """
         # Call root function. Move it here
-        text, footnotes = extract_footnotes_pp(self.text.splitlines())
+        text, footnotes = extract_footnotes_pp(self.text)
 
         # Rebuild text, now without footnotes
         self.text = '\n'.join(text)
@@ -231,7 +231,7 @@ class PgdpFileText(PgdpFile):
         text = []  # new text without footnotes
         footnotes = []
 
-        for line in self.text.splitlines():
+        for line in self.text:
             # New footnote?
             if "[Footnote" in line:
                 in_footnote = True
@@ -296,7 +296,7 @@ def extract_footnotes_pp(pp_text):
     regex_count = [0] * len(all_regexes)  # i.e. [0, 0, 0]
 
     for block, empty_lines in get_block(pp_text):
-        if not len(block):
+        if not block or not len(block):
             continue
 
         for i, (regex, fn_type) in enumerate(all_regexes):
@@ -330,7 +330,7 @@ def extract_footnotes_pp(pp_text):
                         continue
 
                     next_fn_type = fn_type
-                    next_fn_indent = matches.group(1)
+                    # next_fn_indent = matches.group(1) # unused
 
                     # Update first line of block, because we want the
                     # number outside.
@@ -344,7 +344,6 @@ def extract_footnotes_pp(pp_text):
                 # New block is footnote, so it ends the previous footnote
                 footnotes += prev_block + [""]
                 text += [""] * (len(prev_block) + 1)
-                prev_block = None
                 cur_fn_type, cur_fn_indent = next_fn_type, next_fn_indent
             elif block[0].startswith(cur_fn_indent):
                 # Same indent or more. This is a continuation. Merge with
@@ -354,7 +353,6 @@ def extract_footnotes_pp(pp_text):
                 # End of footnote - current block is not a footnote
                 footnotes += prev_block + [""]
                 text += [""] * (len(prev_block) + 1)
-                prev_block = None
                 cur_fn_type = 0
 
         if not cur_fn_type and next_fn_type:
@@ -407,8 +405,8 @@ class PgdpFileHtml(PgdpFile):
         if len(self.parser_errlog):
             if type(parser) == etree.HTMLParser:
                 # HTML parser rejects tags with both id and filename (513 == DTD_ID_REDEFINED)
-                self.parser_errlog = [x for x in parser.error_log
-                                      if parser.error_log[0].type != 513]
+                self.parser_errlog = [x for x in self.parser_errlog
+                                      if self.parser_errlog[0].type != 513]
         if len(self.parser_errlog):
             raise SyntaxError("Parsing errors in document: " + filename)
 
@@ -437,6 +435,7 @@ class PgdpFileHtml(PgdpFile):
         #     elif text.startswith(PG_EBOOK_END1):
         #         self.clear_element(element)
 
+    # noinspection PyProtectedMember,Pylint
     def remove_namespace(self):
         """Remove namespace URI in elements names
         "{http://www.w3.org/1999/xhtml}html" -> "html"
@@ -542,47 +541,44 @@ class PgdpFileHtml(PgdpFile):
         # HTML doc should have oelig by default.
         self.has_oe_ligature = True
 
-    def text_apply(self, element, func):
-        """Apply a function to every sub element's .text and .tail, and element's .text."""
-        if element.text:
-            element.text = func(element.text)
-        for el in element.iter():
-            if el == element:
-                continue
-            if el.text:
-                el.text = func(el.text)
-            if el.tail:
-                el.tail = func(el.tail)
-
     def convert(self):
         """Remove HTML and PGDP marker from the text."""
         escaped_unicode_re = re.compile(r"\\u[0-9a-fA-F]{4}")
 
+        def text_apply(element, func):
+            """Apply a function to every sub element's .text and .tail, and element's .text."""
+            if element.text:
+                element.text = func(element.text)
+            for el in element.iter():
+                if el == element:
+                    continue
+                if el.text:
+                    el.text = func(el.text)
+                if el.tail:
+                    el.tail = func(el.tail)
+
         def escaped_unicode(m):
             try:
-                newstr = bytes(m.group(0), 'utf8').decode('unicode-escape')
-            except Exception:
-                newstr = m.group(0)
-
-            return newstr
+                return bytes(m.group(0), 'utf8').decode('unicode-escape')
+            except:
+                return m.group(0)
 
         def new_content(element):
             """Process the "content:" property"""
-            retstr = ""
+            result = ""
             for token in val.value:
                 if token.type == "STRING":
                     # e.g. { content: "xyz" }
-                    retstr += escaped_unicode_re.sub(escaped_unicode, token.value)
+                    result += escaped_unicode_re.sub(escaped_unicode, token.value)
                 elif token.type == "FUNCTION":
                     if token.function_name == 'attr':
                         # e.g. { content: attr(title) }
-                        retstr += element.attrib.get(token.content[0].value, "")
+                        result += element.attrib.get(token.content[0].value, "")
                 elif token.type == "IDENT":
                     if token.value == "content":
                         # Identity, e.g. { content: content }
-                        retstr += element.text
-
-            return retstr
+                        result += element.text
+            return result
 
         # Process each rule from our transformation CSS
         stylesheet = tinycss.make_parser().parse_stylesheet(self.mycss)
@@ -605,17 +601,17 @@ class PgdpFileHtml(PgdpFile):
                     else:
                         v = val.value[0].value
                         if v == "uppercase":
-                            f_transform = lambda x: x.upper()
+                            def f_transform(x): return x.upper()
                         elif v == "lowercase":
-                            f_transform = lambda x: x.lower()
+                            def f_transform(x): return x.lower()
                         elif v == "capitalize":
-                            f_transform = lambda x: x.title()
+                            def f_transform(x): return x.title()
                         else:
                             property_errors += [(val.line, val.column,
                                                  val.name + " accepts only 'uppercase',"
                                                             " 'lowercase' or 'capitalize'")]
                 elif val.name == "_replace_with_attr":
-                    f_replace_with_attr = lambda el: el.attrib[val.value[0].value]
+                    def f_replace_with_attr(el): return el.attrib[val.value[0].value]
                 elif val.name == "text-replace":
                     # Skip S (spaces) tokens.
                     values = [v for v in val.value if v.type != "S"]
@@ -625,7 +621,7 @@ class PgdpFileHtml(PgdpFile):
                     else:
                         v1 = values[0].value
                         v2 = values[1].value
-                        f_text_replace = lambda x: x.replace(v1, v2)
+                        def f_text_replace(x): return x.replace(v1, v2)
                 elif val.name == "display":
                     # Support display none only. So ignore "none" argument.
                     f_element_func = self.clear_element
@@ -679,10 +675,10 @@ class PgdpFileHtml(PgdpFile):
                                 element.text = new_content(element)
 
                         if f_transform:
-                            self.text_apply(element, f_transform)
+                            text_apply(element, f_transform)
 
                         if f_text_replace:
-                            self.text_apply(element, f_text_replace)
+                            text_apply(element, f_text_replace)
 
                         if f_element_func:
                             f_element_func(element)
@@ -798,7 +794,8 @@ class PgdpFileHtml(PgdpFile):
         if self.args.ignore_0_space:
             self.text = self.text.replace(chr(0x200b), "")
 
-    def clear_element(self, element):
+    @staticmethod
+    def clear_element(element):
         """In an XHTML tree, remove all sub-elements of a given element.
         We can't properly remove an XML element while traversing the
         tree. But we can clear it. Remove its text and children. However,
@@ -924,27 +921,24 @@ class PPComp(object):
 
         def massage_input(text, start0, start1):
             # Massage the input
-            text = text.replace("&", "&amp;")
-            text = text.replace("<", "&lt;")
-            text = text.replace(">", "&gt;")
-
-            text = text.replace("]COMPPP_START_DEL[", "<del>")
-            text = text.replace("]COMPPP_STOP_DEL[", "</del>")
-            text = text.replace("]COMPPP_START_INS[", "<ins>")
-            text = text.replace("]COMPPP_STOP_INS[", "</ins>")
-
-            if text:
-                text = "<hr /><pre>\n" + text
-            text = text.replace("\n--\n", "\n</pre><hr /><pre>\n")
-            text = re.sub(r"^\s*(\d+):(\d+)",
+            newtext = text.replace("&", "&amp;")
+            newtext = newtext.replace("<", "&lt;")
+            newtext = newtext.replace(">", "&gt;")
+            newtext = newtext.replace("]COMPPP_START_DEL[", "<del>")
+            newtext = newtext.replace("]COMPPP_STOP_DEL[", "</del>")
+            newtext = newtext.replace("]COMPPP_START_INS[", "<ins>")
+            newtext = newtext.replace("]COMPPP_STOP_INS[", "</ins>")
+            if newtext:
+                newtext = "<hr /><pre>\n" + newtext
+            newtext = newtext.replace("\n--\n", "\n</pre><hr /><pre>\n")
+            newtext = re.sub(r"^\s*(\d+):(\d+)",
                           lambda m: "<span class='lineno'>{0} : {1}</span>".format(
                               int(m.group(1)) + start0,
                               int(m.group(2)) + start1),
-                          text, flags=re.MULTILINE)
-            if text:
-                text = text + "</pre>\n"
-
-            return text
+                          newtext, flags=re.MULTILINE)
+            if newtext:
+                newtext += "</pre>\n"
+            return newtext
 
         # Find the number of diff sections
         nb_diffs_text = 0
@@ -1000,7 +994,8 @@ class PPComp(object):
 
         return html_content
 
-    def check_char(self, files, char_best, char_other):
+    @staticmethod
+    def check_char(files, char_best, char_other):
         """Check whether each file has the best character. If not, add a conversion request.
 
         This is used for instance if one version uses ’ while the other
@@ -1023,7 +1018,8 @@ class PPComp(object):
             files[1].transform_func.append(lambda text: text.replace(char_best, char_other))
 
     # RT: This should be obsolete, but maybe doesn't hurt for old files
-    def check_oelig(self, files):
+    @staticmethod
+    def check_oelig(files):
         """Similar to check_char, but for oe ligatures."""
         if files[0].has_oe_ligature and files[1].has_oe_ligature:
             pass
@@ -1050,6 +1046,7 @@ class PPComp(object):
                 files[1].transform_func.append(lambda text: text.replace("[oe]", "oe"))
                 files[1].transform_func.append(lambda text: text.replace("[OE]", "OE"))
 
+    @property
     def do_process(self):
         """Main routine: load & process the files"""
         files = [None, None]
@@ -1111,12 +1108,12 @@ class PPComp(object):
         # Remove non-breakable spaces between numbers. For instance, a
         # text file could have 250000, and the html could have 250 000.
         if self.args.suppress_nbsp_num:
-            func = lambda text: re.sub(r"(\d)\u00A0(\d)", r"\1\2", text)
+            def func(text): return re.sub(r"(\d)\u00A0(\d)", r"\1\2", text)
             files[0].transform_func.append(func)
             files[1].transform_func.append(func)
 
         # Suppress shy (soft hyphen)
-        func = lambda text: re.sub(r"\u00AD", r"", text)
+        def func(text): return re.sub(r"\u00AD", r"", text)
         files[0].transform_func.append(func)
         files[1].transform_func.append(func)
 
@@ -1154,6 +1151,7 @@ class PPComp(object):
             f = PgdpFileHtml(self.args)
         else:
             print("Error: not an html file")
+            return
 
         f.load(fname)
         f.analyze()
@@ -1161,11 +1159,11 @@ class PPComp(object):
         # Remove non-breakable spaces between numbers. For instance, a
         # text file could have 250000, and the html could have 250 000.
         if self.args.suppress_nbsp_num:
-            func = lambda text: re.sub(r"(\d)\u00A0(\d)", r"\1\2", text)
+            def func(text): return re.sub(r"(\d)\u00A0(\d)", r"\1\2", text)
             f.transform_func.append(func)
 
         # Suppress shy (soft hyphen)
-        func = lambda text: re.sub(r"\u00AD", r"", text)
+        def func(text): return re.sub(r"\u00AD", r"", text)
         f.transform_func.append(func)
 
         # Apply the various conversions
@@ -1230,8 +1228,10 @@ hr:before {
 """
 
 
+# noinspection PyPep8
 def html_usage(filename1, filename2):
     """Describe how to use the diffs"""
+    # noinspection PyPep8
     return """
     <div class="bbox">
       <p class="center">— Note —</p>
@@ -1248,7 +1248,7 @@ def html_usage(filename1, filename2):
     """
 
 
-def output_html(args, html_content, filename1, filename2):
+def output_html(html_content, filename1, filename2):
     """Outputs a complete HTML file"""
     print("""
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -1332,8 +1332,8 @@ def main():
     if args.simple_html:
         x.simple_html()
     else:
-        _, html_content, fn1, fn2 = x.do_process()
-        output_html(args, html_content, fn1, fn2)
+        _, html_content, fn1, fn2 = x.do_process
+        output_html(html_content, fn1, fn2)
 
 
 if __name__ == '__main__':
