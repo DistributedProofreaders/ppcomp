@@ -201,9 +201,9 @@ class PgdpFile(object):
         self.basename = ""
         self.text = None
         self.file_text = None
+        self.char_text = None
         self.words = None
         self.args = args
-        self.start = 0
         # œ ligature - has_oe_ligature and has_oe_dp are mutually exclusive
         self.has_oe_ligature = False  # the real thing
         self.has_oe_dp = False  # DP type: [oe]
@@ -257,7 +257,6 @@ class PgdpFileText(PgdpFile):
     def __init__(self, args):
         super().__init__(args)
         self.from_pgdp_rounds = False
-        self.char_text = None
 
     def load(self, filename):
         """Load the file"""
@@ -273,7 +272,7 @@ class PgdpFileText(PgdpFile):
             # Find the markers. Unfortunately PG lacks consistency
             if line.startswith((PG_EBOOK_START1, PG_EBOOK_START2)):
                 new_text = []
-                self.start = lineno
+                self.start_line = lineno
             elif line.startswith((PG_EBOOK_END1, PG_EBOOK_END2)):
                 break
             else:
@@ -283,9 +282,6 @@ class PgdpFileText(PgdpFile):
     def analyze(self):
         """Clean then analyse the content of a file. Decides if it is PP version, a DP
         version, ..."""
-
-        # Remember which line the text started
-        self.start_line = self.start
 
         # Unsplit lines
         self.text = '\n'.join(self.file_text)
@@ -450,7 +446,6 @@ class PgdpFileHtml(PgdpFile):
         self.tree = None
         self.parser_errlog = None
         self.mycss = ""
-        self.char_text = None
 
     def load(self, filename):
         """Load the file
