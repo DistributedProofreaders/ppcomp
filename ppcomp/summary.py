@@ -3,15 +3,6 @@ class SourceFile():
     def __init__(self):
         pass
 
-    def load_file(self, fname):
-        """Load a file (text or html)"""
-        pass
-
-    # RT: html only.
-    def load_xhtml(self, name):
-        """Load an html/xhtml file"""
-        pass
-
 
 class PgdpFile(object):
     """Base class: Store and process a DP text or html file."""

@@ -47,20 +47,6 @@ class SourceFile():
         self.basename = ""
 
     # RT: move to PgdpFile
-    def load_file(self, fname):
-        """Load a file (text or html)."""
-        self.basename = os.path.basename(fname)
-        try:
-            text = open(fname, 'r', encoding='utf-8').read()
-        except UnicodeError:
-            text = open(fname, 'r', encoding='latin-1').read()
-        except FileNotFoundError:
-            raise IOError("Cannot load file: " + fname)
-
-        if len(text) < 10:
-            raise SyntaxError("File is too short: " + fname)
-
-        return text
 
 
 def get_block(pp_text):
@@ -249,6 +235,21 @@ class PgdpFile(object):
         self.footnotes = ""  # Footnotes, if extracted
         self.start_line = 0  # First line of the text. This is where <body> is for html.
 
+    def load_file(self, fname):
+        """Load a file (text or html)."""
+        self.myfile.basename = os.path.basename(fname)
+        try:
+            text = open(fname, 'r', encoding='utf-8').read()
+        except UnicodeError:
+            text = open(fname, 'r', encoding='latin-1').read()
+        except FileNotFoundError:
+            raise IOError("Cannot load file: " + fname)
+
+        if len(text) < 10:
+            raise SyntaxError("File is too short: " + fname)
+
+        return text
+
     def load(self, filename):
         """Load the file"""
         pass
@@ -284,7 +285,7 @@ class PgdpFileText(PgdpFile):
 
     def load(self, filename):
         """Load the file"""
-        self.myfile.text = self.myfile.load_file(filename).splitlines()
+        self.myfile.text = self.load_file(filename).splitlines()
         self.from_pgdp_rounds = os.path.basename(filename).startswith('projectID')
         # if not self.from_pgdp_rounds:
         #    self.strip_pg_boilerplate()
@@ -477,7 +478,7 @@ class PgdpFileHtml(PgdpFile):
         """Load the file
         If parsing succeeded, then self.tree is set, and self.parser_errlog is [].
         """
-        text = self.myfile.load_file(filename)
+        text = self.load_file(filename)
 
         parser = html5parser.HTMLParser()
         try:
