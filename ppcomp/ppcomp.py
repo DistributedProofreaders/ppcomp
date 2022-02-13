@@ -393,6 +393,19 @@ class PgdpFileHtml(PgdpFile):
         """Load the file
         If parsing succeeded, then self.tree is set, and self.parser_errlog is [].
         """
+
+        # noinspection PyProtectedMember,Pylint
+        def remove_namespace(self):
+            """Remove namespace URI in elements names
+            "{http://www.w3.org/1999/xhtml}html" -> "html"
+            """
+            for elem in self.tree.iter():
+                if not (isinstance(elem, etree._Comment)
+                        or isinstance(elem, etree._ProcessingInstruction)):
+                    elem.tag = etree.QName(elem).localname
+            # Remove unused namespace declarations
+            etree.cleanup_namespaces(self.tree)
+
         text = self.load_file(filename)
 
         parser = html5parser.HTMLParser()
@@ -414,7 +427,7 @@ class PgdpFileHtml(PgdpFile):
         self.file_text = text.splitlines()
 
         # Remove the namespace from the tags
-        self.remove_namespace()
+        remove_namespace(self)
 
         # Remove PG boilerplate. These are kept in a <pre> tag.
         # BUG: this doesn't save anything
@@ -434,18 +447,6 @@ class PgdpFileHtml(PgdpFile):
         #         self.clear_element(element)
         #     elif text.startswith(PG_EBOOK_END1):
         #         self.clear_element(element)
-
-    # noinspection PyProtectedMember,Pylint
-    def remove_namespace(self):
-        """Remove namespace URI in elements names
-        "{http://www.w3.org/1999/xhtml}html" -> "html"
-        """
-        for elem in self.tree.iter():
-            if not (isinstance(elem, etree._Comment)
-                    or isinstance(elem, etree._ProcessingInstruction)):
-                elem.tag = etree.QName(elem).localname
-        # Remove unused namespace declarations
-        etree.cleanup_namespaces(self.tree)
 
     def process_args(self):
         # Load default CSS for transformations
