@@ -4,15 +4,7 @@ class SourceFile():
         pass
 
     def load_file(self, fname):
-        """Load a file (text or html)."""
-        pass
-
-    # RT: html only.
-    def parse_html_xhtml(self, name, text):
-        """Parse a byte array. Find the correct parser. Returns both the
-        parser, which contains the error log, and the resulting tree,
-        if the parsing was successful.
-        """
+        """Load a file (text or html)"""
         pass
 
     # RT: html only.

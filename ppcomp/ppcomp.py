@@ -62,75 +62,6 @@ class SourceFile():
 
         return text
 
-    def remove_namespace(self):
-        """Remove a namespace URI in elements names
-        "{http://www.w3.org/1999/xhtml}html" -> "html"
-        """
-        for elem in self.tree.iter():
-            if not (isinstance(elem, etree._Comment)
-                    or isinstance(elem, etree._ProcessingInstruction)):
-                elem.tag = etree.QName(elem).localname
-        # Remove unused namespace declarations
-        etree.cleanup_namespaces(self.tree)
-
-    # RT: html only.
-    # RT: move to PgdpFileHtml
-    def load_xhtml(self, name):
-        """Load an html/xhtml file. If it is an XHTML file, get rid of the
-        namespace since that makes things much easier later.
-
-        If parsing fails, then self.parser_errlog is not empty.
-
-        If parsing succeeded, then self.tree is set, and
-        self.parser_errlog is [].
-        """
-        text = self.load_file(name)
-        if text is None:
-            raise IOError("File loading failed for: " + os.path.basename(name))
-
-        parser = html5parser.HTMLParser()
-        try:
-            tree = html5parser.document_fromstring(text)
-        except Exception as e:
-            raise SyntaxError("File cannot be parsed: " + name + repr(e))
-
-        self.parser_errlog = parser.errors
-
-        if len(self.parser_errlog):
-            if type(parser) == etree.HTMLParser:
-                # HTML parser rejects tags with both id and name
-                #   (513 == DTD_ID_REDEFINED)
-                self.parser_errlog = [x for x in parser.error_log
-                                      if parser.error_log[0].type != 513]
-
-        if len(self.parser_errlog):
-            raise SyntaxError("Parsing errors in document: " + os.path.basename(name))
-
-        self.tree = tree.getroottree()
-        self.text = text.splitlines()
-
-        # Remove the namespace from the tags
-        self.remove_namespace()
-
-        # Remove PG boilerplate. These are kept in a <pre> tag.
-        # RT: this has changed:
-        # old: <pre save_image_to_download="true">
-        #     <pre> at end
-        # new: <body save_image_to_download="true">
-        #   to <div>*** START OF THE PROJECT GUTENBERG EBOOK
-        #   <div>*** END OF THE PROJECT GUTENBERG EBOOK
-        find = etree.XPath("//pre")
-        for element in find(self.tree):
-            if element.text is None:
-                continue
-
-            text = element.text.strip()
-
-            if re.match(PG_EBOOK_START_REGEX, text, flags=re.MULTILINE | re.DOTALL):
-                clear_element(element)
-            elif text.startswith(PG_EBOOK_END1):
-                clear_element(element)
-
 
 def get_block(pp_text):
     """Generator to get a block of text, followed by the number of empty lines."""
@@ -543,8 +474,61 @@ class PgdpFileHtml(PgdpFile):
         self.char_text = None
 
     def load(self, filename):
-        """Load the file"""
-        self.myfile.load_xhtml(filename)
+        """Load the file
+        If parsing succeeded, then self.tree is set, and self.parser_errlog is [].
+        """
+        text = self.myfile.load_file(filename)
+
+        parser = html5parser.HTMLParser()
+        try:
+            tree = html5parser.document_fromstring(text)
+        except Exception as e:
+            raise SyntaxError("File cannot be parsed: " + filename + repr(e))
+
+        self.parser_errlog = parser.errors
+        if len(self.parser_errlog):
+            if type(parser) == etree.HTMLParser:
+                # HTML parser rejects tags with both id and filename (513 == DTD_ID_REDEFINED)
+                self.parser_errlog = [x for x in parser.error_log
+                                      if parser.error_log[0].type != 513]
+        if len(self.parser_errlog):
+            raise SyntaxError("Parsing errors in document: " + filename)
+
+        self.myfile.tree = tree.getroottree()
+        self.myfile.text = text.splitlines()
+
+        # Remove the namespace from the tags
+        self.remove_namespace()
+
+        # Remove PG boilerplate. These are kept in a <pre> tag.
+        # BUG: this doesn't save anything
+        # RT: this has changed:
+        # old: <pre save_image_to_download="true">
+        #     <pre> at end
+        # new: <body save_image_to_download="true">
+        #   to <div>*** START OF THE PROJECT GUTENBERG EBOOK
+        #   <div>*** END OF THE PROJECT GUTENBERG EBOOK
+
+        # find = etree.XPath("//pre")
+        # for element in find(self.tree):
+        #     if element.text is None:
+        #         continue
+        #     text = element.text.strip()
+        #     if re.match(PG_EBOOK_START_REGEX, text, flags=re.MULTILINE | re.DOTALL):
+        #         clear_element(element)
+        #     elif text.startswith(PG_EBOOK_END1):
+        #         clear_element(element)
+
+    def remove_namespace(self):
+        """Remove namespace URI in elements names
+        "{http://www.w3.org/1999/xhtml}html" -> "html"
+        """
+        for elem in self.myfile.tree.iter():
+            if not (isinstance(elem, etree._Comment)
+                    or isinstance(elem, etree._ProcessingInstruction)):
+                elem.tag = etree.QName(elem).localname
+        # Remove unused namespace declarations
+        etree.cleanup_namespaces(self.myfile.tree)
 
     def process_args(self):
         # Load default CSS for transformations
