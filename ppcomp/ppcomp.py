@@ -195,18 +195,6 @@ DEFAULT_TRANSFORM_CSS = '''
     '''
 
 
-def clear_element(element):
-    """In an XHTML tree, remove all sub-elements of a given element.
-    We can't properly remove an XML element while traversing the
-    tree. But we can clear it. Remove its text and children. However,
-    the tail must be preserved because it points to the next element,
-    so re-attach.
-    """
-    tail = element.tail
-    element.clear()
-    element.tail = tail
-
-
 class PgdpFile(object):
     """Base class: Store and process a DP text or html file."""
     def __init__(self, args):
@@ -506,9 +494,9 @@ class PgdpFileHtml(PgdpFile):
         #         continue
         #     text = element.text.strip()
         #     if re.match(PG_EBOOK_START_REGEX, text, flags=re.MULTILINE | re.DOTALL):
-        #         clear_element(element)
+        #         self.clear_element(element)
         #     elif text.startswith(PG_EBOOK_END1):
-        #         clear_element(element)
+        #         self.clear_element(element)
 
     def remove_namespace(self):
         """Remove namespace URI in elements names
@@ -595,14 +583,14 @@ class PgdpFileHtml(PgdpFile):
                 continue
 
             if text.startswith(PG_EBOOK_END1) or text.startswith("End of Project Gutenberg"):
-                clear_element(element)
+                self.clear_element(element)
 
         # Remove PG footer, 3rd method -- header and footer are normal html, not text in <pre> tag.
         try:
             # Look for one element
             (element,) = etree.XPath("//p[@id='pg-end-line']")(self.tree)
             while element is not None:
-                clear_element(element)
+                self.clear_element(element)
                 element = element.getnext()
         except ValueError:
             pass
@@ -701,7 +689,7 @@ class PgdpFileHtml(PgdpFile):
                         f_text_replace = lambda x: x.replace(v1, v2)
                 elif val.name == "display":
                     # Support display none only. So ignore "none" argument.
-                    f_element_func = clear_element
+                    f_element_func = self.clear_element
                 elif val.name == "_graft":
                     values = [v for v in val.value if v.type != "S"]
                     if len(values) < 1:
@@ -870,6 +858,17 @@ class PgdpFileHtml(PgdpFile):
         # zero width space
         if self.args.ignore_0_space:
             self.text = self.text.replace(chr(0x200b), "")
+
+    def clear_element(self, element):
+        """In an XHTML tree, remove all sub-elements of a given element.
+        We can't properly remove an XML element while traversing the
+        tree. But we can clear it. Remove its text and children. However,
+        the tail must be preserved because it points to the next element,
+        so re-attach.
+        """
+        tail = element.tail
+        element.clear()
+        element.tail = tail
 
 
 class PPComp(object):
