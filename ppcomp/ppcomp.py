@@ -35,166 +35,6 @@ PG_EBOOK_END2 = "*** END OF THIS PROJECT GUTENBERG EBOOK"
 PG_EBOOK_START_REGEX = r".*?\*\*\* START OF THE PROJECT GUTENBERG EBOOK.*?\*\*\*(.*)"
 
 
-def get_block(pp_text):
-    """Generator to get a block of text, followed by the number of empty lines."""
-    empty_lines = 0
-    block = []
-
-    for line in pp_text:
-        if len(line):
-            # One or more empty lines will stop a block
-            if empty_lines:
-                yield block, empty_lines
-                block = []
-                empty_lines = 0
-            block += [line]
-        else:
-            empty_lines += 1
-
-    yield block, empty_lines
-
-
-def extract_footnotes_pp(pp_text):
-    """Extract footnotes from a PP text file. text is iterable. Returns
-    the text as an iterable, without the footnotes, and footnotes as a
-    list of (footnote string id, line number of the start of the
-    footnote, list of strings comprising the footnote).
-    fn_regexes is a list of (regex, fn_type) that identify the beginning
-    and end of a footnote. The fn_type is 1 when a ] terminates it, or
-    2 when a new block terminates it.
-    """
-    # RT: Why is this different from extract_footnotes_pgdp, except
-    # tidied would be "[1] text" instead of [Footnote 1: text]? 1st regex?
-
-    # If the caller didn't give a list of regex to identify the
-    # footnotes, build one, taking only the most common.
-    all_regexes = [(r"(\s*)\[([\w-]+)\](.*)", 1),
-                   (r"(\s*)\[Note (\d+):( .*|$)", 2),
-                   (r"(      )Note (\d+):( .*|$)", 1)]
-    regex_count = [0] * len(all_regexes)  # i.e. [0, 0, 0]
-
-    for block, empty_lines in get_block(pp_text):
-        if not len(block):
-            continue
-
-        for i, (regex, fn_type) in enumerate(all_regexes):
-            matches = re.match(regex, block[0])
-            if matches:
-                regex_count[i] += 1
-                break
-
-    # Pick the regex with the most matches
-    fn_regexes = [all_regexes[regex_count.index(max(regex_count))]]
-
-    # Different types of footnote. 0 means not in footnote.
-    cur_fn_type, cur_fn_indent = 0, 0
-    footnotes = []
-    text = []
-    prev_block = None
-
-    for block, empty_lines in get_block(pp_text):
-        # Is the block a new footnote?
-        next_fn_type = 0
-        if len(block):
-            for (regex, fn_type) in fn_regexes:
-                matches = re.match(regex, block[0])
-                if matches:
-                    if matches.group(2).startswith(("Illustration",
-                                                    "Décoration",
-                                                    "Décoration", "Bandeau",
-                                                    "Logo", "Ornement")):
-                        # An illustration, possibly inside a footnote. Treat
-                        # as part of text or footnote.
-                        continue
-
-                    next_fn_type = fn_type
-                    next_fn_indent = matches.group(1)
-
-                    # Update first line of block, because we want the
-                    # number outside.
-                    block[0] = matches.group(3)
-                    break
-
-        # Try to close previous footnote
-        next_fn_indent = None
-        if cur_fn_type:
-            if next_fn_type:
-                # New block is footnote, so it ends the previous footnote
-                footnotes += prev_block + [""]
-                text += [""] * (len(prev_block) + 1)
-                prev_block = None
-                cur_fn_type, cur_fn_indent = next_fn_type, next_fn_indent
-            elif block[0].startswith(cur_fn_indent):
-                # Same indent or more. This is a continuation. Merge with
-                # one empty line.
-                block = prev_block + [""] + block
-            else:
-                # End of footnote - current block is not a footnote
-                footnotes += prev_block + [""]
-                text += [""] * (len(prev_block) + 1)
-                prev_block = None
-                cur_fn_type = 0
-
-        if not cur_fn_type and next_fn_type:
-            # Account for new footnote
-            cur_fn_type, cur_fn_indent = next_fn_type, next_fn_indent
-
-        if cur_fn_type and (empty_lines >= 2 or
-                            (cur_fn_type == 2 and block[-1].endswith("]"))):
-            # End of footnote
-            if cur_fn_type == 2 and block[-1].endswith("]"):
-                # Remove terminal bracket
-                block[-1] = block[-1][:-1]
-
-            footnotes += block
-            text += [""] * (len(block))
-            cur_fn_type = 0
-            block = None
-
-        if not cur_fn_type:
-            # Add to text, with white lines
-            text += (block or []) + [""] * empty_lines
-            footnotes += [""] * (len(block or []) + empty_lines)
-
-        prev_block = block
-
-    return text, footnotes
-
-
-DEFAULT_TRANSFORM_CSS = '''
-        /* Italics */
-        i:before, cite:before, em:before, abbr:before, dfn:before,
-        i:after, cite:after, em:after, abbr:after, dfn:after      { content: "_"; }
-
-        /* Bold */
-        b:before, bold:before,
-        b:after, bold:after         { content: "="; }
-
-        /* line breaks with <br /> will be ignored by normalize-space().
-         * Add a space in all of them to work around. */
-        br:before { content: " "; }
-
-        /* Add spaces around td tags. */
-        td:before, td:after { content: " "; }
-
-        /* Remove page numbers. It seems every PP has a different way. */
-        span[class^="pagenum"],
-        p[class^="pagenum"],
-        div[class^="pagenum"],
-        span[class^="pageno"],
-        p[class^="pageno"],
-        div[class^="pageno"],
-        p[class^="page"],
-        span[class^="pgnum"],
-        div[id^="Page_"] { display: none }
-
-        /* Superscripts, Subscripts */
-        sup:before              { content: "^{"; }
-        sub:before              { content: "_{"; }
-        sup:after, sub:after    { content: "}"; }
-    '''
-
-
 class PgdpFile(object):
     """Base class: Store and process a DP text or html file."""
     def __init__(self, args):
@@ -364,13 +204,28 @@ class PgdpFileText(PgdpFile):
         if self.args.ignore_format or self.args.suppress_sidenote_tags:
             self.text = re.sub(r"\[Sidenote:([^]]*?)\]", r'\1', self.text, flags=re.MULTILINE)
 
+    def extract_footnotes(self):
+        if self.from_pgdp_rounds:  # always [Footnote 1: text]
+            self.extract_footnotes_pgdp()
+        else:  # probably [1] text
+            self.extract_footnotes_pp()
+
+    def extract_footnotes_pp(self):
+        """Extract the footnotes from a PP text version
+        Convert to lines and back
+        """
+        # Call root function. Move it here
+        text, footnotes = extract_footnotes_pp(self.text.splitlines())
+
+        # Rebuild text, now without footnotes
+        self.text = '\n'.join(text)
+        self.footnotes = '\n'.join(footnotes)
+
     def extract_footnotes_pgdp(self):
         """ Extract the footnotes from an F round
         Start with [Footnote ... and finish with ] at the end of a line
         """
-
         # Note: this is really dirty code. Should rewrite. Don't use current_fnote[0].
-
         in_footnote = False  # currently processing a footnote
         current_fnote = []  # keeping current footnote
         text = []  # new text without footnotes
@@ -410,24 +265,6 @@ class PgdpFileText(PgdpFile):
         self.text = '\n'.join(text)
         self.footnotes = "\n".join([x[1] for x in footnotes])
 
-    def extract_footnotes_pp(self):
-        """Extract the footnotes from a PP text version
-        Convert to lines and back
-        """
-
-        # Call root function. Move it here?
-        text, footnotes = extract_footnotes_pp(self.text.splitlines())
-
-        # Rebuild text, now without footnotes
-        self.text = '\n'.join(text)
-        self.footnotes = '\n'.join(footnotes)
-
-    def extract_footnotes(self):
-        if self.from_pgdp_rounds:  # always [Footnote 1: text]
-            self.extract_footnotes_pgdp()
-        else:  # probably [1] text
-            self.extract_footnotes_pp()
-
     def transform(self):
         """Final cleanup."""
         for func in self.transform_func:
@@ -438,9 +275,116 @@ class PgdpFileText(PgdpFile):
             self.footnotes = func(self.footnotes)
 
 
+# move to PgdpFileText
+def extract_footnotes_pp(pp_text):
+    """Extract footnotes from a PP text file. text is iterable. Returns
+    the text as an iterable, without the footnotes, and footnotes as a
+    list of (footnote string id, line number of the start of the
+    footnote, list of strings comprising the footnote).
+    fn_regexes is a list of (regex, fn_type) that identify the beginning
+    and end of a footnote. The fn_type is 1 when a ] terminates it, or
+    2 when a new block terminates it.
+    """
+    # RT: Why is this different from extract_footnotes_pgdp, except
+    # tidied would be "[1] text" instead of [Footnote 1: text]? 1st regex?
+
+    # If the caller didn't give a list of regex to identify the
+    # footnotes, build one, taking only the most common.
+    all_regexes = [(r"(\s*)\[([\w-]+)\](.*)", 1),
+                   (r"(\s*)\[Note (\d+):( .*|$)", 2),
+                   (r"(      )Note (\d+):( .*|$)", 1)]
+    regex_count = [0] * len(all_regexes)  # i.e. [0, 0, 0]
+
+    for block, empty_lines in get_block(pp_text):
+        if not len(block):
+            continue
+
+        for i, (regex, fn_type) in enumerate(all_regexes):
+            matches = re.match(regex, block[0])
+            if matches:
+                regex_count[i] += 1
+                break
+
+    # Pick the regex with the most matches
+    fn_regexes = [all_regexes[regex_count.index(max(regex_count))]]
+
+    # Different types of footnote. 0 means not in footnote.
+    cur_fn_type, cur_fn_indent = 0, 0
+    footnotes = []
+    text = []
+    prev_block = None
+
+    for block, empty_lines in get_block(pp_text):
+        # Is the block a new footnote?
+        next_fn_type = 0
+        if len(block):
+            for (regex, fn_type) in fn_regexes:
+                matches = re.match(regex, block[0])
+                if matches:
+                    if matches.group(2).startswith(("Illustration",
+                                                    "Décoration",
+                                                    "Décoration", "Bandeau",
+                                                    "Logo", "Ornement")):
+                        # An illustration, possibly inside a footnote. Treat
+                        # as part of text or footnote.
+                        continue
+
+                    next_fn_type = fn_type
+                    next_fn_indent = matches.group(1)
+
+                    # Update first line of block, because we want the
+                    # number outside.
+                    block[0] = matches.group(3)
+                    break
+
+        # Try to close previous footnote
+        next_fn_indent = None
+        if cur_fn_type:
+            if next_fn_type:
+                # New block is footnote, so it ends the previous footnote
+                footnotes += prev_block + [""]
+                text += [""] * (len(prev_block) + 1)
+                prev_block = None
+                cur_fn_type, cur_fn_indent = next_fn_type, next_fn_indent
+            elif block[0].startswith(cur_fn_indent):
+                # Same indent or more. This is a continuation. Merge with
+                # one empty line.
+                block = prev_block + [""] + block
+            else:
+                # End of footnote - current block is not a footnote
+                footnotes += prev_block + [""]
+                text += [""] * (len(prev_block) + 1)
+                prev_block = None
+                cur_fn_type = 0
+
+        if not cur_fn_type and next_fn_type:
+            # Account for new footnote
+            cur_fn_type, cur_fn_indent = next_fn_type, next_fn_indent
+
+        if cur_fn_type and (empty_lines >= 2 or
+                            (cur_fn_type == 2 and block[-1].endswith("]"))):
+            # End of footnote
+            if cur_fn_type == 2 and block[-1].endswith("]"):
+                # Remove terminal bracket
+                block[-1] = block[-1][:-1]
+
+            footnotes += block
+            text += [""] * (len(block))
+            cur_fn_type = 0
+            block = None
+
+        if not cur_fn_type:
+            # Add to text, with white lines
+            text += (block or []) + [""] * empty_lines
+            footnotes += [""] * (len(block or []) + empty_lines)
+
+        prev_block = block
+
+    return text, footnotes
+
+
 class PgdpFileHtml(PgdpFile):
     """Store and process a DP html file."""
-
     def __init__(self, args):
         super().__init__(args)
         self.tree = None
@@ -866,6 +810,60 @@ class PgdpFileHtml(PgdpFile):
         element.tail = tail
 
 
+# only called by extract_footnotes_pp, move to PgdpFileText
+def get_block(pp_text):
+    """Generator to get a block of text, followed by the number of empty lines."""
+    empty_lines = 0
+    block = []
+
+    for line in pp_text:
+        if len(line):
+            # One or more empty lines will stop a block
+            if empty_lines:
+                yield block, empty_lines
+                block = []
+                empty_lines = 0
+            block += [line]
+        else:
+            empty_lines += 1
+
+    yield block, empty_lines
+
+
+DEFAULT_TRANSFORM_CSS = '''
+        /* Italics */
+        i:before, cite:before, em:before, abbr:before, dfn:before,
+        i:after, cite:after, em:after, abbr:after, dfn:after      { content: "_"; }
+
+        /* Bold */
+        b:before, bold:before,
+        b:after, bold:after         { content: "="; }
+
+        /* line breaks with <br /> will be ignored by normalize-space().
+         * Add a space in all of them to work around. */
+        br:before { content: " "; }
+
+        /* Add spaces around td tags. */
+        td:before, td:after { content: " "; }
+
+        /* Remove page numbers. It seems every PP has a different way. */
+        span[class^="pagenum"],
+        p[class^="pagenum"],
+        div[class^="pagenum"],
+        span[class^="pageno"],
+        p[class^="pageno"],
+        div[class^="pageno"],
+        p[class^="page"],
+        span[class^="pgnum"],
+        div[id^="Page_"] { display: none }
+
+        /* Superscripts, Subscripts */
+        sup:before              { content: "^{"; }
+        sub:before              { content: "_{"; }
+        sup:after, sub:after    { content: "}"; }
+    '''
+
+
 class PPComp(object):
     """Compare two files."""
 
@@ -1184,7 +1182,7 @@ class PPComp(object):
 
 
 ######################################
-# Sample CSS used to display the diffs.
+# CSS used to display the diffs.
 def diff_css():
     return """
 body {
