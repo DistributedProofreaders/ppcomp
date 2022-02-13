@@ -1,12 +1,5 @@
-class SourceFile():
-    """Represent an HTML or text file in memory."""
-    def __init__(self):
-        pass
-
-
 class PgdpFile(object):
     """Base class: Store and process a DP text or html file."""
-
     def __init__(self, args):
         pass
 
@@ -33,7 +26,6 @@ class PgdpFile(object):
 
 class PgdpFileText(PgdpFile):
     """Store and process a DP text file."""
-
     def __init__(self, args):
         pass
 
@@ -111,3 +103,7 @@ class PgdpFileHtml(PgdpFile):
         """Apply a function to every sub element's .text and .tail, and element's .text."""
         pass
 
+    # not in base
+    def remove_namespace(self):
+        """Remove namespace URI in elements names"""
+        pass

@@ -35,20 +35,6 @@ PG_EBOOK_END2 = "*** END OF THIS PROJECT GUTENBERG EBOOK"
 PG_EBOOK_START_REGEX = r".*?\*\*\* START OF THE PROJECT GUTENBERG EBOOK.*?\*\*\*(.*)"
 
 
-# RT: Combine with PgdpFile
-class SourceFile():
-    """Represent an HTML or text file in memory."""
-
-    def __init__(self):
-        self.start = 0
-        self.parser_errlog = None
-        self.tree = None
-        self.text = None
-        self.basename = ""
-
-    # RT: move to PgdpFile
-
-
 def get_block(pp_text):
     """Generator to get a block of text, followed by the number of empty lines."""
     empty_lines = 0
@@ -224,10 +210,12 @@ def clear_element(element):
 class PgdpFile(object):
     """Base class: Store and process a DP text or html file."""
     def __init__(self, args):
+        self.basename = ""
         self.text = None
+        self.file_text = None
         self.words = None
-        self.myfile = SourceFile()
         self.args = args
+        self.start = 0
         # œ ligature - has_oe_ligature and has_oe_dp are mutually exclusive
         self.has_oe_ligature = False  # the real thing
         self.has_oe_dp = False  # DP type: [oe]
@@ -237,7 +225,7 @@ class PgdpFile(object):
 
     def load_file(self, fname):
         """Load a file (text or html)."""
-        self.myfile.basename = os.path.basename(fname)
+        self.basename = os.path.basename(fname)
         try:
             text = open(fname, 'r', encoding='utf-8').read()
         except UnicodeError:
@@ -285,7 +273,7 @@ class PgdpFileText(PgdpFile):
 
     def load(self, filename):
         """Load the file"""
-        self.myfile.text = self.load_file(filename).splitlines()
+        self.file_text = self.load_file(filename).splitlines()
         self.from_pgdp_rounds = os.path.basename(filename).startswith('projectID')
         # if not self.from_pgdp_rounds:
         #    self.strip_pg_boilerplate()
@@ -309,10 +297,10 @@ class PgdpFileText(PgdpFile):
         version, ..."""
 
         # Remember which line the text started
-        self.start_line = self.myfile.start
+        self.start_line = self.start
 
         # Unsplit lines
-        self.text = '\n'.join(self.myfile.text)
+        self.text = '\n'.join(self.file_text)
 
         # Keep a copy to search for characters
         self.char_text = self.text
@@ -471,6 +459,8 @@ class PgdpFileHtml(PgdpFile):
 
     def __init__(self, args):
         super().__init__(args)
+        self.tree = None
+        self.parser_errlog = None
         self.mycss = ""
         self.char_text = None
 
@@ -495,8 +485,8 @@ class PgdpFileHtml(PgdpFile):
         if len(self.parser_errlog):
             raise SyntaxError("Parsing errors in document: " + filename)
 
-        self.myfile.tree = tree.getroottree()
-        self.myfile.text = text.splitlines()
+        self.tree = tree.getroottree()
+        self.file_text = text.splitlines()
 
         # Remove the namespace from the tags
         self.remove_namespace()
@@ -524,12 +514,12 @@ class PgdpFileHtml(PgdpFile):
         """Remove namespace URI in elements names
         "{http://www.w3.org/1999/xhtml}html" -> "html"
         """
-        for elem in self.myfile.tree.iter():
+        for elem in self.tree.iter():
             if not (isinstance(elem, etree._Comment)
                     or isinstance(elem, etree._ProcessingInstruction)):
                 elem.tag = etree.QName(elem).localname
         # Remove unused namespace declarations
-        etree.cleanup_namespaces(self.myfile.tree)
+        etree.cleanup_namespaces(self.tree)
 
     def process_args(self):
         # Load default CSS for transformations
@@ -567,20 +557,20 @@ class PgdpFileHtml(PgdpFile):
     def analyze(self):
         """Clean then analyse the content of a file."""
         # Empty the head - we only want the body
-        self.myfile.tree.find('head').clear()
+        self.tree.find('head').clear()
 
         # Remember which line <body> was.
         lineno = 0
-        for line in self.myfile.text:
+        for line in self.file_text:
             if '<body' in line:
                 break
             lineno = lineno + 1
 
-        #        self.start_line = self.myfile.tree.find('body').sourceline - 2
+        #        self.start_line = self.tree.find('body').sourceline - 2
 
         # Remove PG footer, 1st method
         clear_after = False
-        for element in self.myfile.tree.find('body').iter():
+        for element in self.tree.find('body').iter():
             if clear_after:
                 element.text = ""
                 element.tail = ""
@@ -591,7 +581,7 @@ class PgdpFileHtml(PgdpFile):
 
         # Remove PG header and footer, 2nd method
         find = etree.XPath("//pre")
-        for element in find(self.myfile.tree):
+        for element in find(self.tree):
             if element.text is None:
                 continue
 
@@ -610,7 +600,7 @@ class PgdpFileHtml(PgdpFile):
         # Remove PG footer, 3rd method -- header and footer are normal html, not text in <pre> tag.
         try:
             # Look for one element
-            (element,) = etree.XPath("//p[@id='pg-end-line']")(self.myfile.tree)
+            (element,) = etree.XPath("//p[@id='pg-end-line']")(self.tree)
             while element is not None:
                 clear_element(element)
                 element = element.getnext()
@@ -620,7 +610,7 @@ class PgdpFileHtml(PgdpFile):
         # Cleaning is done.
 
         # Transform html into text for character search.
-        self.char_text = etree.XPath("normalize-space(/)")(self.myfile.tree)
+        self.char_text = etree.XPath("normalize-space(/)")(self.tree)
 
         # HTML doc should have oelig by default.
         self.has_oe_ligature = True
@@ -746,7 +736,7 @@ class PgdpFileHtml(PgdpFile):
                     find = etree.XPath(xpath)
 
                     # Find each matching element in the HTML/XHTML document
-                    for element in find(self.myfile.tree):
+                    for element in find(self.tree):
                         # Replace text with content of an attribute.
                         if f_replace_with_attr:
                             element.text = f_replace_with_attr(element)
@@ -836,7 +826,7 @@ class PgdpFileHtml(PgdpFile):
 
             # Special case for PPers who do not keep the marking around
             # the whole footnote. They only mark the first paragraph.
-            elements = etree.XPath("//div[@class='footnote']")(self.myfile.tree)
+            elements = etree.XPath("//div[@class='footnote']")(self.tree)
             if len(elements) == 1:
                 element = elements[0]
 
@@ -853,7 +843,7 @@ class PgdpFileHtml(PgdpFile):
                              "//div/p[span/a[@id[starts-with(.,'Footnote_')]]]",
                              "//p[@class='footnote']",
                              "//div[@class='footnote']"]:
-                    for element in etree.XPath(find)(self.myfile.tree):
+                    for element in etree.XPath(find)(self.tree):
                         # Grab the text and remove the footnote number
                         footnotes += [strip_note_tag(element.xpath("string()"))]
                         # Remove the footnote from the main document
@@ -867,7 +857,7 @@ class PgdpFileHtml(PgdpFile):
 
     def transform(self):
         """Transform html into text. Do a final cleanup."""
-        self.text = etree.XPath("string(/)")(self.myfile.tree)
+        self.text = etree.XPath("string(/)")(self.tree)
 
         # Apply transform function to the main text
         for func in self.transform_func:
@@ -1163,7 +1153,7 @@ class PPComp(object):
 
         html_content = self.create_html(files, main_diff, fnotes_diff)
 
-        return err_message, html_content, files[0].myfile.basename, files[1].myfile.basename
+        return err_message, html_content, files[0].basename, files[1].basename
 
     def simple_html(self):
         """For debugging purposes. Transform the html and print the text output."""
@@ -1174,10 +1164,6 @@ class PPComp(object):
             print("Error: not an html file")
 
         f.load(fname)
-        if f.myfile is None:
-            print("Couldn't load file:", fname)
-            return
-
         f.analyze()
 
         # Remove non-breakable spaces between numbers. For instance, a
