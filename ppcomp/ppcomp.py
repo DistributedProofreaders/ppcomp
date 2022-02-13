@@ -101,9 +101,12 @@ class PgdpFileText(PgdpFile):
     def load(self, filename):
         """Load the file"""
         self.file_text = self.load_file(filename).splitlines()
-        self.from_pgdp_rounds = os.path.basename(filename).startswith('projectID')
-        # if not self.from_pgdp_rounds:
-        #    self.strip_pg_boilerplate()
+        self.from_pgdp_rounds = os.path.basename(self.basename).startswith('projectID')
+
+    def process_args(self):
+        if not self.from_pgdp_rounds:
+            #self.strip_pg_boilerplate()
+            pass
 
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from a text version if present."""
@@ -386,12 +389,11 @@ class PgdpFileHtml(PgdpFile):
     def __init__(self, args):
         super().__init__(args)
         self.tree = None
-        self.parser_errlog = None
         self.mycss = ""
 
     def load(self, filename):
         """Load the file
-        If parsing succeeded, then self.tree is set, and self.parser_errlog is [].
+        If parsing succeeded, then self.tree is set, and parser.errors is [].
         """
 
         # noinspection PyProtectedMember,Pylint
@@ -414,13 +416,12 @@ class PgdpFileHtml(PgdpFile):
         except Exception as e:
             raise SyntaxError("File cannot be parsed: " + filename + repr(e))
 
-        self.parser_errlog = parser.errors
-        if len(self.parser_errlog):
+        if len(parser.errors):
             if type(parser) == etree.HTMLParser:
                 # HTML parser rejects tags with both id and filename (513 == DTD_ID_REDEFINED)
-                self.parser_errlog = [x for x in self.parser_errlog
-                                      if self.parser_errlog[0].type != 513]
-        if len(self.parser_errlog):
+                parser.errors = [x for x in parser.errors
+                                      if parser.errors[0].type != 513]
+        if len(parser.errors):
             raise SyntaxError("Parsing errors in document: " + filename)
 
         self.tree = tree.getroottree()
@@ -798,10 +799,9 @@ class PgdpFileHtml(PgdpFile):
     @staticmethod
     def clear_element(element):
         """In an XHTML tree, remove all sub-elements of a given element.
-        We can't properly remove an XML element while traversing the
-        tree. But we can clear it. Remove its text and children. However,
-        the tail must be preserved because it points to the next element,
-        so re-attach.
+        We can't properly remove an XML element while traversing the tree. But we can clear it.
+        Remove its text and children. However, the tail must be preserved because it points to
+        the next element, so re-attach.
         """
         tail = element.tail
         element.clear()
