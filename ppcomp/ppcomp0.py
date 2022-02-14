@@ -660,7 +660,7 @@ class PgdpFileHtml(PgdpFile):
                     xpath = cssselect.HTMLTranslator().selector_to_xpath(selector)
                     find = etree.XPath(xpath)
 
-                    # Find each matching element in the HTML/XHTML document
+                    # Find each matching element in the HTML document
                     for element in find(self.tree):
                         # Replace text with content of an attribute.
                         if f_replace_with_attr:
@@ -875,12 +875,12 @@ class PPComp(object):
                print(line)
         Use dwdiff instead.
         """
-        with tempfile.NamedTemporaryFile(mode='wb') as t1, \
-                tempfile.NamedTemporaryFile(mode='wb') as t2:
-            t1.write(text1.encode('utf-8'))
-            t2.write(text2.encode('utf-8'))
-            t1.flush()
-            t2.flush()
+        with tempfile.NamedTemporaryFile(mode='wb') as temp1, \
+                tempfile.NamedTemporaryFile(mode='wb') as temp2:
+            temp1.write(text1.encode('utf-8'))
+            temp2.write(text2.encode('utf-8'))
+            temp1.flush()
+            temp2.flush()
             repo_dir = os.environ.get("OPENSHIFT_DATA_DIR", "")
             if repo_dir:
                 dwdiff_path = os.path.join(repo_dir, "bin", "dwdiff")
@@ -903,16 +903,13 @@ class PPComp(object):
                    "-x ]COMPPP_STOP_DEL[",
                    "-y ]COMPPP_START_INS[",
                    "-z ]COMPPP_STOP_INS["]
-
             if self.args.ignore_case:
                 cmd += ["--ignore-case"]
-
-            cmd += [t1.name, t2.name]
+            cmd += [temp1.name, temp2.name]
 
             # This shouldn't be needed if openshift was utf8 by default.
             env = os.environ.copy()
             env["LANG"] = "en_US.UTF-8"
-
             p = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env)
             # The output is raw, so we have to decode it to UTF-8, which is the default under Ubuntu
             return p.stdout.read().decode('utf-8')
@@ -997,23 +994,18 @@ class PPComp(object):
 
     @staticmethod
     def check_char(files, char_best, char_other):
-        """Check whether each file has the best character. If not, add a conversion request.
-
-        This is used for instance if one version uses ’ while the other
-        uses '. In that case, we need to convert one into the other, to
-        get a smaller diff.
+        """Check whether each file has the 'best' character. If not, add a conversion request.
+        This is used for instance if one version uses curly quotes while the other uses straight.
+        In that case, we need to convert one into the other, to get a smaller diff.
         """
-        in_0 = files[0].char_text.find(char_best)
-        in_1 = files[1].char_text.find(char_best)
-
-        if in_0 >= 0 and in_1 >= 0:  # Both have it
+        finds_0 = files[0].char_text.find(char_best)
+        finds_1 = files[1].char_text.find(char_best)
+        if finds_0 >= 0 and finds_1 >= 0:  # Both have it
             return
-
-        if in_0 == -1 and in_1 == -1:  # None have it
+        if finds_0 == -1 and finds_1 == -1:  # Neither has it
             return
-
         # Downgrade one version
-        if in_0 > 0:
+        if finds_0 > 0:
             files[0].transform_func.append(lambda text: text.replace(char_best, char_other))
         else:
             files[1].transform_func.append(lambda text: text.replace(char_best, char_other))
@@ -1106,6 +1098,7 @@ class PPComp(object):
         self.check_char(files, "⁸", "8")  # superscript 8
         self.check_char(files, "⁹", "9")  # superscript 9
 
+        # RT: move to convert
         # Remove non-breakable spaces between numbers. For instance, a
         # text file could have 250000, and the html could have 250 000.
         if self.args.suppress_nbsp_num:
@@ -1113,6 +1106,7 @@ class PPComp(object):
             files[0].transform_func.append(func)
             files[1].transform_func.append(func)
 
+        # RT: move to convert
         # Suppress shy (soft hyphen)
         def func(text): return re.sub(r"\u00AD", r"", text)
         files[0].transform_func.append(func)

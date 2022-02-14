@@ -1,4 +1,9 @@
 import argparse
+import os
+import re
+
+from lxml import etree
+from lxml.html import html5parser
 
 """
 ppcomp.py - compare text from 2 files, ignoring html and formatting differences, for use by users
@@ -24,25 +29,44 @@ PG_EBOOK_START_REGEX = r".*?\*\*\* START OF THE PROJECT GUTENBERG EBOOK.*?\*\*\*
 
 
 class PgdpFile:
-    """Base class: Store and process a DP text or html file"""
+    """Base class: Store and process a DP text or html file
+    Call order from PPComp.do_process():
+        1. load()
+        2. analyze()
+        3. convert()
+        4. extract_footnotes()
+        5. transform()
+    """
 
     def __init__(self, args):
+        self.basename = ""
+        self.text = None
+        self.text_lines = None
         pass
 
     def load(self, filename):
-        """Load the file"""
-        pass
+        """Load a file (text or html)."""
+        self.basename = os.path.basename(filename)
+        try:
+            self.text = open(filename, 'r', encoding='utf-8').read()
+        except UnicodeError:
+            self.text = open(filename, 'r', encoding='latin-1').read()
+        except FileNotFoundError:
+            raise IOError("Cannot load file: " + filename)
+        if len(self.text) < 10:
+            raise SyntaxError("File is too short: " + filename)
+        self.text_lines = self.text.splitlines()
 
     def process_args(self):
         """Process command line arguments"""
         pass
 
-    def convert(self):
-        """Remove markup from the text"""
-        pass
-
     def analyze(self):
         """Clean then analyse the contents of a file"""
+        pass
+
+    def convert(self):
+        """Remove markup from the text"""
         pass
 
     def extract_footnotes(self):
@@ -56,30 +80,26 @@ class PgdpFile:
 
 class PgdpFileText(PgdpFile):
     """Store and process a DP text file"""
-
     def __init__(self, args):
         super().__init__(args)
         self.from_pgdp_rounds = False
 
-    def load(self, filename):
-        """Load the file"""
-        pass
-
     def process_args(self):
         """Process command line arguments"""
+        self.from_pgdp_rounds = self.basename.startswith('projectID')
+
+    def analyze(self):
+        """Clean then analyse the contents of a file"""
         pass
 
     def convert(self):
         """Remove markup from the text"""
         pass
 
-    def analyze(self):
-        """Clean then analyse the contents of a file"""
-        pass
-
     def extract_footnotes(self):
         """Extract the footnotes."""
-        pass
+        if not self.args.extract_footnotes:
+            return
 
     def transform(self):
         """Final transformation pass"""
@@ -93,24 +113,53 @@ class PgdpFileHtml(PgdpFile):
         super().__init__(args)
 
     def load(self, filename):
-        """Load the file"""
-        pass
+        """Load the file. If parsing succeeded, then self.tree is set, and parser.errors is []"""
+        # noinspection PyProtectedMember,Pylint
+        def remove_namespace(self):
+            """Remove namespace URI in elements names
+            "{http://www.w3.org/1999/xhtml}html" -> "html"
+            """
+            for elem in self.tree.iter():
+                if not (isinstance(elem, etree._Comment)
+                        or isinstance(elem, etree._ProcessingInstruction)):
+                    elem.tag = etree.QName(elem).localname
+            etree.cleanup_namespaces(self.tree)  # Remove unused namespace declarations
+
+        super().load(filename)
+        parser = html5parser.HTMLParser()
+        try:
+            tree = html5parser.document_fromstring(self.text)
+        except Exception as e:
+            raise SyntaxError("File cannot be parsed: " + filename + repr(e))
+
+        if len(parser.errors):
+            if type(parser) == etree.HTMLParser:
+                # HTML parser rejects tags with both id and filename (513 == DTD_ID_REDEFINED)
+                parser.errors = [x for x in parser.errors
+                                      if parser.errors[0].type != 513]
+        if len(parser.errors):
+            raise SyntaxError("Parsing errors in document: " + filename)
+
+        self.tree = tree.getroottree()
+        # Remove the namespace from the tags
+        remove_namespace(self)
 
     def process_args(self):
         """Process command line arguments"""
-        pass
-
-    def convert(self):
-        """Remove markup from the text"""
         pass
 
     def analyze(self):
         """Clean then analyse the content of a file"""
         pass
 
+    def convert(self):
+        """Remove markup from the text"""
+        pass
+
     def extract_footnotes(self):
         """Extract the footnotes"""
-        pass
+        if not self.args.extract_footnotes:
+            return
 
     def transform(self):
         """Final transformation pass"""
@@ -122,15 +171,15 @@ class PPComp:
     def __init__(self, args):
         self.args = args
 
-    def compare_texts(self, text1, text2):
-        """Compare two sources. We could have used the difflib module, but it's too slow:
-           for line in difflib.unified_diff(f1.words, f2.words):
-               print(line)
-        Use dwdiff instead.
-        """
+    def convert(self):
+        """Apply the various conversions to both files"""
         pass
 
-    def do_process():
+    def compare_texts(self, text1, text2):
+        """Compare two sources, using dwdiff"""
+        pass
+
+    def do_process(self):
         """Main routine: load & process the files"""
         pass
 
@@ -140,12 +189,39 @@ class PPComp:
 
     def simple_html(self):
         """For debugging purposes. Transform the html and print the text output."""
-        pass
+        if not self.args.filename[0].lower().endswith(('.html', '.htm')):
+            print("Error: not an html html_file")
+            return
+
+        html_file = PgdpFileHtml(self.args)
+        html_file.load(self.args.filename[0])
+        html_file.analyze()
+        html_file.convert()
+        html_file.extract_footnotes()
+        html_file.transform()
+        print(html_file.text)
+
+    @staticmethod
+    def check_char(files, char_best, char_other):
+        """Check whether each file has the 'best' character. If not, add a conversion request.
+        This is used for instance if one version uses curly quotes while the other uses straight.
+        In that case, we need to convert one into the other, to get a smaller diff.
+        """
+        finds_0 = files[0].text.find(char_best)
+        finds_1 = files[1].text.find(char_best)
+        if finds_0 >= 0 and finds_1 >= 0:  # Both have it
+            return
+        if finds_0 == -1 and finds_1 == -1:  # Neither has it
+            return
+        # Downgrade one version
+        if finds_0 > 0:
+            files[0].transform_func.append(lambda text: text.replace(char_best, char_other))
+        else:
+            files[1].transform_func.append(lambda text: text.replace(char_best, char_other))
 
 
-######################################
-# CSS used to display the diffs.
 def diff_css():
+    """CSS used to display the diffs"""
     return """
 body {
     margin-left: 5%;
