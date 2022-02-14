@@ -57,21 +57,27 @@ class PgdpFile:
             raise SyntaxError("File is too short: " + filename)
         self.text_lines = self.text.splitlines()
 
-    def process_args(self):
-        """Process command line arguments"""
-        pass
-
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from the text if present."""
         pass
 
     def prepare(self):
         """Clean text in preparation for conversions"""
+        # strip boilerplate
+        # page markup, blank pages
+        # block markup
+        # replace italics, bold
+        # proofers notes
+        # split words
+        # thought breaks
+        # add/suppress illustrations, sidenotes, footnotes
+        # html head
+        # css transforms
         pass
 
     def convert(self):
         """Apply needed text conversions"""
-        # RT: do conversions that apply to both here & call from subclass
+        # handle universal ones here, particular ones in subclass, comparisons (do_process) elsewhere
         for func in self.transform_func:
             self.text = func(self.text)
         pass
@@ -87,17 +93,13 @@ class PgdpFileText(PgdpFile):
         super().__init__(args)
         self.from_pgdp_rounds = False
 
-    def process_args(self):
-        """Process command line arguments"""
-        self.from_pgdp_rounds = self.basename.startswith('projectID')
-
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from the text if present."""
         pass
 
     def prepare(self):
         """Clean text in preparation for conversions"""
-        pass
+        self.from_pgdp_rounds = self.basename.startswith('projectID')
 
     def convert(self):
         """Apply needed text conversions"""
@@ -146,10 +148,6 @@ class PgdpFileHtml(PgdpFile):
         self.tree = tree.getroottree()
         # Remove the namespace from the tags
         remove_namespace(self)
-
-    def process_args(self):
-        """Process command line arguments"""
-        pass
 
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from the text if present."""
