@@ -32,7 +32,7 @@ class PgdpFile:
     """Base class: Store and process a DP text or html file
     Call order from PPComp.do_process():
         1. load()
-        2. analyze()
+        2. prepare()
         3. convert()
         4. extract_footnotes()
         5. transform()
@@ -40,9 +40,9 @@ class PgdpFile:
 
     def __init__(self, args):
         self.basename = ""
-        self.text = None
-        self.text_lines = None
-        pass
+        self.text = None  # file text
+        self.text_lines = None  # list of file lines
+        self.footnotes = ""  # footnotes, if extracted
 
     def load(self, filename):
         """Load a file (text or html)."""
@@ -61,20 +61,23 @@ class PgdpFile:
         """Process command line arguments"""
         pass
 
-    def analyze(self):
-        """Clean then analyse the contents of a file"""
+    def strip_pg_boilerplate(self):
+        """Remove the PG header and footer from the text if present."""
+        pass
+
+    def prepare(self):
+        """Clean text in preparation for conversions"""
         pass
 
     def convert(self):
-        """Remove markup from the text"""
+        """Apply needed text conversions"""
+        # RT: do conversions that apply to both here & call from subclass
+        for func in self.transform_func:
+            self.text = func(self.text)
         pass
 
     def extract_footnotes(self):
         """Extract the footnotes"""
-        pass
-
-    def transform(self):
-        """Final transformation pass"""
         pass
 
 
@@ -88,27 +91,27 @@ class PgdpFileText(PgdpFile):
         """Process command line arguments"""
         self.from_pgdp_rounds = self.basename.startswith('projectID')
 
-    def analyze(self):
-        """Clean then analyse the contents of a file"""
+    def strip_pg_boilerplate(self):
+        """Remove the PG header and footer from the text if present."""
+        pass
+
+    def prepare(self):
+        """Clean text in preparation for conversions"""
         pass
 
     def convert(self):
-        """Remove markup from the text"""
-        pass
+        """Apply needed text conversions"""
+        for func in self.transform_func:
+            self.text = func(self.text)
 
     def extract_footnotes(self):
         """Extract the footnotes."""
         if not self.args.extract_footnotes:
             return
 
-    def transform(self):
-        """Final transformation pass"""
-        pass
-
 
 class PgdpFileHtml(PgdpFile):
     """Store and process a DP html file."""
-
     def __init__(self, args):
         super().__init__(args)
 
@@ -148,22 +151,24 @@ class PgdpFileHtml(PgdpFile):
         """Process command line arguments"""
         pass
 
-    def analyze(self):
-        """Clean then analyse the content of a file"""
+    def strip_pg_boilerplate(self):
+        """Remove the PG header and footer from the text if present."""
+        pass
+
+    def prepare(self):
+        """Clean text in preparation for conversions"""
         pass
 
     def convert(self):
-        """Remove markup from the text"""
-        pass
+        """Apply needed text conversions"""
+        self.text = etree.XPath("string(/)")(self.tree)
+        for func in self.transform_func:
+            self.text = func(self.text)
 
     def extract_footnotes(self):
         """Extract the footnotes"""
         if not self.args.extract_footnotes:
             return
-
-    def transform(self):
-        """Final transformation pass"""
-        pass
 
 
 class PPComp:
@@ -171,8 +176,8 @@ class PPComp:
     def __init__(self, args):
         self.args = args
 
-    def convert(self):
-        """Apply the various conversions to both files"""
+    def convert_both(self):
+        """Apply various conversions to both files"""
         pass
 
     def compare_texts(self, text1, text2):
@@ -180,7 +185,12 @@ class PPComp:
         pass
 
     def do_process(self):
-        """Main routine: load & process the files"""
+        """Main routine: load & process the files
+            1. load()
+            2. prepare()
+            3. convert()
+            4. extract_footnotes()
+        """
         pass
 
     def create_html(self, files, text, footnotes):
@@ -190,15 +200,13 @@ class PPComp:
     def simple_html(self):
         """For debugging purposes. Transform the html and print the text output."""
         if not self.args.filename[0].lower().endswith(('.html', '.htm')):
-            print("Error: not an html html_file")
+            print("Error: not an html file")
             return
-
         html_file = PgdpFileHtml(self.args)
         html_file.load(self.args.filename[0])
-        html_file.analyze()
+        html_file.prepare()
         html_file.convert()
         html_file.extract_footnotes()
-        html_file.transform()
         print(html_file.text)
 
     @staticmethod

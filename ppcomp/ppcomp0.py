@@ -272,8 +272,6 @@ class PgdpFileText(PgdpFile):
         """Final cleanup."""
         for func in self.transform_func:
             self.text = func(self.text)
-
-        # Apply transform function to the footnotes
         for func in self.transform_func:
             self.footnotes = func(self.footnotes)
 
