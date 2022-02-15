@@ -44,8 +44,7 @@
 
 [b]All file actions:[/b]
 [list]
-[*]Extract footnotes (option
-[*]Suppress soft hyphen (U+00AD)
+[*]Extract footnotes (option)
 [*]"[oe]", "oe", "œ" ligature replacements [color=#FF0000]Obsolete: should now treat same as ae, do nothing[/color]
 [*]Character conversions - if one file has 1st char & other does not, convert
 [code]
@@ -89,27 +88,18 @@
 
 [b]Text file actions:[/b]
 [list]
-[*]
+[*]Remove "[Illustration: ]" tags (option)
+[*]Remove "[Sidenote: ]" tags (option)
+[*]Remove "[Footnote: ]" tags (option)
 [/list]
 
 [b]Text file from rounds actions:[/b]
 [list]
 [*]Remove page numbers, [Blank page]
-[code]
-    span[class^="pagenum"],
-    p[class^="pagenum"],
-    div[class^="pagenum"],
-    span[class^="pageno"],
-    p[class^="pageno"],
-    div[class^="pageno"],
-    p[class^="page"],
-    span[class^="pgnum"],
-    div[id^="Page_"]
-[/code]
 [*]if Silence formatting differences: remove <i> and <b>
 			else replace with _, =
-[*]Suppress_proofers_notes (option)
-[*]Regroup_split_words (option)
+[*]Remove proofers notes (option)
+[*]Regroup split words (option)
 [*]Remove block markup
 [code]
     "/*", "*/",
@@ -134,6 +124,15 @@
     span[class^="pgnum"],
     div[id^="Page_"]
 [/code]
+[*]<i>, <em>, <cite> to '_'
+[*]<b> to '='
+[*]<sup> to "^{}"
+[*]<sub> to "_{}"
+[*]Remove non-breakable spaces between numbers (option)
+[*]Remove soft hyphen (U+00AD)
+[*]Remove zero width space (U+200B)
+[*]Add "[Illustration: ]" tags (option)
+[*]Add "[Sidenote: ]" tags (option)
 [/list]
 
 [b]bold[/b]
