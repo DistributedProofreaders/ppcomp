@@ -6,7 +6,7 @@ args = None
 def test_load_text_file():
     textfile = PgdpFileText(args)
     textfile.load('fossilplants1.txt')
-    length = len(textfile.text_lines)
+    length = len(textfile.text.splitlines())
     assert length == 19647
     textfile.prepare()
     assert not textfile.from_pgdp_rounds
@@ -15,7 +15,7 @@ def test_load_text_file():
 def test_load_html_file():
     htmlfile = PgdpFileHtml(args)
     htmlfile.load('fossilplants1.html')
-    length = len(htmlfile.text_lines)
+    length = len(htmlfile.text.splitlines())
     assert length == 24190
     assert htmlfile.tree
 
@@ -23,7 +23,7 @@ def test_load_html_file():
 def test_load_pgdp_file():
     textfile = PgdpFileText(args)
     textfile.load('projectID123456.txt')
-    length = len(textfile.text_lines)
+    length = len(textfile.text.splitlines())
     assert length == 19647
     textfile.prepare()
     assert textfile.from_pgdp_rounds

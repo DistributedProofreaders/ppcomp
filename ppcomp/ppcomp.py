@@ -41,7 +41,6 @@ class PgdpFile:
         self.args = args
         self.basename = ""
         self.text = None  # file text
-        self.text_lines = None  # list of file lines
         self.footnotes = ""  # footnotes, if extracted
         self.transform_func = []  # List of transforms to perform
 
@@ -58,7 +57,6 @@ class PgdpFile:
             raise IOError("Cannot load file: " + filename) from ex
         if len(self.text) < 10:
             raise SyntaxError("File is too short: " + filename)
-        self.text_lines = self.text.splitlines()
 
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from the text if present."""
@@ -161,7 +159,6 @@ class PgdpFileHtml(PgdpFile):
         """Clean text in preparation for conversions"""
         pass
 
-    # noinspection Pylint
     def convert(self):
         """Apply needed text conversions"""
         # noinspection Pylint
