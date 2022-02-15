@@ -114,10 +114,10 @@ class PgdpFileText(PgdpFile):
         for lineno, line in enumerate(self.text, start=1):
             # Find the markers. Unfortunately PG lacks consistency
             if line.startswith((PG_EBOOK_START1, PG_EBOOK_START2)):
-                new_text = []
+                new_text = []  # PG found, remove previous lines
                 self.start_line = lineno
             elif line.startswith((PG_EBOOK_END1, PG_EBOOK_END2)):
-                break
+                break  # ignore following lines
             else:
                 new_text.append(line)
         self.text = new_text
@@ -546,16 +546,16 @@ class PgdpFileHtml(PgdpFile):
         escaped_unicode_re = re.compile(r"\\u[0-9a-fA-F]{4}")
 
         def text_apply(element, func):
-            """Apply a function to every sub element's .text and .tail, and element's .text."""
+            """Apply a function to every sub-element's .text and .tail, and element's .text"""
             if element.text:
                 element.text = func(element.text)
-            for el in element.iter():
-                if el == element:
+            for sub in element.iter():
+                if sub == element:
                     continue
-                if el.text:
-                    el.text = func(el.text)
-                if el.tail:
-                    el.tail = func(el.tail)
+                if sub.text:
+                    sub.text = func(sub.text)
+                if sub.tail:
+                    sub.tail = func(sub.tail)
 
         def escaped_unicode(m):
             try:

@@ -40,7 +40,10 @@ class PgdpFile:
     def __init__(self, args):
         self.args = args
         self.basename = ""
-        self.text = None  # file text
+        # RT: do we want the plain text, or the list of lines? not both, too hard to sync
+        # for now, plain text
+        self.text = ""  # file text
+        self.start_line = 0  # line text started, before stripping boilerplate and/or head
         self.footnotes = ""  # footnotes, if extracted
         self.transform_func = []  # List of transforms to perform
 
@@ -98,11 +101,23 @@ class PgdpFileText(PgdpFile):
 
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from the text if present."""
-        pass
+        new_text = []
+        for lineno, line in enumerate(self.text.splitlines(), start=1):
+            # Find the markers. Unfortunately PG lacks consistency
+            if line.startswith((PG_EBOOK_START1, PG_EBOOK_START2)):
+                new_text = []  # PG found, remove previous lines
+                self.start_line = lineno
+            elif line.startswith((PG_EBOOK_END1, PG_EBOOK_END2)):
+                break  # ignore following lines
+            else:
+                new_text.append(line)
+        self.text = '\n'.join(new_text)
 
     def prepare(self):
         """Clean text in preparation for conversions"""
         self.from_pgdp_rounds = self.basename.startswith('projectID')
+        if not self.from_pgdp_rounds:
+            self.strip_pg_boilerplate()
 
     def convert(self):
         """Apply needed text conversions"""
@@ -121,6 +136,7 @@ class PgdpFileHtml(PgdpFile):
     def __init__(self, args):
         super().__init__(args)
         self.tree = None
+        self.mycss = ""  # CSS for transformations
 
     def load(self, filename):
         # noinspection GrazieInspection
@@ -157,7 +173,31 @@ class PgdpFileHtml(PgdpFile):
 
     def prepare(self):
         """Clean text in preparation for conversions"""
-        pass
+        # Empty the head - we only want the body
+        self.tree.find('head').clear()
+
+        # Process command line arguments
+        # Load default CSS for transformations
+        if self.args.css_no_default is False:
+            self.mycss = DEFAULT_TRANSFORM_CSS
+        if self.args.css_smcap == 'U':
+            self.mycss += ".smcap { text-transform:uppercase; }"
+        elif self.args.css_smcap == 'L':
+            self.mycss += ".smcap { text-transform:lowercase; }"
+        elif self.args.css_smcap == 'T':
+            self.mycss += ".smcap { text-transform:capitalize; }"
+        if self.args.css_bold:
+            self.mycss += "b:before, b:after { content: " + self.args.css_bold + "; }"
+        if self.args.css_add_illustration:
+            for figclass in ['figcenter', 'figleft', 'figright']:
+                self.mycss += '.' + figclass + ':before { content: "[Illustration: "; }'
+                self.mycss += '.' + figclass + ':after { content: "]"; }'
+        if self.args.css_add_sidenote:
+            self.mycss += '.sidenote:before { content: "[Sidenote: "; }'
+            self.mycss += '.sidenote:after { content: "]"; }'
+        # --css can be present multiple times, so it's a list.
+        for css in self.args.css:
+            self.mycss += css
 
     def convert(self):
         """Apply needed text conversions"""
@@ -170,6 +210,40 @@ class PgdpFileHtml(PgdpFile):
         """Extract the footnotes"""
         if not self.args.extract_footnotes:
             return
+
+
+DEFAULT_TRANSFORM_CSS = '''
+        /* Italics */
+        i:before, cite:before, em:before,
+        i:after, cite:after, em:after, { content: "_"; }
+
+        /* Bold */
+        b:before, bold:before,
+        b:after, bold:after { content: "="; }
+
+        /* line breaks with <br /> will be ignored by normalize-space().
+         * Add a space in all of them to work around. */
+        br:before { content: " "; }
+
+        /* Add spaces around td tags. */
+        td:before, td:after { content: " "; }
+
+        /* Remove page numbers. It seems every PP has a different way. */
+        span[class^="pagenum"],
+        p[class^="pagenum"],
+        div[class^="pagenum"],
+        span[class^="pageno"],
+        p[class^="pageno"],
+        div[class^="pageno"],
+        p[class^="page"],
+        span[class^="pgnum"],
+        div[id^="Page_"] { display: none }
+
+        /* Superscripts, Subscripts */
+        sup:before              { content: "^{"; }
+        sub:before              { content: "_{"; }
+        sup:after, sub:after    { content: "}"; }
+    '''
 
 
 class PPComp:
