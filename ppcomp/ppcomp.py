@@ -1,13 +1,12 @@
 import argparse
 import os
-import re
 
 from lxml import etree
 from lxml.html import html5parser
 
 """
 ppcomp.py - compare text from 2 files, ignoring html and formatting differences, for use by users
-of Distributed Profreaders (https://www.pgdp.net)
+of Distributed Proofreaders (https://www.pgdp.net)
 
 Applies various transformations according to program options before passing the files to the Linux
 program dwdiff.
@@ -39,20 +38,24 @@ class PgdpFile:
     """
 
     def __init__(self, args):
+        self.args = args
         self.basename = ""
         self.text = None  # file text
         self.text_lines = None  # list of file lines
         self.footnotes = ""  # footnotes, if extracted
+        self.transform_func = []  # List of transforms to perform
 
     def load(self, filename):
         """Load a file (text or html)."""
         self.basename = os.path.basename(filename)
         try:
-            self.text = open(filename, 'r', encoding='utf-8').read()
+            with open(filename, 'r', encoding='utf-8') as file:
+                self.text = file.read()
         except UnicodeError:
-            self.text = open(filename, 'r', encoding='latin-1').read()
-        except FileNotFoundError:
-            raise IOError("Cannot load file: " + filename)
+            with open(filename, 'r', encoding='latin-1') as file:
+                self.text = file.read()
+        except FileNotFoundError as ex:
+            raise IOError("Cannot load file: " + filename) from ex
         if len(self.text) < 10:
             raise SyntaxError("File is too short: " + filename)
         self.text_lines = self.text.splitlines()
@@ -77,7 +80,8 @@ class PgdpFile:
 
     def convert(self):
         """Apply needed text conversions"""
-        # handle universal ones here, particular ones in subclass, comparisons (do_process) elsewhere
+        # handle universal ones here, particular ones in subclass,
+        # comparisons (do_process) elsewhere
         for func in self.transform_func:
             self.text = func(self.text)
         pass
@@ -89,6 +93,7 @@ class PgdpFile:
 
 class PgdpFileText(PgdpFile):
     """Store and process a DP text file"""
+
     def __init__(self, args):
         super().__init__(args)
         self.from_pgdp_rounds = False
@@ -114,40 +119,39 @@ class PgdpFileText(PgdpFile):
 
 class PgdpFileHtml(PgdpFile):
     """Store and process a DP html file."""
+
     def __init__(self, args):
         super().__init__(args)
+        self.tree = None
 
     def load(self, filename):
+        # noinspection GrazieInspection
         """Load the file. If parsing succeeded, then self.tree is set, and parser.errors is []"""
+
         # noinspection PyProtectedMember,Pylint
-        def remove_namespace(self):
+        def remove_namespace():
             """Remove namespace URI in elements names
             "{http://www.w3.org/1999/xhtml}html" -> "html"
             """
             for elem in self.tree.iter():
-                if not (isinstance(elem, etree._Comment)
-                        or isinstance(elem, etree._ProcessingInstruction)):
+                if not isinstance(elem, (etree._Comment, etree._ProcessingInstruction)):
                     elem.tag = etree.QName(elem).localname
+            # noinspection Pylint
             etree.cleanup_namespaces(self.tree)  # Remove unused namespace declarations
 
         super().load(filename)
         parser = html5parser.HTMLParser()
         try:
             tree = html5parser.document_fromstring(self.text)
-        except Exception as e:
-            raise SyntaxError("File cannot be parsed: " + filename + repr(e))
+        except Exception as ex:
+            raise SyntaxError("File cannot be parsed: " + filename) from ex
 
-        if len(parser.errors):
-            if type(parser) == etree.HTMLParser:
-                # HTML parser rejects tags with both id and filename (513 == DTD_ID_REDEFINED)
-                parser.errors = [x for x in parser.errors
-                                      if parser.errors[0].type != 513]
-        if len(parser.errors):
+        if parser.errors and len(parser.errors):
             raise SyntaxError("Parsing errors in document: " + filename)
 
         self.tree = tree.getroottree()
         # Remove the namespace from the tags
-        remove_namespace(self)
+        remove_namespace()
 
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from the text if present."""
@@ -157,8 +161,10 @@ class PgdpFileHtml(PgdpFile):
         """Clean text in preparation for conversions"""
         pass
 
+    # noinspection Pylint
     def convert(self):
         """Apply needed text conversions"""
+        # noinspection Pylint
         self.text = etree.XPath("string(/)")(self.tree)
         for func in self.transform_func:
             self.text = func(self.text)
@@ -171,6 +177,7 @@ class PgdpFileHtml(PgdpFile):
 
 class PPComp:
     """Compare two files."""
+
     def __init__(self, args):
         self.args = args
 
@@ -287,8 +294,10 @@ def html_usage(filename1, filename2):
         Line numbers can sometimes be very approximate.
       </p>
       <p>
-        Deleted words that were in the first file but not in the second will appear <del>like this</del>.<br />
-        Inserted words that were in the second file but not in the first will appear <ins>like this</ins>.
+        Deleted words that were in the first file but not in the second will appear <del>like
+         this</del>.<br />
+        Inserted words that were in the second file but not in the first will appear <ins>like
+         this</ins>.
       </p>
     </div>
     """
@@ -327,6 +336,7 @@ def output_html(html_content, filename1, filename2):
 
 
 def main():
+    """Main program"""
     parser = argparse.ArgumentParser(description='Diff text document for PGDP PP.')
     parser.add_argument('filename', metavar='FILENAME', type=str,
                         help='input files', nargs=2)
@@ -376,7 +386,7 @@ def main():
     if args.simple_html:
         compare.simple_html()
     else:
-        _, html_content, fn1, fn2 = compare.do_process
+        html_content, fn1, fn2 = compare.do_process
         output_html(html_content, fn1, fn2)
 
 

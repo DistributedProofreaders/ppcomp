@@ -8,7 +8,7 @@ def test_load_text_file():
     textfile.load('fossilplants1.txt')
     length = len(textfile.text_lines)
     assert length == 19647
-    textfile.process_args()
+    textfile.prepare()
     assert not textfile.from_pgdp_rounds
 
 
@@ -25,7 +25,7 @@ def test_load_pgdp_file():
     textfile.load('projectID123456.txt')
     length = len(textfile.text_lines)
     assert length == 19647
-    textfile.process_args()
+    textfile.prepare()
     assert textfile.from_pgdp_rounds
 
 

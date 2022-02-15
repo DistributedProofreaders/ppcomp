@@ -3,7 +3,7 @@
 
 """
 ppcomp.py - compare text from 2 files, ignoring html and formatting differences, for use by users
-of Distributed Profreaders (https://www.pgdp.net)
+of Distributed Proofreaders (https://www.pgdp.net)
 
 Applies various transformations according to program options before passing the files to the Linux
 program dwdiff.
@@ -1135,7 +1135,7 @@ class PPComp(object):
 
         html_content = self.create_html(files, main_diff, fnotes_diff)
 
-        return err_message, html_content, files[0].basename, files[1].basename
+        return html_content, files[0].basename, files[1].basename
 
     def simple_html(self):
         """For debugging purposes. Transform the html and print the text output."""
@@ -1325,7 +1325,7 @@ def main():
     if args.simple_html:
         x.simple_html()
     else:
-        _, html_content, fn1, fn2 = x.do_process
+        html_content, fn1, fn2 = x.do_process
         output_html(html_content, fn1, fn2)
 
 
