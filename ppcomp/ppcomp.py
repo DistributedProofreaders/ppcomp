@@ -1,10 +1,3 @@
-import argparse
-import os
-import re
-
-from lxml import etree
-from lxml.html import html5parser
-
 """
 ppcomp.py - compare text from 2 files, ignoring html and formatting differences, for use by users
 of Distributed Proofreaders (https://www.pgdp.net)
@@ -20,6 +13,15 @@ program. It is used as part of the PP Workbench with permission.
 
 Distributable under the GNU General Public License Version 3 or newer.
 """
+
+import argparse
+import os
+import re
+
+import cssselect
+import tinycss
+from lxml import etree
+from lxml.html import html5parser
 
 PG_EBOOK_START1 = "*** START OF THE PROJECT GUTENBERG EBOOK"
 PG_EBOOK_START2 = "*** START OF THIS PROJECT GUTENBERG EBOOK"
@@ -40,12 +42,12 @@ class PgdpFile:
 
     def __init__(self, args):
         self.args = args
-        self.basename = ""
+        self.basename = ''
         # RT: do we want the plain text, or the list of lines? not both, too hard to sync
         # for now, plain text
-        self.text = ""  # file text
+        self.text = ''  # file text
         self.start_line = 0  # line text started, before stripping boilerplate and/or head
-        self.footnotes = ""  # footnotes, if extracted
+        self.footnotes = ''  # footnotes, if extracted
         self.transform_func = []  # List of transforms to perform
 
     def load(self, filename):
@@ -98,7 +100,6 @@ class PgdpFileText(PgdpFile):
 
     def __init__(self, args):
         super().__init__(args)
-        self.from_pgdp_rounds = False
 
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from the text if present."""
@@ -116,57 +117,57 @@ class PgdpFileText(PgdpFile):
 
     def prepare(self):
         """Clean text in preparation for conversions"""
-        self.from_pgdp_rounds = self.basename.startswith('projectID')
-        if not self.from_pgdp_rounds:
+        from_pgdp_rounds = self.basename.startswith('projectID')
+        if not from_pgdp_rounds:
             self.strip_pg_boilerplate()
-
-        if self.args.txt_cleanup_type == "n":  # none
+        if self.args.txt_cleanup_type == 'n':  # none
             return
 
-        if self.from_pgdp_rounds:
+        if from_pgdp_rounds:
             # remove page markers & blank pages
             self.text = re.sub(r"-----File: \w+.png.*", '', self.text)
             self.text = re.sub(r"\[Blank Page]", '', self.text)
 
-            if self.args.txt_cleanup_type == "p":  # proofers, all done
+            if self.args.txt_cleanup_type == 'p':  # proofers, all done
                 return
+            # else 'b' best effort
 
             # remove block markup
-            block_markup = ["/*", "*/",
-                            "/#", "#/",
-                            "/P", "P/",
-                            "/F", "F/",
-                            "/X", "X/"]
+            block_markup = ['/*', '*/',
+                            '/#', '#/',
+                            '/P', 'P/',
+                            '/F', 'F/',
+                            '/X', 'X/']
             for item in block_markup:
-                self.text = self.text.replace("\n" + item + "\n", "\n\n")
+                self.text = self.text.replace('\n' + item + '\n', '\n\n')
 
             # ignore or replace italics and bold html
             if self.args.ignore_format:  # silence formatting differences
                 for item in ["<i>", "</i>", "<b>", "</b>"]:
-                    self.text = self.text.replace(item, "")
+                    self.text = self.text.replace(item, '')
             else:
                 for item in ["<i>", "</i>"]:
-                    self.text = self.text.replace(item, "_")
+                    self.text = self.text.replace(item, '_')
                 for item in ["<b>", "</b>"]:
-                    self.text = self.text.replace(item, "=")
+                    self.text = self.text.replace(item, '=')
 
             # remove other markup
             self.text = re.sub("<.*?>", '', self.text)
             if self.args.suppress_proofers_notes:
-                self.text = re.sub(r"\[\*\*[^]]*?\]", '', self.text)
+                self.text = re.sub(r"\[\*\*[^]]*?]", '', self.text)
 
             if self.args.regroup_split_words:
-                word_splits = {r"(\w+)-\*(\n+)\*": r'\2\1',
+                word_splits = {r"(\w+)-\*(\n+)\*": r"\2\1",
                                r"(\w+)-\*_(\n\n)_\*": r"\2\1",
                                r"(\w+)-\*(\w+)": r"\1\2"}
-                for item in word_splits:
-                    self.text = re.sub(item, word_splits[item], self.text)
+                for key, value in word_splits.items():
+                    self.text = re.sub(key, value, self.text)
 
         else:  # processed text file
             # BUG: these can be perfectly valid characters, need to use regex
             if self.args.ignore_format:
-                self.text = self.text.replace("_", "")
-                self.text = self.text.replace("=", "")
+                self.text = self.text.replace('_', '')
+                self.text = self.text.replace('=', '')
 
             # Remove thought breaks
             self.text = re.sub(r"\*\s+\*\s+\*\s+\*\s+\*", '', self.text)
@@ -174,7 +175,7 @@ class PgdpFileText(PgdpFile):
         # remove [Footnote, [Illustrations and [Sidenote tags
         # BUG: doesn't handle closing ']' or contents
         if self.args.ignore_format or self.args.suppress_footnote_tags:
-            self.text = re.sub(r"\[Footnote (\d+): ", r'\1 ', self.text)
+            self.text = re.sub(r"\[Footnote (\d+): ", r"\1 ", self.text)
             self.text = re.sub(r"\*\[Footnote: ", '', self.text)
 
         if self.args.ignore_format or self.args.suppress_illustration_tags:
@@ -202,7 +203,7 @@ class PgdpFileHtml(PgdpFile):
         super().__init__(args)
         self.tree = None
         self.body_line = 0  # line number of <body> tag
-        self.mycss = ""  # CSS for transformations
+        self.mycss = ''  # CSS for transformations
 
     def load(self, filename):
         # noinspection GrazieInspection
@@ -258,7 +259,7 @@ class PgdpFileHtml(PgdpFile):
 
         # process command line arguments
         # load default CSS for transformations
-        if self.args.css_no_default is False:
+        if not self.args.css_no_default:
             self.mycss = DEFAULT_TRANSFORM_CSS
         if self.args.css_smcap == 'U':
             self.mycss += ".smcap { text-transform:uppercase; }"
@@ -279,12 +280,202 @@ class PgdpFileHtml(PgdpFile):
         for css in self.args.css:
             self.mycss += css
 
+        self.process_css()
+
     def convert(self):
         """Apply needed text conversions"""
         # noinspection Pylint
         self.text = etree.XPath("string(/)")(self.tree)
         for func in self.transform_func:
             self.text = func(self.text)
+
+        # zero width space
+        if self.args.ignore_0_space:
+            self.text = self.text.replace(chr(0x200b), '')
+
+    def process_css(self):
+        # Process each rule from our transformation CSS
+        escaped_unicode_re = re.compile(r"\\u[0-9a-fA-F]{4}")
+
+        def text_apply(element, func):
+            """Apply a function to every sub-element's .text and .tail, and element's .text"""
+            if element.text:
+                element.text = func(element.text)
+            for sub in element.iter():
+                if sub == element:
+                    continue
+                if sub.text:
+                    sub.text = func(sub.text)
+                if sub.tail:
+                    sub.tail = func(sub.tail)
+
+        def escaped_unicode(item):
+            try:
+                return bytes(item.group(0), 'utf8').decode('unicode-escape')
+            except Exception:
+                return item.group(0)
+
+        def new_content(element):
+            """Process the "content:" property"""
+            result = ""
+            for token in val.value:
+                if token.type == "STRING":
+                    # e.g. { content: "xyz" }
+                    result += escaped_unicode_re.sub(escaped_unicode, token.value)
+                elif token.type == "FUNCTION":
+                    if token.function_name == 'attr':
+                        # e.g. { content: attr(title) }
+                        result += element.attrib.get(token.content[0].value, "")
+                elif token.type == "IDENT":
+                    if token.value == "content":
+                        # identity, e.g. { content: content }
+                        result += element.text
+            return result
+
+        # process each rule from our transformation CSS
+        stylesheet = tinycss.make_parser().parse_stylesheet(self.mycss)
+        property_errors = []
+        for rule in stylesheet.rules:
+            # extract values we care about
+            f_replace_with_attr = None
+            f_text_replace = None
+            f_element_func = None
+            f_move = None
+
+            for val in rule.declarations:
+                if val.name == 'content':
+                    # result depends on element and pseudo elements
+                    pass
+                elif val.name == "text-transform":
+                    if len(val.value) != 1:
+                        property_errors += [(val.line, val.column, val.name + " takes 1 argument")]
+                    else:
+                        value = val.value[0].value
+                        if value == "uppercase":
+                            def f_transform(text):
+                                return text.upper()
+                        elif value == "lowercase":
+                            def f_transform(text):
+                                return text.lower()
+                        elif value == "capitalize":
+                            def f_transform(text):
+                                return text.title()
+                        else:
+                            property_errors += [(val.line, val.column,
+                                                 val.name + " accepts only 'uppercase',"
+                                                            " 'lowercase' or 'capitalize'")]
+                elif val.name == "_replace_with_attr":
+                    def f_replace_with_attr(item):
+                        return item.attrib[val.value[0].value]
+                elif val.name == "text-replace":
+                    # skip S (spaces) tokens
+                    values = [v for v in val.value if v.type != "S"]
+                    if len(values) != 2:
+                        property_errors += [(val.line, val.column, val.name
+                                             + " takes 2 string arguments")]
+                    else:
+                        value1 = values[0].value
+                        value2 = values[1].value
+                        def f_text_replace(text):
+                            return text.replace(value1, value2)
+                elif val.name == "display":
+                    # support display none only. So ignore "none" argument
+                    f_element_func = self.clear_element
+                elif val.name == "_graft":
+                    values = [v for v in val.value if v.type != "S"]
+                    if len(values) < 1:
+                        property_errors += [(val.line, val.column, val.name
+                                             + " takes at least one argument")]
+                        continue
+                    f_move = []
+                    for value in values:
+                        print("[", value.value, "]")
+                        if value.value == 'parent':
+                            f_move.append(lambda el: el.getparent())
+                        elif value.value == 'prev-sib':
+                            f_move.append(lambda el: el.getprevious())
+                        elif value.value == 'next-sib':
+                            f_move.append(lambda el: el.getnext())
+                        else:
+                            property_errors += [(val.line, val.column, val.name
+                                                 + " invalid value " + value.value)]
+                            f_move = None
+                            break
+                    if not f_move:
+                        continue
+                else:
+                    property_errors += [(val.line, val.column, "Unsupported property " + val.name)]
+                    continue
+
+                # iterate through each selector in the rule
+                for selector in cssselect.parse(rule.selector.as_css()):
+                    pseudo_element = selector.pseudo_element
+                    xpath = cssselect.HTMLTranslator().selector_to_xpath(selector)
+                    find = etree.XPath(xpath)
+
+                    # find each matching element in the HTML document
+                    for element in find(self.tree):
+                        # replace text with content of an attribute.
+                        if f_replace_with_attr:
+                            element.text = f_replace_with_attr(element)
+                        if val.name == 'content':
+                            v_content = new_content(element)
+                            if pseudo_element == "before":
+                                element.text = v_content + (element.text or '')  # opening tag
+                            elif pseudo_element == "after":
+                                element.tail = v_content + (element.tail or '')  # closing tag
+                            else:  # replace all content
+                                element.text = new_content(element)
+                        if f_transform:
+                            text_apply(element, f_transform)
+                        if f_text_replace:
+                            text_apply(element, f_text_replace)
+                        if f_element_func:
+                            f_element_func(element)
+                        if f_move:
+                            parent = element.getparent()
+                            new = element
+                            for item in f_move:
+                                new = item(new)
+                            # move the tail to the sibling or the parent
+                            if element.tail:
+                                sibling = element.getprevious()
+                                if sibling:
+                                    sibling.tail = (sibling.tail or '') + element.tail
+                                else:
+                                    parent.text = (parent.text or '') + element.tail
+                                element.tail = None
+                            # prune and graft
+                            parent.remove(element)
+                            new.append(element)
+
+        css_errors = ''
+        if stylesheet.errors or property_errors:
+            # There are transformation CSS errors. If the default css
+            # is included, take the offset into account.
+            i = 0
+            if not self.args.css_no_default:
+                i = DEFAULT_TRANSFORM_CSS.count('\n')
+            css_errors = "<div class='error-border bbox'><p>Error(s) in the" \
+                         "  transformation CSS:</p><ul>"
+            for err in stylesheet.errors:
+                css_errors += f"<li>{err.line - i},{err.column}: {err.reason}</li>"
+            for err in property_errors:
+                css_errors += f"<li>{err[0] - i},{err[1]}: {err[2]}</li>"
+            css_errors += "</ul>"
+
+        return css_errors
+
+    @staticmethod
+    def clear_element(element):
+        """In an XHTML tree, remove all sub-elements of a given element.
+        We can't properly remove an XML element while traversing the tree. But we can clear it.
+        Remove its text and children. However, the tail must be preserved because it points to
+        the next element, so re-attach.
+        """
+        tail = element.tail
+        element.clear()
+        element.tail = tail
 
     def extract_footnotes(self):
         """Extract the footnotes"""

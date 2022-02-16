@@ -1,7 +1,8 @@
 import argparse
 from ppcomp.ppcomp import *
 
-args = None
+args = object
+
 
 def test_load_text_file():
     textfile = PgdpFileText(args)
@@ -59,7 +60,7 @@ def load_args():
     args = ['fossilplants1.html', 'fossilplants1.txt']
     parser = argparse.ArgumentParser(description='Diff text document for PGDP PP.')
     parser.add_argument('filename', metavar='FILENAME', type=str,
-                        help='input files', nargs=2)
+                        help='input files', nargs=1)
     parser.add_argument('--ignore-case', action='store_true', default=False,
                         help='Ignore case when comparing')
     parser.add_argument('--extract-footnotes', action='store_true', default=False,
