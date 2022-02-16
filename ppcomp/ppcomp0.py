@@ -105,7 +105,7 @@ class PgdpFileText(PgdpFile):
 
     def process_args(self):
         if not self.from_pgdp_rounds:
-            #self.strip_pg_boilerplate()
+            self.strip_pg_boilerplate()
             pass
 
     def strip_pg_boilerplate(self):
@@ -201,7 +201,7 @@ class PgdpFileText(PgdpFile):
             self.text = re.sub(r"\*\[Footnote: ", '', self.text)
 
         if self.args.ignore_format or self.args.suppress_illustration_tags:
-            self.text = re.sub(r"\[Illustrations?:([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
+            self.text = re.sub(r"\[Illustration:([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
             self.text = re.sub(r"\[Illustration]", '', self.text)
 
         if self.args.ignore_format or self.args.suppress_sidenote_tags:

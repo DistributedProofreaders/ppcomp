@@ -1,5 +1,6 @@
 import argparse
 import os
+import re
 
 from lxml import etree
 from lxml.html import html5parser
@@ -119,6 +120,70 @@ class PgdpFileText(PgdpFile):
         if not self.from_pgdp_rounds:
             self.strip_pg_boilerplate()
 
+        if self.args.txt_cleanup_type == "n":  # none
+            return
+
+        if self.from_pgdp_rounds:
+            # remove page markers & blank pages
+            self.text = re.sub(r"-----File: \w+.png.*", '', self.text)
+            self.text = re.sub(r"\[Blank Page]", '', self.text)
+
+            if self.args.txt_cleanup_type == "p":  # proofers, all done
+                return
+
+            # remove block markup
+            block_markup = ["/*", "*/",
+                            "/#", "#/",
+                            "/P", "P/",
+                            "/F", "F/",
+                            "/X", "X/"]
+            for item in block_markup:
+                self.text = self.text.replace("\n" + item + "\n", "\n\n")
+
+            # ignore or replace italics and bold html
+            if self.args.ignore_format:  # silence formatting differences
+                for item in ["<i>", "</i>", "<b>", "</b>"]:
+                    self.text = self.text.replace(item, "")
+            else:
+                for item in ["<i>", "</i>"]:
+                    self.text = self.text.replace(item, "_")
+                for item in ["<b>", "</b>"]:
+                    self.text = self.text.replace(item, "=")
+
+            # remove other markup
+            self.text = re.sub("<.*?>", '', self.text)
+            if self.args.suppress_proofers_notes:
+                self.text = re.sub(r"\[\*\*[^]]*?\]", '', self.text)
+
+            if self.args.regroup_split_words:
+                word_splits = {r"(\w+)-\*(\n+)\*": r'\2\1',
+                               r"(\w+)-\*_(\n\n)_\*": r"\2\1",
+                               r"(\w+)-\*(\w+)": r"\1\2"}
+                for item in word_splits:
+                    self.text = re.sub(item, word_splits[item], self.text)
+
+        else:  # processed text file
+            # BUG: these can be perfectly valid characters, need to use regex
+            if self.args.ignore_format:
+                self.text = self.text.replace("_", "")
+                self.text = self.text.replace("=", "")
+
+            # Remove thought breaks
+            self.text = re.sub(r"\*\s+\*\s+\*\s+\*\s+\*", '', self.text)
+
+        # remove [Footnote, [Illustrations and [Sidenote tags
+        # BUG: doesn't handle closing ']' or contents
+        if self.args.ignore_format or self.args.suppress_footnote_tags:
+            self.text = re.sub(r"\[Footnote (\d+): ", r'\1 ', self.text)
+            self.text = re.sub(r"\*\[Footnote: ", '', self.text)
+
+        if self.args.ignore_format or self.args.suppress_illustration_tags:
+            self.text = re.sub(r"\[Illustration?:([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
+            self.text = re.sub(r"\[Illustration]", '', self.text)
+
+        if self.args.ignore_format or self.args.suppress_sidenote_tags:
+            self.text = re.sub(r"\[Sidenote:([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
+
     def convert(self):
         """Apply needed text conversions"""
         for func in self.transform_func:
@@ -136,6 +201,7 @@ class PgdpFileHtml(PgdpFile):
     def __init__(self, args):
         super().__init__(args)
         self.tree = None
+        self.body_line = 0  # line number of <body> tag
         self.mycss = ""  # CSS for transformations
 
     def load(self, filename):
@@ -150,7 +216,6 @@ class PgdpFileHtml(PgdpFile):
             for elem in self.tree.iter():
                 if not isinstance(elem, (etree._Comment, etree._ProcessingInstruction)):
                     elem.tag = etree.QName(elem).localname
-            # noinspection Pylint
             etree.cleanup_namespaces(self.tree)  # Remove unused namespace declarations
 
         super().load(filename)
@@ -160,24 +225,39 @@ class PgdpFileHtml(PgdpFile):
         except Exception as ex:
             raise SyntaxError("File cannot be parsed: " + filename) from ex
 
-        if parser.errors and len(parser.errors):
+        if parser.errors:
             raise SyntaxError("Parsing errors in document: " + filename)
 
         self.tree = tree.getroottree()
-        # Remove the namespace from the tags
+        # remove the namespace from the tags
         remove_namespace()
+        # save line number of <body> tag - actual text start
+        for lineno, line in enumerate(self.text.splitlines(), start=1):
+            if '<body' in line:
+                self.body_line = lineno
+                break
 
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from the text if present."""
-        pass
+        new_text = []
+        for lineno, line in enumerate(self.text.splitlines(), start=self.body_line):
+            # Find the markers. Unfortunately PG lacks consistency
+            if PG_EBOOK_START1 in line or PG_EBOOK_START2 in line:
+                new_text = []  # PG found, remove previous lines
+                self.start_line = lineno
+            elif PG_EBOOK_END1 in line or PG_EBOOK_END2 in line:
+                break  # ignore following lines
+            else:
+                new_text.append(line)
+        self.text = '\n'.join(new_text)
 
     def prepare(self):
         """Clean text in preparation for conversions"""
-        # Empty the head - we only want the body
+        # empty the head - we only want the body
         self.tree.find('head').clear()
 
-        # Process command line arguments
-        # Load default CSS for transformations
+        # process command line arguments
+        # load default CSS for transformations
         if self.args.css_no_default is False:
             self.mycss = DEFAULT_TRANSFORM_CSS
         if self.args.css_smcap == 'U':

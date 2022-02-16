@@ -9,7 +9,7 @@
 | --suppress-footnote-tags     | TXT: Suppress [Footnote ?: ] marks                           |
 | --suppress-illustration-tags | TXT: Suppress [Illustration: ] marks                         |
 | --suppress-sidenote-tags     | TXT: Suppress [Sidenote: ] marks                             |
-| --ignore-format              | TXT from the rounds: Silence formatting differences (<i>, <b>) |
+| --ignore-format              | TXT from the rounds: Silence formatting differences (\<i>, \<b>) |
 | --suppress-proofers-notes    | TXT from the rounds: Remove [**proofreaders notes]           |
 | --regroup-split-words        | TXT from the rounds: Regroup split wo-* *rds                 |
 | --txt-cleanup-type TYPE      | TXT from the rounds: Type of text cleaning -- (b)est effort [default], (n)one, (p)roofers |
@@ -28,7 +28,7 @@
 
 - Extract footnotes (option)
 - Remove PG boilerplate
-- "[oe]", "oe", "œ" ligature replacements **(Obsolete: should now treat same as 'æ', do nothing)**
+- ~~"[oe]", "oe", "œ" ligature replacements~~ **(Obsolete: should now treat same as 'æ', do nothing)**
 - Character conversions - if one file has 1st char & other does not, convert
   - "’", "'"  # single close curly quote to straight
   - "‘", "'"  # single open curly quote to straight
@@ -38,9 +38,9 @@
   - "ª", "a"  # ordinal a to letter a
   - "–", "-"  # endash to regular dash
   - "—", "--" # emdash to double dashes
-  - "½", "-1/2" **(Obsolete?)**
-  - "¼", "-1/4" **(Obsolete?)**
-  - "¾", "-3/4" **(Obsolete?)**
+  - ~~"½", "-1/2"~~ **(Obsolete?)**
+  - ~~"¼", "-1/4"~~ **(Obsolete?)**
+  - ~~"¾", "-3/4"~~ **(Obsolete?)**
   - '⁄', '/'   # fraction slash
   - "′", "'"   # prime
   - "″", "''"  # double prime
@@ -65,44 +65,49 @@
   - "⁷", "7"  # superscript 7
   - "⁸", "8"  # superscript 8
   - "⁹", "9"  # superscript 9
-  - Superscripts: should handle Unicode or ^{} in text, Unicode or <sup> in html
-  - Subscripts: should handle Unicode or _{} in text, Unicode or <sub> in html
+  - **Note:** Superscripts should handle Unicode or ^{} in text, Unicode or \<sup> in html
+  - **Note:** Subscripts should handle Unicode or _{} in text, Unicode or \<sub> in html
 
-## Actions for text files:
+## Actions for all text files:
 
 - Remove "[Illustration: ]" tags (option)
 - Remove "[Sidenote: ]" tags (option)
-- Remove "[Footnote: ]" tags (option)
+- Remove "[Footnote: ]" tags (option) **(Meaning what? Currently replaces "[Footnote 1:" with "1 ", leaving end ']')**
 
 ## Actions for text files from rounds ("projectID...")
 
-- Remove page numbers, [Blank page]
-- If Silence formatting differences: remove "<i>" and "<b>", else replace with '_', '='
+- Remove page markers, "[Blank page]"
+- If silence formatting differences: remove "\<i>" and "\<b>", else replace with '_', '='
 - Remove proofers notes (option)
 - Regroup split words (option)
 - Remove block markup
-  - "/*", "*/",
+  - "/\*", "\*/",
   - "/#", "#/"
   - "/P", "P/"
   - "/F", "F/"
   - "/X", "X/"
 
+## Actions for processed text files:
+
+- Remove thought breaks "*     *     *     *     *"
+- If ignore format remove '_', '-' **(Bug: could be valid characters)**
+
 ## Actions for HTML files:
 
 - Remove page numbers
-- span[class^="pagenum"]
-  - p[class^="pagenum"]
-  - div[class^="pagenum"]
-  - span[class^="pageno"]
-  - p[class^="pageno"]
-  - div[class^="pageno"]
-  - p[class^="page"]
-  - span[class^="pgnum"]
-  - div[id^="Page_"]
-- <i>, <em>, <cite> to ''
-- <b> to '='
-- <sup> to "^{}"
-- <sub> to "_{}"
+  - \<span class="pagenum"
+  - \<span class="pageno"
+  - \<span class="pgnum"
+  - \<p class="pagenum"
+  - \<p class="pageno"
+  - \<p class="page"
+  - \<div class="pagenum"
+  - \<div class="pageno"
+  - \<div id="Page_"
+- \<i>, \<em>, \<cite> to '_'
+- \<b> to '='
+- \<sup> to "^{}" **(also see Character conversions above)**
+- \<sub> to "_{}" **(also see Character conversions above)**
 - Remove non-breakable spaces between numbers (option)
 - Remove soft hyphen (U+00AD)
 - Remove zero width space (U+200B)

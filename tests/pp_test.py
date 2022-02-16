@@ -36,14 +36,12 @@ def test_load_html_file():
     length = len(htmlfile.text.splitlines())
     assert length == 24190
     assert htmlfile.tree
+    assert htmlfile.body_line == 606
 
 
 def test_load_pgdp_file():
     textfile = PgdpFileText(args)
     textfile.load('projectID123456.txt')
-    length = len(textfile.text.splitlines())
-    assert length == 19647
-    textfile.strip_pg_boilerplate()
     length = len(textfile.text.splitlines())
     assert length == 19647
 
@@ -53,6 +51,8 @@ def test_prepare_pgdp_file():
     textfile.load('projectID123456.txt')
     textfile.prepare()
     assert textfile.from_pgdp_rounds
+    length = len(textfile.text.splitlines())
+    assert length == 19647
 
 
 def load_args():
