@@ -66,7 +66,11 @@ def test_prepare_pgdp_file(pgdp_text_file):
 
 @pytest.fixture()
 def test_args():
-    myargs = ['fossilplants1.html', 'fossilplants1.txt', '--simple-html', '--css', 'css test', '--css', 'css test2']
+    myargs = ['fossilplants1.html',
+              'fossilplants1.txt',
+              '--simple-html',
+              '--css', 'css test',
+              '--css', 'css test2']
     parser = argparse.ArgumentParser(description='Diff text document for PGDP PP.')
     parser.add_argument('filename', metavar='FILENAME', type=str,
                         help='input files', nargs=2)

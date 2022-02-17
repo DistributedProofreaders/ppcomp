@@ -2,33 +2,34 @@
 
 ## Usage:
 
-| -h                           | Show usage                                                   |
-| ---------------------------- | ------------------------------------------------------------ |
-| --ignore-case                | ALL: Ignore case when comparing                              |
-| --extract-footnotes          | ALL: Extract and process footnotes separately                |
-| --suppress-footnote-tags     | TXT: Suppress [Footnote ?: ] marks                           |
-| --suppress-illustration-tags | TXT: Suppress [Illustration: ] marks                         |
-| --suppress-sidenote-tags     | TXT: Suppress [Sidenote: ] marks                             |
-| --ignore-format              | TXT from the rounds: Silence formatting differences (\<i>, \<b>) |
-| --suppress-proofers-notes    | TXT from the rounds: Remove [**proofreaders notes]           |
-| --regroup-split-words        | TXT from the rounds: Regroup split wo-* *rds                 |
-| --txt-cleanup-type TYPE      | TXT from the rounds: Type of text cleaning -- (b)est effort [default], (n)one, (p)roofers |
-| --css-greek-title-plus       | HTML: use greek transliteration in title attribute **(Obsolete?)** |
-| --css-add-illustration       | HTML: add [Illustration: ...] tags                           |
-| --css-add-sidenote           | HTML: add [Sidenote: ...] tags                               |
-| --suppress-nbsp-num          | HTML: Suppress non-breakable spaces between numbers (U+200b) (\&nbsp;, \&#160;) |
-| --ignore-0-space             | HTML: suppress zero width space (U+200b)                     |
-| --css-smcap TYPE             | HTML: Transform small caps into uppercase (U), lowercase (L) or title case (T) |
-| --css-bold STR               | HTML: Surround bold strings with this string                 |
-| --css CSS                    | HTML: Insert transformation CSS (can be multiple)            |
-| --css-no-default             | HTML: do not use default transformation CSS                  |
-| --simple-html                | HTML: Process an html file and print the output (debug)      |
+| Option                       | File type | Description                                                               |
+|------------------------------|----|---------------------------------------------------------------------------|
+| -h                           |    | Show usage                                                                |
+| --ignore-case                | All | Ignore case when comparing                                                |
+| --extract-footnotes          | All | Extract and process footnotes separately                                  |
+| --suppress-footnote-tags     | Txt | Suppress \[Footnote ?: ] marks                                            |
+| --suppress-illustration-tags | Txt | Suppress \[Illustration: ] marks                                          |
+| --suppress-sidenote-tags     | Txt | Suppress \[Sidenote: ] marks                                              |
+| --ignore-format              | Rounds txt | Silence formatting differences (\<i>, \<b>)                               |
+| --suppress-proofers-notes    | Rounds txt | Remove \[**proofreaders notes]                                            |
+| --regroup-split-words        | Rounds txt | Regroup split wo-* *rds                                                   |
+| --txt-cleanup-type TYPE      | Rounds txt | Type of text cleaning -- (b)est effort \[default], (n)one, (p)roofers     |
+| --css-greek-title-plus       | HTML | Use greek transliteration in title attribute **(Obsolete?)**              |
+| --css-add-illustration       | HTML | Add \[Illustration: ...] tags                                             |
+| --css-add-sidenote           | HTML | Add \[Sidenote: ...] tags                                                 |
+| --suppress-nbsp-num          | HTML | Suppress non-breakable spaces between numbers (U+200b) (\&nbsp;, \&#160;) |
+| --ignore-0-space             | HTML | Suppress zero width space (U+200b)                                        |
+| --css-smcap TYPE             | HTML | Transform small caps into uppercase (U), lowercase (L) or title case (T)  |
+| --css-bold STR               | HTML | Surround bold strings with this string                                    |
+| --css CSS                    | HTML | Insert transformation CSS (can be multiple)                               |
+| --css-no-default             | HTML | Do not use default transformation CSS                                     |
+| --simple-html                | HTML | Process an html file and print the output (debug)                         |
 
 ## Actions for all files:
 
 - Extract footnotes (option)
 - Remove PG boilerplate
-- ~~"[oe]", "oe", "œ" ligature replacements~~ **(Obsolete: should now treat same as 'æ', do nothing)**
+- ~~"[oe]", "oe", "œ" ligature replacements~~ **(Obsolete: should now treat same as 'æ' - do nothing)**
 - Character conversions - if one file has 1st char & other does not, convert
   - "’", "'"  # single close curly quote to straight
   - "‘", "'"  # single open curly quote to straight
@@ -65,14 +66,11 @@
   - "⁷", "7"  # superscript 7
   - "⁸", "8"  # superscript 8
   - "⁹", "9"  # superscript 9
-  - **Note:** Superscripts should handle Unicode or ^{} in text, Unicode or \<sup> in html
-  - **Note:** Subscripts should handle Unicode or _{} in text, Unicode or \<sub> in html
-
-## Actions for all text files:
+  - Actions for all text files:
 
 - Remove "[Illustration: ]" tags (option)
 - Remove "[Sidenote: ]" tags (option)
-- Remove "[Footnote: ]" tags (option) **(Meaning what? Currently replaces "[Footnote 1:" with "1 ", leaving end ']')**
+- Remove "[Footnote: ]" tags (option)
 
 ## Actions for text files from rounds ("projectID...")
 
@@ -94,24 +92,42 @@
 
 ## Actions for HTML files:
 
-- Remove page numbers
-  - \<span class="pagenum"
-  - \<span class="pageno"
-  - \<span class="pgnum"
-  - \<p class="pagenum"
-  - \<p class="pageno"
-  - \<p class="page"
-  - \<div class="pagenum"
-  - \<div class="pageno"
-  - \<div id="Page_"
-- \<i>, \<em>, \<cite> to '_'
-- \<b> to '='
-- \<sup> to "^{}" **(also see Character conversions above)**
-- \<sub> to "_{}" **(also see Character conversions above)**
-- Remove non-breakable spaces between numbers (option)
-- Remove soft hyphen (U+00AD)
-- Remove zero width space (U+200B)
-- Add "[Illustration: ]" tags (option)
-- Add "[Sidenote: ]" tags (option)
-- Use Greek transliteration in title attribute **(Obsolete?)**
+Remove page numbers
+- \<span class="pagenum"
+- \<span class="pageno"
+- \<span class="pgnum"
+- \<p class="pagenum"
+- \<p class="pageno"
+- \<p class="page"
+- \<div class="pagenum"
+- \<div class="pageno"
+- \<div id="Page_"
 
+\<i>, \<em>, \<cite> to '_'
+
+\<b> to '='
+
+\<sup> to "^{}"
+
+\<sub> to "_{}"
+
+Remove non-breakable spaces between numbers (option)
+
+Remove soft hyphen (U+00AD)
+
+Remove zero width space (U+200B)
+
+Add "[Illustration: ]" tags (option)
+
+Add "[Sidenote: ]" tags (option)
+
+Use Greek transliteration in title attribute **(Obsolete?)**
+
+## Proposed changes
+
+Improve handling of superscripts and subscripts - Unicode/text markup/html markup
+
+- Superscripts should handle Unicode or ^{} in text, Unicode or \<sup> in html
+- Subscripts should handle Unicode or _{} in text, Unicode or \<sub> in html
+
+## 
