@@ -7,15 +7,15 @@ from ppcomp.ppcomp import *
 args = object
 
 @pytest.fixture()
-def pgdp_text_file(test_args):
+def pgdp_text_file():
     "Create a processed text file"
-    return PgdpFileText(test_args)
+    return PgdpFileText(load_args(myargs))
 
 
 @pytest.fixture()
 def pgdp_html_file():
     "Create a processed html file"
-    return PgdpFileHtml(test_args)
+    return PgdpFileHtml(load_args(myargs))
 
 
 def test_load_text_file(pgdp_text_file):
@@ -32,7 +32,6 @@ def test_prepare_text_file(pgdp_text_file):
     assert length == 19647
 
 
-@pytest.mark.skip
 def test_prepare_pg_text_file(pgdp_text_file):
     pgdp_text_file.load('fossilplants1pg.txt')
     length = len(pgdp_text_file.text.splitlines())
@@ -56,7 +55,6 @@ def test_load_pgdp_file(pgdp_text_file):
     assert length == 19647
 
 
-@pytest.mark.skip
 def test_prepare_pgdp_file(pgdp_text_file):
     pgdp_text_file.load('projectID123456.txt')
     pgdp_text_file.prepare()
@@ -64,13 +62,14 @@ def test_prepare_pgdp_file(pgdp_text_file):
     assert length == 19647
 
 
-@pytest.fixture()
-def test_args():
-    myargs = ['fossilplants1.html',
-              'fossilplants1.txt',
-              '--simple-html',
-              '--css', 'css test',
-              '--css', 'css test2']
+myargs = ['fossilplants1.html',
+          'fossilplants1.txt',
+          '--simple-html',
+          '--css', 'css test',
+          '--css', 'css test2']
+
+
+def load_args(myargs):
     parser = argparse.ArgumentParser(description='Diff text document for PGDP PP.')
     parser.add_argument('filename', metavar='FILENAME', type=str,
                         help='input files', nargs=2)
@@ -116,7 +115,6 @@ def test_args():
                         help="HTML: Process the html file and print the output (debug)")
     args = parser.parse_args(args=myargs)
     return args
-    #print(args)
 
     # filename = ['tests/fossilplants1.html', 'tests/fossilplants1.txt'],
     # ignore_case = False,
