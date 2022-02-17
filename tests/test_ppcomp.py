@@ -1,3 +1,5 @@
+""" Tests for ppcomp functions"""
+
 import argparse
 
 import pytest
@@ -113,27 +115,4 @@ def load_args(myargs):
                         help="HTML: use greek transliteration in title attribute")
     parser.add_argument('--simple-html', action='store_true', default=False,
                         help="HTML: Process the html file and print the output (debug)")
-    args = parser.parse_args(args=myargs)
-    return args
-
-    # filename = ['tests/fossilplants1.html', 'tests/fossilplants1.txt'],
-    # ignore_case = False,
-    # extract_footnotes = False,
-    # suppress_footnote_tags = False,
-    # suppress_illustration_tags = False,
-    # suppress_sidenote_tags = False,
-    # ignore_format = False,
-    # suppress_proofers_notes = False,
-    # regroup_split_words = False,
-    # txt_cleanup_type = 'b',
-    # css_add_illustration = False,
-    # css_add_sidenote = False,
-    # css_smcap = None,
-    # css_bold = None,
-    # css = [],
-    # css_no_default = False,
-    # suppress_nbsp_num = False,
-    # ignore_0_space = False,
-    # css_greek_title_plus = False,
-    # simple_html = False)
-
+    return parser.parse_args(args=myargs)

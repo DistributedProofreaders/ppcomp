@@ -66,7 +66,7 @@ class PgdpFile:
 
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from the text if present."""
-        pass
+        raise NotImplementedError("Override this method")
 
     def prepare(self):
         """Clean text in preparation for conversions"""
@@ -80,7 +80,7 @@ class PgdpFile:
         # add/suppress illustrations, sidenotes, footnotes
         # html head
         # css transforms
-        pass
+        raise NotImplementedError("Override this method")
 
     def convert(self):
         """Apply needed text conversions"""
@@ -92,7 +92,7 @@ class PgdpFile:
 
     def extract_footnotes(self):
         """Extract the footnotes"""
-        pass
+        raise NotImplementedError("Override this method")
 
 
 class PgdpFileText(PgdpFile):
@@ -138,24 +138,23 @@ class PgdpFileText(PgdpFile):
                             '/P', 'P/',
                             '/F', 'F/',
                             '/X', 'X/']
-            for item in block_markup:
-                self.text = self.text.replace('\n' + item + '\n', '\n\n')
+            for markup in block_markup:
+                self.text = self.text.replace('\n' + markup + '\n', '\n\n')
 
             # ignore or replace italics and bold html
             if self.args.ignore_format:  # silence formatting differences
-                for item in ["<i>", "</i>", "<b>", "</b>"]:
-                    self.text = self.text.replace(item, '')
+                for markup in ["<i>", "</i>", "<b>", "</b>"]:
+                    self.text = self.text.replace(markup, '')
             else:
-                for item in ["<i>", "</i>"]:
-                    self.text = self.text.replace(item, '_')
-                for item in ["<b>", "</b>"]:
-                    self.text = self.text.replace(item, '=')
+                for markup in ["<i>", "</i>"]:
+                    self.text = self.text.replace(markup, '_')
+                for markup in ["<b>", "</b>"]:
+                    self.text = self.text.replace(markup, '=')
 
             # remove other markup
             self.text = re.sub("<.*?>", '', self.text)
             if self.args.suppress_proofers_notes:
                 self.text = re.sub(r"\[\*\*[^]]*?]", '', self.text)
-
             if self.args.regroup_split_words:
                 word_splits = {r"(\w+)-\*(\n+)\*": r"\2\1",
                                r"(\w+)-\*_(\n\n)_\*": r"\2\1",
@@ -526,11 +525,11 @@ class PPComp:
 
     def convert_both(self):
         """Apply various conversions to both files"""
-        pass
+        raise NotImplementedError("Method not implemented")
 
     def compare_texts(self, text1, text2):
         """Compare two sources, using dwdiff"""
-        pass
+        raise NotImplementedError("Method not implemented")
 
     def do_process(self):
         """Main routine: load & process the files
@@ -539,11 +538,11 @@ class PPComp:
             3. convert()
             4. extract_footnotes()
         """
-        pass
+        raise NotImplementedError("Method not implemented")
 
     def create_html(self, files, text, footnotes):
         """Create the output html file"""
-        pass
+        raise NotImplementedError("Method not implemented")
 
     def simple_html(self):
         """For debugging purposes. Transform the html and print the text output."""
