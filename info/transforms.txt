@@ -164,11 +164,6 @@ nav
 section
 summary
 
-Notes for DP:
-Guiguts: default header xml:lang not needed, warning
-	html5lib\_ihatexml.py:266: DataLossWarning: Coercing non-XML name: xml:lang
-	http://www.html-5.com/attributes/xml-attributes.htm:
-	"The HTML lang attribute serves the same purpose as the xml:lang attribute and should be used instead."
 
 ppcomp issue: lettersfromandoldtimesalesman.zip
 The error is caused by lines 146, 150 and 156 in the source file. The file has <hr></hr>
@@ -178,3 +173,8 @@ could be changed in ppcomp to either identify it or live with it.
 
 ========================================
 Changes: eliminate oe ligature transforms, treat same as ae.
+
+Text file: use split list to strip boilerplate & find start line #, otherwise plain text.
+
+html file: use split list to strip boilerplate & find start line #, need tree to process tags.
+Then plain text can be used for char replacements.
