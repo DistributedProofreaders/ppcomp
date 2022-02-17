@@ -32,7 +32,7 @@ PG_EBOOK_START_REGEX = r".*?\*\*\* START OF THE PROJECT GUTENBERG EBOOK.*?\*\*\*
 
 class PgdpFile:
     """Base class: Store and process a DP text or html file
-    Call order from PPComp.do_process():
+    Function order from PPComp.do_process():
         1. load()
         2. prepare()
         3. convert()
@@ -88,7 +88,6 @@ class PgdpFile:
         # comparisons (do_process) elsewhere
         for func in self.transform_func:
             self.text = func(self.text)
-        pass
 
     def extract_footnotes(self):
         """Extract the footnotes"""
@@ -297,25 +296,25 @@ class PgdpFileHtml(PgdpFile):
         # Process each rule from our transformation CSS
         escaped_unicode_re = re.compile(r"\\u[0-9a-fA-F]{4}")
 
-        def text_apply(element, func):
+        def text_apply(tree_elem, func):
             """Apply a function to every sub-element's .text and .tail, and element's .text"""
-            if element.text:
-                element.text = func(element.text)
-            for sub in element.iter():
-                if sub == element:
+            if tree_elem.text:
+                tree_elem.text = func(tree_elem.text)
+            for sub in tree_elem.iter():
+                if sub == tree_elem:
                     continue
                 if sub.text:
                     sub.text = func(sub.text)
                 if sub.tail:
                     sub.tail = func(sub.tail)
 
-        def escaped_unicode(item):
+        def escaped_unicode(elem):
             try:
-                return bytes(item.group(0), 'utf8').decode('unicode-escape')
-            except Exception:
-                return item.group(0)
+                return bytes(elem.group(0), 'utf8').decode('unicode-escape')
+            except UnicodeDecodeError:
+                return elem.group(0)
 
-        def new_content(element):
+        def new_content(elem):
             """Process the "content:" property"""
             result = ""
             for token in val.value:
@@ -325,11 +324,11 @@ class PgdpFileHtml(PgdpFile):
                 elif token.type == "FUNCTION":
                     if token.function_name == 'attr':
                         # e.g. { content: attr(title) }
-                        result += element.attrib.get(token.content[0].value, "")
+                        result += elem.attrib.get(token.content[0].value, "")
                 elif token.type == "IDENT":
                     if token.value == "content":
                         # identity, e.g. { content: content }
-                        result += element.text
+                        result += elem.text
             return result
 
         # process each rule from our transformation CSS
@@ -337,6 +336,7 @@ class PgdpFileHtml(PgdpFile):
         property_errors = []
         for rule in stylesheet.rules:
             # extract values we care about
+            f_transform = None
             f_replace_with_attr = None
             f_text_replace = None
             f_element_func = None
@@ -352,21 +352,21 @@ class PgdpFileHtml(PgdpFile):
                     else:
                         value = val.value[0].value
                         if value == "uppercase":
-                            def f_transform(text):
-                                return text.upper()
+                            def f_transform(x):
+                                return x.upper()
                         elif value == "lowercase":
-                            def f_transform(text):
-                                return text.lower()
+                            def f_transform(x):
+                                return x.lower()
                         elif value == "capitalize":
-                            def f_transform(text):
-                                return text.title()
+                            def f_transform(x):
+                                return x.title()
                         else:
                             property_errors += [(val.line, val.column,
                                                  val.name + " accepts only 'uppercase',"
                                                             " 'lowercase' or 'capitalize'")]
                 elif val.name == "_replace_with_attr":
-                    def f_replace_with_attr(item):
-                        return item.attrib[val.value[0].value]
+                    def f_replace_with_attr(elem):
+                        return elem.attrib[val.value[0].value]
                 elif val.name == "text-replace":
                     # skip S (spaces) tokens
                     values = [v for v in val.value if v.type != "S"]
@@ -376,6 +376,7 @@ class PgdpFileHtml(PgdpFile):
                     else:
                         value1 = values[0].value
                         value2 = values[1].value
+
                         def f_text_replace(text):
                             return text.replace(value1, value2)
                 elif val.name == "display":
