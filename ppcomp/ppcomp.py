@@ -43,15 +43,22 @@ class PgdpFile:
     def __init__(self, args):
         self.args = args
         self.basename = ''
-        # RT: do we want the plain text, or the list of lines? not both, too hard to sync
-        # for now, plain text
         self.text = ''  # file text
         self.start_line = 0  # line text started, before stripping boilerplate and/or head
         self.footnotes = ''  # footnotes, if extracted
         self.transform_func = []  # List of transforms to perform
 
     def load(self, filename):
-        """Load a file (text or html)."""
+        """Load a file (text or html)
+        Args:
+            filename: file pathname
+        Vars:
+            self.text = contents of file
+            self.basename = file base name
+        Raises:
+            IOError: unable to open file
+            SyntaxError: file too short
+        """
         self.basename = os.path.basename(filename)
         try:
             with open(filename, 'r', encoding='utf-8') as file:
@@ -63,6 +70,7 @@ class PgdpFile:
             raise IOError("Cannot load file: " + filename) from ex
         if len(self.text) < 10:
             raise SyntaxError("File is too short: " + filename)
+        self.start_line = 1
 
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from the text if present."""
@@ -97,8 +105,13 @@ class PgdpFile:
 class PgdpFileText(PgdpFile):
     """Store and process a DP text file"""
 
-    def __init__(self, args):
-        super().__init__(args)
+    def load(self, filename):
+        """Load the file
+        filename: filename to load
+        """
+        if not filename.lower().endswith('.txt'):
+            raise SyntaxError("Not a text file: " + filename)
+        super().load(filename)
 
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from the text if present."""
@@ -107,7 +120,7 @@ class PgdpFileText(PgdpFile):
             # Find the markers. Unfortunately PG lacks consistency
             if line.startswith((PG_EBOOK_START1, PG_EBOOK_START2)):
                 new_text = []  # PG found, remove previous lines
-                self.start_line = lineno
+                self.start_line = lineno + 1
             elif line.startswith((PG_EBOOK_END1, PG_EBOOK_END2)):
                 break  # ignore following lines
             else:
@@ -202,11 +215,11 @@ class PgdpFileHtml(PgdpFile):
         super().__init__(args)
         self.tree = None
         self.body_line = 0  # line number of <body> tag
-        self.mycss = ''  # CSS for transformations
 
     def load(self, filename):
-        # noinspection GrazieInspection
-        """Load the file. If parsing succeeded, then self.tree is set, and parser.errors is []"""
+        """Load the file. If parsing succeeded, then self.tree is set, and parser.errors is []
+        @param filename: filename to load
+        """
 
         # noinspection PyProtectedMember,Pylint
         def remove_namespace():
@@ -218,6 +231,8 @@ class PgdpFileHtml(PgdpFile):
                     elem.tag = etree.QName(elem).localname
             etree.cleanup_namespaces(self.tree)  # Remove unused namespace declarations
 
+        if not filename.lower().endswith(('.html', '.htm')):
+            raise SyntaxError("Not an html file: " + filename)
         super().load(filename)
         parser = html5parser.HTMLParser()
         try:
@@ -258,28 +273,30 @@ class PgdpFileHtml(PgdpFile):
 
         # process command line arguments
         # load default CSS for transformations
-        if not self.args.css_no_default:
-            self.mycss = DEFAULT_TRANSFORM_CSS
+        if self.args.css_no_default:
+            mycss = None
+        else:
+            mycss = DEFAULT_TRANSFORM_CSS
         if self.args.css_smcap == 'U':
-            self.mycss += ".smcap { text-transform:uppercase; }"
+            mycss += ".smcap { text-transform:uppercase; }"
         elif self.args.css_smcap == 'L':
-            self.mycss += ".smcap { text-transform:lowercase; }"
+            mycss += ".smcap { text-transform:lowercase; }"
         elif self.args.css_smcap == 'T':
-            self.mycss += ".smcap { text-transform:capitalize; }"
+            mycss += ".smcap { text-transform:capitalize; }"
         if self.args.css_bold:
-            self.mycss += "b:before, b:after { content: " + self.args.css_bold + "; }"
+            mycss += "b:before, b:after { content: " + self.args.css_bold + "; }"
         if self.args.css_add_illustration:
             for figclass in ['figcenter', 'figleft', 'figright']:
-                self.mycss += '.' + figclass + ':before { content: "[Illustration: "; }'
-                self.mycss += '.' + figclass + ':after { content: "]"; }'
+                mycss += '.' + figclass + ':before { content: "[Illustration: "; }'
+                mycss += '.' + figclass + ':after { content: "]"; }'
         if self.args.css_add_sidenote:
-            self.mycss += '.sidenote:before { content: "[Sidenote: "; }'
-            self.mycss += '.sidenote:after { content: "]"; }'
+            mycss += '.sidenote:before { content: "[Sidenote: "; }'
+            mycss += '.sidenote:after { content: "]"; }'
         # --css can be present multiple times, so it's a list.
         for css in self.args.css:
-            self.mycss += css
+            mycss += css
 
-        self.process_css()
+        self.process_css(mycss)
 
     def convert(self):
         """Apply needed text conversions"""
@@ -292,8 +309,12 @@ class PgdpFileHtml(PgdpFile):
         if self.args.ignore_0_space:
             self.text = self.text.replace(chr(0x200b), '')
 
-    def process_css(self):
-        # Process each rule from our transformation CSS
+    def process_css(self, mycss):
+        """Process each rule from our transformation CSS
+
+        @param mycss:
+        @return: errors as html string
+        """
         escaped_unicode_re = re.compile(r"\\u[0-9a-fA-F]{4}")
 
         def text_apply(tree_elem, func):
@@ -332,7 +353,7 @@ class PgdpFileHtml(PgdpFile):
             return result
 
         # process each rule from our transformation CSS
-        stylesheet = tinycss.make_parser().parse_stylesheet(self.mycss)
+        stylesheet = tinycss.make_parser().parse_stylesheet(mycss)
         property_errors = []
         for rule in stylesheet.rules:
             # extract values we care about
@@ -381,7 +402,7 @@ class PgdpFileHtml(PgdpFile):
                             return text.replace(value1, value2)
                 elif val.name == "display":
                     # support display none only. So ignore "none" argument
-                    f_element_func = self.clear_element
+                    f_element_func = PgdpFileHtml.clear_element
                 elif val.name == "_graft":
                     values = [v for v in val.value if v.type != "S"]
                     if len(values) < 1:

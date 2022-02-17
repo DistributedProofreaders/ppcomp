@@ -26,21 +26,24 @@ def test_load_text_file(pgdp_text_file):
     assert pgdp_text_file.args.simple_html
     assert pgdp_text_file.args.css == ["css test", "css test2"]
     assert length == 19647
+    assert pgdp_text_file.start_line == 1
 
 
 def test_prepare_text_file(pgdp_text_file):
     pgdp_text_file.load('fossilplants1.txt')
     length = len(pgdp_text_file.text.splitlines())
     assert length == 19647
+    assert pgdp_text_file.start_line == 1
 
 
 def test_prepare_pg_text_file(pgdp_text_file):
     pgdp_text_file.load('fossilplants1pg.txt')
     length = len(pgdp_text_file.text.splitlines())
-    assert length > 19647
+    assert length == 20020
     pgdp_text_file.prepare()
     length = len(pgdp_text_file.text.splitlines())
     assert length == 19647
+    assert pgdp_text_file.start_line == 27
 
 
 def test_load_html_file(pgdp_html_file):
@@ -55,6 +58,7 @@ def test_load_pgdp_file(pgdp_text_file):
     pgdp_text_file.load('projectID123456.txt')
     length = len(pgdp_text_file.text.splitlines())
     assert length == 19647
+    assert pgdp_text_file.start_line == 1
 
 
 def test_prepare_pgdp_file(pgdp_text_file):
@@ -62,6 +66,7 @@ def test_prepare_pgdp_file(pgdp_text_file):
     pgdp_text_file.prepare()
     length = len(pgdp_text_file.text.splitlines())
     assert length == 19647
+    assert pgdp_text_file.start_line == 1
 
 
 myargs = ['fossilplants1.html',
