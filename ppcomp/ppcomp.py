@@ -175,8 +175,9 @@ class PgdpFileText(PgdpFile):
         # remove [Footnote, [Illustrations and [Sidenote tags
         # BUG: doesn't handle closing ']' or contents
         if self.args.ignore_format or self.args.suppress_footnote_tags:
-            self.text = re.sub(r"\[Footnote (\d+): ", r"\1 ", self.text)
-            self.text = re.sub(r"\*\[Footnote: ", '', self.text)
+            self.text = re.sub(r"\[Footnote (\d+):([^]]*?)]", r"\1 \2", self.text,
+                               flags=re.MULTILINE)
+            self.text = re.sub(r"\*\[Footnote:([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
 
         if self.args.ignore_format or self.args.suppress_illustration_tags:
             self.text = re.sub(r"\[Illustration?:([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
