@@ -77,6 +77,7 @@ class PgdpFile:
         raise NotImplementedError("Override this method")
 
     def cleanup(self):
+        """Remove tags from the file"""
         raise NotImplementedError("Override this method")
 
     def convert(self):
@@ -165,6 +166,7 @@ class PgdpFileText(PgdpFile):
         self.text = re.sub(r"\*\s+\*\s+\*\s+\*\s+\*", '', self.text)
 
     def suppress_footnote_tags(self):
+        """Remove footnote tags"""
         # Todo: doesn't handle internal ']'
         if self.args.ignore_format or self.args.suppress_footnote_tags:
             self.text = re.sub(r"\[Footnote (\d+): ([^]]*?)]", r"\1 \2", self.text,
@@ -172,11 +174,13 @@ class PgdpFileText(PgdpFile):
             self.text = re.sub(r"\*\[Footnote: ([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
 
     def suppress_illustration_tags(self):
+        """Remove illustration tags"""
         if self.args.ignore_format or self.args.suppress_illustration_tags:
             self.text = re.sub(r"\[Illustration?: ([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
             self.text = self.text.replace("[Illustration]", '')
 
     def suppress_sidenote_tags(self):
+        """Remove sidenote tags"""
         if self.args.ignore_format or self.args.suppress_sidenote_tags:
             self.text = re.sub(r"\[Sidenote:([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
 
@@ -277,7 +281,7 @@ class PgdpFileHtml(PgdpFile):
                 new_text.append(line)
         self.text = '\n'.join(new_text)
 
-    def transform_smallcaps(self):
+    def css_smallcaps(self):
         """Transform small caps"""
         if self.args.css_smcap == 'U':
             self.mycss += ".smcap { text-transform:uppercase; }"
@@ -286,42 +290,42 @@ class PgdpFileHtml(PgdpFile):
         elif self.args.css_smcap == 'T':
             self.mycss += ".smcap { text-transform:capitalize; }"
 
-    def transform_bold(self):
+    def css_bold(self):
         """Surround bold strings with this string"""
         if self.args.css_bold:
             self.mycss += "b:before, b:after { content: " + self.args.css_bold + "; }"
 
-    def transform_illustration(self):
+    def css_illustration(self):
         """Add [Illustration: ...] markup"""
         if self.args.css_add_illustration:
             for figclass in ['figcenter', 'figleft', 'figright']:
                 self.mycss += '.' + figclass + ':before { content: "[Illustration: "; }'
                 self.mycss += '.' + figclass + ':after { content: "]"; }'
 
-    def transform_sidenote(self):
+    def css_sidenote(self):
         """Add [Sidenote: ...] markup"""
         if self.args.css_add_sidenote:
             self.mycss += '.sidenote:before { content: "[Sidenote: "; }'
             self.mycss += '.sidenote:after { content: "]"; }'
 
-    def transform_custom_css(self):
+    def css_custom_css(self):
         """--css can be present multiple times, so it's a list"""
         for css in self.args.css:
             self.mycss += css
 
     def cleanup(self):
-        """Clean text in preparation for conversions"""
+        """Setup css transform rules, then process them against tree"""
         # empty the head - we only want the body
         self.tree.find('head').clear()
 
         # load default CSS for transformations
         if not self.args.css_no_default:
             self.mycss = DEFAULT_TRANSFORM_CSS
-        self.transform_smallcaps()
-        self.transform_bold()
-        self.transform_illustration()
-        self.transform_sidenote()
-        self.transform_custom_css()
+        self.css_smallcaps()
+        self.css_bold()
+        self.css_illustration()
+        self.css_sidenote()
+        self.css_custom_css()
         self.process_css(self.mycss)
 
     def convert(self):
@@ -337,7 +341,6 @@ class PgdpFileHtml(PgdpFile):
 
     def process_css(self, mycss):
         """Process each rule from our transformation CSS"""
-
         stylesheet = tinycss.make_parser().parse_stylesheet(mycss)
         property_errors = []
         for rule in stylesheet.rules:
@@ -346,7 +349,7 @@ class PgdpFileHtml(PgdpFile):
             f_replace_with_attr = None
             f_text_replace = None
             f_element_func = None
-            f_move = None
+            f_move = []
 
             for val in rule.declarations:
                 if val.name == 'content':
@@ -358,21 +361,17 @@ class PgdpFileHtml(PgdpFile):
                     else:
                         value = val.value[0].value
                         if value == "uppercase":
-                            def f_transform(x):
-                                return x.upper()
+                            f_transform = lambda x: x.upper()
                         elif value == "lowercase":
-                            def f_transform(x):
-                                return x.lower()
+                            f_transform = lambda x: x.lower()
                         elif value == "capitalize":
-                            def f_transform(x):
-                                return x.title()
+                            f_transform = lambda x: x.title()
                         else:
                             property_errors += [(val.line, val.column,
                                                  val.name + " accepts only 'uppercase',"
                                                             " 'lowercase' or 'capitalize'")]
                 elif val.name == "_replace_with_attr":
-                    def f_replace_with_attr(elem):
-                        return elem.attrib[val.value[0].value]
+                    f_replace_with_attr = lambda el: el.attrib[val.value[0].value]
                 elif val.name == "text-replace":
                     # skip S (spaces) tokens
                     values = [v for v in val.value if v.type != "S"]
@@ -382,9 +381,7 @@ class PgdpFileHtml(PgdpFile):
                     else:
                         value1 = values[0].value
                         value2 = values[1].value
-
-                        def f_text_replace(text):
-                            return text.replace(value1, value2)
+                        f_text_replace = lambda x: x.replace(value1, value2)
                 elif val.name == "display":
                     # support display none only. So ignore "none" argument
                     f_element_func = PgdpFileHtml.clear_element
@@ -394,7 +391,6 @@ class PgdpFileHtml(PgdpFile):
                         property_errors += [(val.line, val.column, val.name
                                              + " takes at least one argument")]
                         continue
-                    f_move = []
                     for value in values:
                         print("[", value.value, "]")
                         if value.value == 'parent':
@@ -440,21 +436,7 @@ class PgdpFileHtml(PgdpFile):
                         if f_element_func:
                             f_element_func(element)
                         if f_move:
-                            parent = element.getparent()
-                            new = element
-                            for item in f_move:
-                                new = item(new)
-                            # move the tail to the sibling or the parent
-                            if element.tail:
-                                sibling = element.getprevious()
-                                if sibling:
-                                    sibling.tail = (sibling.tail or '') + element.tail
-                                else:
-                                    parent.text = (parent.text or '') + element.tail
-                                element.tail = None
-                            # prune and graft
-                            parent.remove(element)
-                            new.append(element)
+                            self.move_element(element, f_move)
 
         css_errors = ''
         if stylesheet.errors or property_errors:
@@ -474,14 +456,33 @@ class PgdpFileHtml(PgdpFile):
         return css_errors
 
     @staticmethod
+    def move_element(element, f_move):
+        """Move element in tree"""
+        parent = element.getparent()
+        new = element
+        for item in f_move:
+            new = item(new)
+        # move the tail to the sibling or the parent
+        if element.tail:
+            sibling = element.getprevious()
+            if sibling:
+                sibling.tail = (sibling.tail or '') + element.tail
+            else:
+                parent.text = (parent.text or '') + element.tail
+            element.tail = None
+        # prune and graft
+        parent.remove(element)
+        new.append(element)
+
+    @staticmethod
     def new_content(elem, val):
         """Process the "content:" property"""
 
-        def escaped_unicode(elem):
+        def escaped_unicode(element):
             try:
-                return bytes(elem.group(0), 'utf8').decode('unicode-escape')
+                return bytes(element.group(0), 'utf8').decode('unicode-escape')
             except UnicodeDecodeError:
-                return elem.group(0)
+                return element.group(0)
 
         escaped_unicode_re = re.compile(r"\\u[0-9a-fA-F]{4}")
         result = ""
