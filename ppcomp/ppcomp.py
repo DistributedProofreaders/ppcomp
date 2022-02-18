@@ -225,6 +225,7 @@ class PgdpFileHtml(PgdpFile):
         super().__init__(args)
         self.tree = None
         self.body_line = 0  # line number of <body> tag
+        self.mycss = ''
 
     def load(self, filename):
         """Load the file. If parsing succeeded, then self.tree is set, and parser.errors is []
@@ -276,37 +277,52 @@ class PgdpFileHtml(PgdpFile):
                 new_text.append(line)
         self.text = '\n'.join(new_text)
 
+    def transform_smallcaps(self):
+        """Transform small caps"""
+        if self.args.css_smcap == 'U':
+            self.mycss += ".smcap { text-transform:uppercase; }"
+        elif self.args.css_smcap == 'L':
+            self.mycss += ".smcap { text-transform:lowercase; }"
+        elif self.args.css_smcap == 'T':
+            self.mycss += ".smcap { text-transform:capitalize; }"
+
+    def transform_bold(self):
+        """Surround bold strings with this string"""
+        if self.args.css_bold:
+            self.mycss += "b:before, b:after { content: " + self.args.css_bold + "; }"
+
+    def transform_illustration(self):
+        """Add [Illustration: ...] markup"""
+        if self.args.css_add_illustration:
+            for figclass in ['figcenter', 'figleft', 'figright']:
+                self.mycss += '.' + figclass + ':before { content: "[Illustration: "; }'
+                self.mycss += '.' + figclass + ':after { content: "]"; }'
+
+    def transform_sidenote(self):
+        """Add [Sidenote: ...] markup"""
+        if self.args.css_add_sidenote:
+            self.mycss += '.sidenote:before { content: "[Sidenote: "; }'
+            self.mycss += '.sidenote:after { content: "]"; }'
+
+    def transform_custom_css(self):
+        """--css can be present multiple times, so it's a list"""
+        for css in self.args.css:
+            self.mycss += css
+
     def cleanup(self):
         """Clean text in preparation for conversions"""
         # empty the head - we only want the body
         self.tree.find('head').clear()
 
-        # process command line arguments
         # load default CSS for transformations
-        if self.args.css_no_default:
-            mycss = None
-        else:
-            mycss = DEFAULT_TRANSFORM_CSS
-        if self.args.css_smcap == 'U':
-            mycss += ".smcap { text-transform:uppercase; }"
-        elif self.args.css_smcap == 'L':
-            mycss += ".smcap { text-transform:lowercase; }"
-        elif self.args.css_smcap == 'T':
-            mycss += ".smcap { text-transform:capitalize; }"
-        if self.args.css_bold:
-            mycss += "b:before, b:after { content: " + self.args.css_bold + "; }"
-        if self.args.css_add_illustration:
-            for figclass in ['figcenter', 'figleft', 'figright']:
-                mycss += '.' + figclass + ':before { content: "[Illustration: "; }'
-                mycss += '.' + figclass + ':after { content: "]"; }'
-        if self.args.css_add_sidenote:
-            mycss += '.sidenote:before { content: "[Sidenote: "; }'
-            mycss += '.sidenote:after { content: "]"; }'
-        # --css can be present multiple times, so it's a list.
-        for css in self.args.css:
-            mycss += css
-
-        self.process_css(mycss)
+        if not self.args.css_no_default:
+            self.mycss = DEFAULT_TRANSFORM_CSS
+        self.transform_smallcaps()
+        self.transform_bold()
+        self.transform_illustration()
+        self.transform_sidenote()
+        self.transform_custom_css()
+        self.process_css(self.mycss)
 
     def convert(self):
         """Apply needed text conversions"""
@@ -320,49 +336,8 @@ class PgdpFileHtml(PgdpFile):
             self.text = self.text.replace(chr(0x200b), '')
 
     def process_css(self, mycss):
-        """Process each rule from our transformation CSS
+        """Process each rule from our transformation CSS"""
 
-        @param mycss:
-        @return: errors as html string
-        """
-        escaped_unicode_re = re.compile(r"\\u[0-9a-fA-F]{4}")
-
-        def text_apply(tree_elem, func):
-            """Apply a function to every sub-element's .text and .tail, and element's .text"""
-            if tree_elem.text:
-                tree_elem.text = func(tree_elem.text)
-            for sub in tree_elem.iter():
-                if sub == tree_elem:
-                    continue
-                if sub.text:
-                    sub.text = func(sub.text)
-                if sub.tail:
-                    sub.tail = func(sub.tail)
-
-        def escaped_unicode(elem):
-            try:
-                return bytes(elem.group(0), 'utf8').decode('unicode-escape')
-            except UnicodeDecodeError:
-                return elem.group(0)
-
-        def new_content(elem):
-            """Process the "content:" property"""
-            result = ""
-            for token in val.value:
-                if token.type == "STRING":
-                    # e.g. { content: "xyz" }
-                    result += escaped_unicode_re.sub(escaped_unicode, token.value)
-                elif token.type == "FUNCTION":
-                    if token.function_name == 'attr':
-                        # e.g. { content: attr(title) }
-                        result += elem.attrib.get(token.content[0].value, "")
-                elif token.type == "IDENT":
-                    if token.value == "content":
-                        # identity, e.g. { content: content }
-                        result += elem.text
-            return result
-
-        # process each rule from our transformation CSS
         stylesheet = tinycss.make_parser().parse_stylesheet(mycss)
         property_errors = []
         for rule in stylesheet.rules:
@@ -451,17 +426,17 @@ class PgdpFileHtml(PgdpFile):
                         if f_replace_with_attr:
                             element.text = f_replace_with_attr(element)
                         if val.name == 'content':
-                            v_content = new_content(element)
+                            v_content = self.new_content(element, val)
                             if pseudo_element == "before":
                                 element.text = v_content + (element.text or '')  # opening tag
                             elif pseudo_element == "after":
                                 element.tail = v_content + (element.tail or '')  # closing tag
                             else:  # replace all content
-                                element.text = new_content(element)
+                                element.text = self.new_content(element, val)
                         if f_transform:
-                            text_apply(element, f_transform)
+                            self.text_apply(element, f_transform)
                         if f_text_replace:
-                            text_apply(element, f_text_replace)
+                            self.text_apply(element, f_text_replace)
                         if f_element_func:
                             f_element_func(element)
                         if f_move:
@@ -497,6 +472,42 @@ class PgdpFileHtml(PgdpFile):
             css_errors += "</ul>"
 
         return css_errors
+
+    @staticmethod
+    def new_content(elem, val):
+        """Process the "content:" property"""
+
+        def escaped_unicode(elem):
+            try:
+                return bytes(elem.group(0), 'utf8').decode('unicode-escape')
+            except UnicodeDecodeError:
+                return elem.group(0)
+
+        escaped_unicode_re = re.compile(r"\\u[0-9a-fA-F]{4}")
+        result = ""
+        for token in val.value:
+            if token.type == "STRING":  # e.g. { content: "xyz" }
+                result += escaped_unicode_re.sub(escaped_unicode, token.value)
+            elif token.type == "FUNCTION":
+                if token.function_name == 'attr':  # e.g. { content: attr(title) }
+                    result += elem.attrib.get(token.content[0].value, "")
+            elif token.type == "IDENT":
+                if token.value == "content":  # identity, e.g. { content: content }
+                    result += elem.text
+        return result
+
+    @staticmethod
+    def text_apply(tree_elem, func):
+        """Apply a function to every sub-element's .text and .tail, and element's .text"""
+        if tree_elem.text:
+            tree_elem.text = func(tree_elem.text)
+        for sub in tree_elem.iter():
+            if sub == tree_elem:
+                continue
+            if sub.text:
+                sub.text = func(sub.text)
+            if sub.tail:
+                sub.tail = func(sub.tail)
 
     @staticmethod
     def clear_element(element):
