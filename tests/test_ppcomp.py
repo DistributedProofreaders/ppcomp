@@ -8,19 +8,9 @@ from ppcomp.ppcomp import *
 
 args = object
 
-@pytest.fixture()
-def pgdp_text_file():
-    "Create a processed text file"
-    return PgdpFileText(load_args(myargs))
 
-
-@pytest.fixture()
-def pgdp_html_file():
-    "Create a processed html file"
-    return PgdpFileHtml(load_args(myargs))
-
-
-def test_load_text_file(pgdp_text_file):
+def test_load_text_file():
+    pgdp_text_file = PgdpFileText(load_args(myargs))
     pgdp_text_file.load('fossilplants1.txt')
     length = len(pgdp_text_file.text.splitlines())
     assert pgdp_text_file.args.simple_html
@@ -29,39 +19,43 @@ def test_load_text_file(pgdp_text_file):
     assert pgdp_text_file.start_line == 1
 
 
-def test_cleanup_text_file(pgdp_text_file):
-    pgdp_text_file.load('fossilplants1.txt')
-    length = len(pgdp_text_file.text.splitlines())
+def test_cleanup_text_file():
+    text_file = PgdpFileText(load_args(myargs))
+    text_file.load('fossilplants1.txt')
+    length = len(text_file.text.splitlines())
     assert length == 19647
-    assert pgdp_text_file.start_line == 1
+    assert text_file.start_line == 1
 
 
-def test_cleanup_pg_text_file(pgdp_text_file):
-    pgdp_text_file.load('fossilplants1pg.txt')
-    length = len(pgdp_text_file.text.splitlines())
+def test_cleanup_pg_text_file():
+    text_file = PgdpFileText(load_args(myargs))
+    text_file.load('fossilplants1pg.txt')
+    length = len(text_file.text.splitlines())
     assert length == 20020
-    pgdp_text_file.cleanup()
-    length = len(pgdp_text_file.text.splitlines())
+    text_file.cleanup()
+    length = len(text_file.text.splitlines())
     assert length == 19647
-    assert pgdp_text_file.start_line == 27
+    assert text_file.start_line == 27
 
 
-def test_load_html_file(pgdp_html_file):
-    pgdp_html_file.load('fossilplants1.html')
-    length = len(pgdp_html_file.text.splitlines())
+def test_load_html_file():
+    html_file = PgdpFileHtml(load_args(myargs))
+    html_file.load('fossilplants1.html')
+    length = len(html_file.text.splitlines())
     assert length == 24190
-    assert pgdp_html_file.tree
-    assert pgdp_html_file.body_line == 606
+    assert html_file.tree
+    assert html_file.body_line == 606
 
 
-def test_load_pgdp_file(pgdp_text_file):
-    pgdp_text_file.load('projectID5c76226c51b6d.txt')
-    length = len(pgdp_text_file.text.splitlines())
+def test_load_pgdp_file():
+    text_file = PgdpFileText(load_args(myargs))
+    text_file.load('projectID5c76226c51b6d.txt')
+    length = len(text_file.text.splitlines())
     assert length == 6968
-    assert pgdp_text_file.start_line == 1
+    assert text_file.start_line == 1
 
 
-def test_cleanup_pgdp_file(pgdp_text_file):
+def test_cleanup_pgdp_file():
     markup = ["-----File:", "[Blank Page]",
         '/*\n', '*/\n',
          '/#\n', '#/\n',
@@ -70,26 +64,21 @@ def test_cleanup_pgdp_file(pgdp_text_file):
          '/X\n', 'X/\n',
          '<i>', '</i>',
          '<b>', '</b>']
-    pgdp_text_file.load('projectID5c76226c51b6d.txt')
-    pgdp_text_file.cleanup()
-    length = len(pgdp_text_file.text.splitlines())
+    text_file = PgdpFileText(load_args(myargs))
+    text_file.load('projectID5c76226c51b6d.txt')
+    text_file.cleanup()
+    length = len(text_file.text.splitlines())
     assert length == 6968
-    assert pgdp_text_file.start_line == 1
+    assert text_file.start_line == 1
     for txt in markup:
-        assert -1 == pgdp_text_file.text.find(txt)
-    assert -1 == pgdp_text_file.text.find("[Illustration]")
+        assert -1 == text_file.text.find(txt)
+    assert -1 == text_file.text.find("[Illustration]")
     with open('outfile.txt', 'w') as f:
-        f.write(pgdp_text_file.text)
+        f.write(text_file.text)
 
 
 myargs = ['fossilplants1.html',
-          'fossilplants1.txt',
-          '--simple-html',
-          '--suppress-footnote-tags',
-          '--suppress-illustration-tags',
-          '--regroup-split-words',
-          '--css', 'css test',
-          '--css', 'css test2']
+          'fossilplants1.txt']
 
 
 def load_args(myargs):
