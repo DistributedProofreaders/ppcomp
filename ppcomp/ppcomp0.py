@@ -542,45 +542,7 @@ class PgdpFileHtml(PgdpFile):
         self.has_oe_ligature = True
 
     def convert(self):
-        """Remove HTML and PGDP marker from the text."""
-        escaped_unicode_re = re.compile(r"\\u[0-9a-fA-F]{4}")
-
-        def text_apply(element, func):
-            """Apply a function to every sub-element's .text and .tail, and element's .text"""
-            if element.text:
-                element.text = func(element.text)
-            for sub in element.iter():
-                if sub == element:
-                    continue
-                if sub.text:
-                    sub.text = func(sub.text)
-                if sub.tail:
-                    sub.tail = func(sub.tail)
-
-        def escaped_unicode(m):
-            try:
-                return bytes(m.group(0), 'utf8').decode('unicode-escape')
-            except:
-                return m.group(0)
-
-        def new_content(element):
-            """Process the "content:" property"""
-            result = ""
-            for token in val.value:
-                if token.type == "STRING":
-                    # e.g. { content: "xyz" }
-                    result += escaped_unicode_re.sub(escaped_unicode, token.value)
-                elif token.type == "FUNCTION":
-                    if token.function_name == 'attr':
-                        # e.g. { content: attr(title) }
-                        result += element.attrib.get(token.content[0].value, "")
-                elif token.type == "IDENT":
-                    if token.value == "content":
-                        # Identity, e.g. { content: content }
-                        result += element.text
-            return result
-
-        # Process each rule from our transformation CSS
+        """Process each rule from our transformation CSS"""
         stylesheet = tinycss.make_parser().parse_stylesheet(self.mycss)
         property_errors = []
         for rule in stylesheet.rules:
@@ -665,20 +627,20 @@ class PgdpFileHtml(PgdpFile):
                             element.text = f_replace_with_attr(element)
 
                         if val.name == 'content':
-                            v_content = new_content(element)
+                            v_content = self.new_content(element, val)
                             if pseudo_element == "before":
                                 element.text = v_content + (element.text or '')  # opening tag
                             elif pseudo_element == "after":
                                 element.tail = v_content + (element.tail or '')  # closing tag
                             else:
                                 # Replace all content
-                                element.text = new_content(element)
+                                element.text = self.new_content(element, val)
 
                         if f_transform:
-                            text_apply(element, f_transform)
+                            self.text_apply(element, f_transform)
 
                         if f_text_replace:
-                            text_apply(element, f_text_replace)
+                            self.text_apply(element, f_text_replace)
 
                         if f_element_func:
                             f_element_func(element)
@@ -718,6 +680,42 @@ class PgdpFileHtml(PgdpFile):
             css_errors += "</ul>"
 
         return css_errors
+
+    @staticmethod
+    def new_content(element, val):
+        """Process the "content:" property"""
+
+        def escaped_unicode(m):
+            try:
+                return bytes(m.group(0), 'utf8').decode('unicode-escape')
+            except:
+                return m.group(0)
+
+        escaped_unicode_re = re.compile(r"\\u[0-9a-fA-F]{4}")
+        result = ""
+        for token in val.value:
+            if token.type == "STRING":  # e.g. { content: "xyz" }
+                result += escaped_unicode_re.sub(escaped_unicode, token.value)
+            elif token.type == "FUNCTION":
+                if token.function_name == 'attr':  # e.g. { content: attr(title) }
+                    result += element.attrib.get(token.content[0].value, "")
+            elif token.type == "IDENT":
+                if token.value == "content":  # Identity, e.g. { content: content }
+                    result += element.text
+        return result
+
+    @staticmethod
+    def text_apply(element, func):
+        """Apply a function to every sub-element's .text and .tail, and element's .text"""
+        if element.text:
+            element.text = func(element.text)
+        for sub in element.iter():
+            if sub == element:
+                continue
+            if sub.text:
+                sub.text = func(sub.text)
+            if sub.tail:
+                sub.tail = func(sub.tail)
 
     def extract_footnotes(self):
         """Find footnotes, then remove them"""
