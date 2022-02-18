@@ -29,18 +29,18 @@ def test_load_text_file(pgdp_text_file):
     assert pgdp_text_file.start_line == 1
 
 
-def test_prepare_text_file(pgdp_text_file):
+def test_cleanup_text_file(pgdp_text_file):
     pgdp_text_file.load('fossilplants1.txt')
     length = len(pgdp_text_file.text.splitlines())
     assert length == 19647
     assert pgdp_text_file.start_line == 1
 
 
-def test_prepare_pg_text_file(pgdp_text_file):
+def test_cleanup_pg_text_file(pgdp_text_file):
     pgdp_text_file.load('fossilplants1pg.txt')
     length = len(pgdp_text_file.text.splitlines())
     assert length == 20020
-    pgdp_text_file.prepare()
+    pgdp_text_file.cleanup()
     length = len(pgdp_text_file.text.splitlines())
     assert length == 19647
     assert pgdp_text_file.start_line == 27
@@ -55,23 +55,38 @@ def test_load_html_file(pgdp_html_file):
 
 
 def test_load_pgdp_file(pgdp_text_file):
-    pgdp_text_file.load('projectID123456.txt')
+    pgdp_text_file.load('projectID5c76226c51b6d.txt')
     length = len(pgdp_text_file.text.splitlines())
-    assert length == 19647
+    assert length == 6968
     assert pgdp_text_file.start_line == 1
 
 
-def test_prepare_pgdp_file(pgdp_text_file):
-    pgdp_text_file.load('projectID123456.txt')
-    pgdp_text_file.prepare()
+def test_cleanup_pgdp_file(pgdp_text_file):
+    markup = ["-----File:", "[Blank Page]",
+        '/*\n', '*/\n',
+         '/#\n', '#/\n',
+         '/P\n', 'P/\n',
+         '/F\n', 'F/\n',
+         '/X\n', 'X/\n',
+         '<i>', '</i>',
+         '<b>', '</b>']
+    pgdp_text_file.load('projectID5c76226c51b6d.txt')
+    pgdp_text_file.cleanup()
     length = len(pgdp_text_file.text.splitlines())
-    assert length == 19647
+    assert length == 6968
     assert pgdp_text_file.start_line == 1
+    for txt in markup:
+        assert -1 == pgdp_text_file.text.find(txt)
+    assert -1 == pgdp_text_file.text.find("[Illustration]")
+    with open('outfile.txt', 'w') as f:
+        f.write(pgdp_text_file.text)
 
 
 myargs = ['fossilplants1.html',
           'fossilplants1.txt',
           '--simple-html',
+          '--suppress-footnote-tags',
+          '--suppress-illustration-tags',
           '--css', 'css test',
           '--css', 'css test2']
 

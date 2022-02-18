@@ -76,18 +76,7 @@ class PgdpFile:
         """Remove the PG header and footer from the text if present."""
         raise NotImplementedError("Override this method")
 
-    def prepare(self):
-        """Clean text in preparation for conversions"""
-        # strip boilerplate
-        # page markup, blank pages
-        # block markup
-        # replace italics, bold
-        # proofers notes
-        # split words
-        # thought breaks
-        # add/suppress illustrations, sidenotes, footnotes
-        # html head
-        # css transforms
+    def cleanup(self):
         raise NotImplementedError("Override this method")
 
     def convert(self):
@@ -127,7 +116,71 @@ class PgdpFileText(PgdpFile):
                 new_text.append(line)
         self.text = '\n'.join(new_text)
 
-    def prepare(self):
+    def remove_paging(self):
+        """Remove page markers & blank pages"""
+        self.text = re.sub(r"-----File: \w+.png.*", '', self.text)
+        self.text = self.text.replace("[Blank Page]", '')
+
+    def remove_block_markup(self):
+        """Remove block markup"""
+        for markup in ['/*', '*/', '/#', '#/', '/P', 'P/', '/F', 'F/', '/X', 'X/']:
+            self.text = self.text.replace('\n' + markup + '\n', '\n\n')
+
+    def remove_formatting(self):
+        """Ignore or replace italics and bold html"""
+        if self.args.ignore_format:  # silence formatting differences
+            for markup in ["<i>", "</i>", "<b>", "</b>"]:
+                self.text = self.text.replace(markup, '')
+        else:
+            for markup in ["<i>", "</i>"]:
+                self.text = self.text.replace(markup, '_')
+            for markup in ["<b>", "</b>"]:
+                self.text = self.text.replace(markup, '=')
+        # remove other markup
+        self.text = re.sub("<.*?>", '', self.text)
+
+    def suppress_proofers_notes(self):
+        """suppress proofers notes"""
+        if self.args.suppress_proofers_notes:
+            self.text = re.sub(r"\[\*\*[^]]*?]", '', self.text)
+
+    def regroup_split_words(self):
+        """Regroup split words"""
+        if self.args.regroup_split_words:
+            word_splits = {r"(\w+)-\*(\n+)\*": r"\2\1",
+                           r"(\w+)-\*_(\n\n)_\*": r"\2\1",
+                           r"(\w+)-\*(\w+)": r"\1\2"}
+            for key, value in word_splits.items():
+                self.text = re.sub(key, value, self.text)
+
+    def ignore_format(self):
+        """Remove italics and bold markers"""
+        # Todo: these can be perfectly valid characters, need to use regex
+        if self.args.ignore_format:
+            self.text = self.text.replace('_', '')
+            self.text = self.text.replace('=', '')
+
+    def remove_thought_breaks(self):
+        """Remove thought breaks (5 spaced asterisks)"""
+        self.text = re.sub(r"\*\s+\*\s+\*\s+\*\s+\*", '', self.text)
+
+    def suppress_footnote_tags(self):
+        # Todo: doesn't handle internal ']'
+        if self.args.ignore_format or self.args.suppress_footnote_tags:
+            self.text = re.sub(r"\[Footnote (\d+): ([^]]*?)]", r"\1 \2", self.text,
+                               flags=re.MULTILINE)
+            self.text = re.sub(r"\*\[Footnote: ([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
+
+    def suppress_illustration_tags(self):
+        if self.args.ignore_format or self.args.suppress_illustration_tags:
+            self.text = re.sub(r"\[Illustration?: ([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
+            self.text = self.text.replace("[Illustration]", '')
+
+    def suppress_sidenote_tags(self):
+        if self.args.ignore_format or self.args.suppress_sidenote_tags:
+            self.text = re.sub(r"\[Sidenote:([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
+
+    def cleanup(self):
         """Clean text in preparation for conversions"""
         from_pgdp_rounds = self.basename.startswith('projectID')
         if not from_pgdp_rounds:
@@ -137,65 +190,22 @@ class PgdpFileText(PgdpFile):
 
         if from_pgdp_rounds:
             # remove page markers & blank pages
-            self.text = re.sub(r"-----File: \w+.png.*", '', self.text)
-            self.text = re.sub(r"\[Blank Page]", '', self.text)
-
+            self.remove_paging()
             if self.args.txt_cleanup_type == 'p':  # proofers, all done
                 return
             # else 'b' best effort
-
-            # remove block markup
-            block_markup = ['/*', '*/',
-                            '/#', '#/',
-                            '/P', 'P/',
-                            '/F', 'F/',
-                            '/X', 'X/']
-            for markup in block_markup:
-                self.text = self.text.replace('\n' + markup + '\n', '\n\n')
-
-            # ignore or replace italics and bold html
-            if self.args.ignore_format:  # silence formatting differences
-                for markup in ["<i>", "</i>", "<b>", "</b>"]:
-                    self.text = self.text.replace(markup, '')
-            else:
-                for markup in ["<i>", "</i>"]:
-                    self.text = self.text.replace(markup, '_')
-                for markup in ["<b>", "</b>"]:
-                    self.text = self.text.replace(markup, '=')
-
-            # remove other markup
-            self.text = re.sub("<.*?>", '', self.text)
-            if self.args.suppress_proofers_notes:
-                self.text = re.sub(r"\[\*\*[^]]*?]", '', self.text)
-            if self.args.regroup_split_words:
-                word_splits = {r"(\w+)-\*(\n+)\*": r"\2\1",
-                               r"(\w+)-\*_(\n\n)_\*": r"\2\1",
-                               r"(\w+)-\*(\w+)": r"\1\2"}
-                for key, value in word_splits.items():
-                    self.text = re.sub(key, value, self.text)
-
+            self.remove_block_markup()
+            self.remove_formatting()
+            self.suppress_proofers_notes()
+            self.regroup_split_words()
         else:  # processed text file
-            # BUG: these can be perfectly valid characters, need to use regex
-            if self.args.ignore_format:
-                self.text = self.text.replace('_', '')
-                self.text = self.text.replace('=', '')
+            self.ignore_format()
+            self.remove_thought_breaks()
 
-            # Remove thought breaks
-            self.text = re.sub(r"\*\s+\*\s+\*\s+\*\s+\*", '', self.text)
-
-        # remove [Footnote, [Illustrations and [Sidenote tags
-        # BUG: doesn't handle closing ']' or contents
-        if self.args.ignore_format or self.args.suppress_footnote_tags:
-            self.text = re.sub(r"\[Footnote (\d+):([^]]*?)]", r"\1 \2", self.text,
-                               flags=re.MULTILINE)
-            self.text = re.sub(r"\*\[Footnote:([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
-
-        if self.args.ignore_format or self.args.suppress_illustration_tags:
-            self.text = re.sub(r"\[Illustration?:([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
-            self.text = re.sub(r"\[Illustration]", '', self.text)
-
-        if self.args.ignore_format or self.args.suppress_sidenote_tags:
-            self.text = re.sub(r"\[Sidenote:([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
+        # all text files
+        self.suppress_footnote_tags()
+        self.suppress_illustration_tags()
+        self.suppress_sidenote_tags()
 
     def convert(self):
         """Apply needed text conversions"""
@@ -266,7 +276,7 @@ class PgdpFileHtml(PgdpFile):
                 new_text.append(line)
         self.text = '\n'.join(new_text)
 
-    def prepare(self):
+    def cleanup(self):
         """Clean text in preparation for conversions"""
         # empty the head - we only want the body
         self.tree.find('head').clear()
@@ -573,7 +583,7 @@ class PPComp:
             return
         html_file = PgdpFileHtml(self.args)
         html_file.load(self.args.filename[0])
-        html_file.prepare()
+        html_file.cleanup()
         html_file.convert()
         html_file.extract_footnotes()
         print(html_file.text)
