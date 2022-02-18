@@ -551,7 +551,7 @@ class PgdpFileHtml(PgdpFile):
             f_replace_with_attr = None
             f_text_replace = None
             f_element_func = None
-            f_move = None
+            f_move = []
 
             for val in rule.declarations:
                 if val.name == 'content':
@@ -593,7 +593,6 @@ class PgdpFileHtml(PgdpFile):
                         property_errors += [(val.line, val.column, val.name
                                              + " takes at least one argument")]
                         continue
-                    f_move = []
                     for v in values:
                         print("[", v.value, "]")
                         if v.value == 'parent':
@@ -646,23 +645,7 @@ class PgdpFileHtml(PgdpFile):
                             f_element_func(element)
 
                         if f_move:
-                            parent = element.getparent()
-                            new = element
-                            for f in f_move:
-                                new = f(new)
-
-                            # Move the tail to the sibling or the parent
-                            if element.tail:
-                                sibling = element.getprevious()
-                                if sibling:
-                                    sibling.tail = (sibling.tail or "") + element.tail
-                                else:
-                                    parent.text = (parent.text or "") + element.tail
-                                element.tail = None
-
-                            # Prune and graft
-                            parent.remove(element)
-                            new.append(element)
+                            self.move_element(element, f_move)
 
         css_errors = ""
         if stylesheet.errors or property_errors:
@@ -680,6 +663,25 @@ class PgdpFileHtml(PgdpFile):
             css_errors += "</ul>"
 
         return css_errors
+
+    @staticmethod
+    def move_element(element, f_move):
+        """Move element in tree"""
+        parent = element.getparent()
+        new = element
+        for item in f_move:
+            new = item(new)
+        # move the tail to the sibling or the parent
+        if element.tail:
+            sibling = element.getprevious()
+            if sibling:
+                sibling.tail = (sibling.tail or '') + element.tail
+            else:
+                parent.text = (parent.text or '') + element.tail
+            element.tail = None
+        # prune and graft
+        parent.remove(element)
+        new.append(element)
 
     @staticmethod
     def new_content(element, val):
