@@ -57,14 +57,14 @@
 - Type of text cleaning:
   - (b)est effort \[default]: All
   - (n)one: Remove PG boilerplate only
-  - (p)roofers: Remove PG boilerplate, page markers, "[Blank page]" only
+  - (p)roofers: Remove PG boilerplate, page markers, "\[Blank page]" only
 
 ## Actions for text files from rounds ("projectID...")
 
 - Remove page markers, "[Blank page]"
 - If silence formatting differences: remove "\<i>" and "\<b>", else replace with '_', '='
 - Remove proofers notes (option)
-- Regroup split words (option)
+- Regroup split words (option) (works, but can't tell when hyphen should be kept)
 - Remove block markup
   - "/\*", "\*/",
   - "/#", "#/"

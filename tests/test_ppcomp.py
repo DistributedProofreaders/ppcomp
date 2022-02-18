@@ -87,6 +87,7 @@ myargs = ['fossilplants1.html',
           '--simple-html',
           '--suppress-footnote-tags',
           '--suppress-illustration-tags',
+          '--regroup-split-words',
           '--css', 'css test',
           '--css', 'css test2']
 

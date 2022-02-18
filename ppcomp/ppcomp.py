@@ -129,15 +129,15 @@ class PgdpFileText(PgdpFile):
     def remove_formatting(self):
         """Ignore or replace italics and bold html"""
         if self.args.ignore_format:  # silence formatting differences
-            for markup in ["<i>", "</i>", "<b>", "</b>"]:
-                self.text = self.text.replace(markup, '')
+            for tag in ['<i>', '</i>', '<b>', '</b>']:
+                self.text = self.text.replace(tag, '')
         else:
-            for markup in ["<i>", "</i>"]:
-                self.text = self.text.replace(markup, '_')
-            for markup in ["<b>", "</b>"]:
-                self.text = self.text.replace(markup, '=')
+            for tag in ['<i>', '</i>']:
+                self.text = self.text.replace(tag, '_')
+            for tag in ['<b>', '</b>']:
+                self.text = self.text.replace(tag, '=')
         # remove other markup
-        self.text = re.sub("<.*?>", '', self.text)
+        self.text = re.sub('<.*?>', '', self.text)
 
     def suppress_proofers_notes(self):
         """suppress proofers notes"""
@@ -577,9 +577,9 @@ class PPComp:
         raise NotImplementedError("Method not implemented")
 
     def simple_html(self):
-        """For debugging purposes. Transform the html and print the text output."""
+        """Debugging only, transform the html and print the text output"""
         if not self.args.filename[0].lower().endswith(('.html', '.htm')):
-            print("Error: not an html file")
+            print("Error: 1st file must be an html file")
             return
         html_file = PgdpFileHtml(self.args)
         html_file.load(self.args.filename[0])
