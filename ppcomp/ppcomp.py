@@ -143,14 +143,13 @@ class PgdpFileText(PgdpFile):
     def suppress_proofers_notes(self):
         """suppress proofers notes"""
         if self.args.suppress_proofers_notes:
-            self.text = re.sub(r"\[\*\*[^]]*?]", '', self.text)
+            self.text = re.sub(r"\[\*\*[^\]]*?]", '', self.text)
 
     def regroup_split_words(self):
-        """Regroup split words"""
+        """Regroup split words. Run after removing page markers."""
         if self.args.regroup_split_words:
-            word_splits = {r"(\w+)-\*(\n+)\*": r"\2\1",
-                           r"(\w+)-\*_(\n\n)_\*": r"\2\1",
-                           r"(\w+)-\*(\w+)": r"\1\2"}
+            word_splits = {r"(\w+)-\*(\n+)\*": r"\n\1",  # followed by 0 or more blank lines
+                           r"(\w+)-\*(\w+)": r"\1\2"}  # same line
             for key, value in word_splits.items():
                 self.text = re.sub(key, value, self.text)
 
@@ -160,6 +159,8 @@ class PgdpFileText(PgdpFile):
         if self.args.ignore_format:
             self.text = self.text.replace('_', '')
             self.text = self.text.replace('=', '')
+            self.text = re.sub(r"_([^\n]*?)_", r'\1', self.text, flags=re.MULTILINE)
+            self.text = re.sub(r"=([^\n]*?)=", r'\1', self.text, flags=re.MULTILINE)
 
     def remove_thought_breaks(self):
         """Remove thought breaks (5 spaced asterisks)"""
