@@ -314,7 +314,7 @@ class PgdpFileHtml(PgdpFile):
             self.mycss += css
 
     def cleanup(self):
-        """Setup css transform rules, then process them against tree"""
+        """Build up a list of CSS transform rules, then process them against tree"""
         # empty the head - we only want the body
         self.tree.find('head').clear()
 

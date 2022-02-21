@@ -57,7 +57,7 @@
 - Type of text cleaning:
   - (b)est effort \[default]: All
   - (n)one: Remove PG boilerplate only
-  - (p)roofers: Remove PG boilerplate, page markers, "\[Blank page]" only
+  - (p)roofers: Remove page markers, "\[Blank page]" only
 
 ## Actions for text files from rounds ("projectID...")
 
@@ -75,7 +75,7 @@
 ## Actions for processed text files:
 
 - Remove thought breaks "*     *     *     *     *"
-- If ignore format remove '_', '=' **(Bug: could be valid characters)**
+- If ignore format remove '_', '='
 
 ## Actions for HTML files:
 
