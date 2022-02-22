@@ -25,6 +25,16 @@ def test_remove_thought_breaks():
     assert not re.search(r"\*\s+\*\s+\*\s+\*\s+\*", text_file.text)
 
 
+def test_ignore_format():
+    args = myargs + ['--ignore-format']
+    text_file = PgdpFileText(load_args(args))
+    text_file.load('fossilplants1.txt')
+    text_file.ignore_format()
+    assert -1 < text_file.text.find("His Einleitung")
+    with open('outfile.txt', 'w', encoding='utf-8') as f:
+        f.write(text_file.text)
+
+
 ########## Text file from rounds ##########
 
 def test_load_pgdp_file():
@@ -125,8 +135,6 @@ def test_suppress_footnote_tags():
     text_file.load('projectID5c76226c51b6d.txt')
     text_file.suppress_footnote_tags()
     assert -1 == text_file.text.find("[Footnote:")
-    with open('outfile.txt', 'w') as f:
-        f.write(text_file.text)
 
 
 ########## HTML file ##########
