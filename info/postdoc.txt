@@ -62,26 +62,8 @@
 "′", "'"   # prime
 "″", "''"  # double prime
 "‴", "'''" # triple prime
-"₀", "0"  # subscript 0
-"₁", "1"  # subscript 1
-"₂", "2"  # subscript 2
-"₃", "3"  # subscript 3
-"₄", "4"  # subscript 4
-"₅", "5"  # subscript 5
-"₆", "6"  # subscript 6
-"₇", "7"  # subscript 7
-"₈", "8"  # subscript 8
-"₉", "9"  # subscript 9
-"⁰", "0"  # superscript 0
-"¹", "1"  # superscript 1
-"²", "2"  # superscript 2
-"³", "3"  # superscript 3
-"⁴", "4"  # superscript 4
-"⁵", "5"  # superscript 5
-"⁶", "6"  # superscript 6
-"⁷", "7"  # superscript 7
-"⁸", "8"  # superscript 8
-"⁹", "9"  # superscript 9
+"₁", "1" ... # subscript to number
+"¹", "1" ... # superscript to number
 [/list]
 
 [b]Actions for all text files:[/b]

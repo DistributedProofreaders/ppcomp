@@ -1003,7 +1003,7 @@ class PPComp(object):
         if finds_0 == -1 and finds_1 == -1:  # Neither has it
             return
         # Downgrade one version
-        if finds_0 > 0:
+        if finds_0 >= 0:
             files[0].transform_func.append(lambda text: text.replace(char_best, char_other))
         else:
             files[1].transform_func.append(lambda text: text.replace(char_best, char_other))

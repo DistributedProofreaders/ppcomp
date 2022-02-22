@@ -91,6 +91,17 @@ class PgdpFile:
         """Extract the footnotes"""
         raise NotImplementedError("Override this method")
 
+    def remove_nbspaces(self):
+        """Remove non-breakable spaces between numbers. For instance, a
+        text file could have 250000, and the html could have 250 000.
+        """
+        if self.args.suppress_nbsp_num:
+            self.text = re.sub(r"(\d)\u00A0(\d)", r"\1\2", self.text)
+
+    def remove_soft_hyphen(self):
+        """Suppress shy (soft hyphen)"""
+        self.text = re.sub(r"\u00AD", r"", self.text)
+
 
 class PgdpFileText(PgdpFile):
     """Store and process a DP text file"""
@@ -143,7 +154,7 @@ class PgdpFileText(PgdpFile):
     def suppress_proofers_notes(self):
         """suppress proofers notes"""
         if self.args.suppress_proofers_notes:
-            self.text = re.sub(r"\[\*\*[^\]]*?]", '', self.text)
+            self.text = re.sub(r"\[\*\*[^]]*?]", '', self.text)
 
     def regroup_split_words(self):
         """Regroup split words, must run remove page markers 1st"""
@@ -159,8 +170,8 @@ class PgdpFileText(PgdpFile):
         if self.args.ignore_format:
             self.text = self.text.replace('_', '')
             self.text = self.text.replace('=', '')
-            self.text = re.sub(r"_([^\n]*?)_", r'\1', self.text, flags=re.MULTILINE)
-            self.text = re.sub(r"=([^\n]*?)=", r'\1', self.text, flags=re.MULTILINE)
+            self.text = re.sub(r"_(.+\n?.+)_", r'\1', self.text)
+            self.text = re.sub(r"=(.+\n?.+)=", r'\1', self.text)
 
     def remove_thought_breaks(self):
         """Remove thought breaks (5 spaced asterisks)"""
@@ -168,7 +179,6 @@ class PgdpFileText(PgdpFile):
 
     def suppress_footnote_tags(self):
         """Remove footnote tags"""
-        # Todo: doesn't handle internal ']'
         if self.args.ignore_format or self.args.suppress_footnote_tags:
             self.text = re.sub(r"\[Footnote (\d+): ([^]]*?)]", r"\1 \2", self.text,
                                flags=re.MULTILINE)
@@ -186,7 +196,7 @@ class PgdpFileText(PgdpFile):
             self.text = re.sub(r"\[Sidenote:([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
 
     def cleanup(self):
-        """Clean text in preparation for conversions"""
+        """Perform cleanup for this type of file"""
         from_pgdp_rounds = self.basename.startswith('projectID')
         if not from_pgdp_rounds:
             self.strip_pg_boilerplate()
@@ -211,11 +221,6 @@ class PgdpFileText(PgdpFile):
         self.suppress_footnote_tags()
         self.suppress_illustration_tags()
         self.suppress_sidenote_tags()
-
-    def convert(self):
-        """Apply needed text conversions"""
-        for func in self.transform_func:
-            self.text = func(self.text)
 
     def extract_footnotes(self):
         """Extract the footnotes."""
@@ -315,7 +320,9 @@ class PgdpFileHtml(PgdpFile):
             self.mycss += css
 
     def cleanup(self):
-        """Build up a list of CSS transform rules, then process them against tree"""
+        """Perform cleanup for this type of file - build up a list of CSS transform rules,
+        then process them against tree
+        """
         # empty the head - we only want the body
         self.tree.find('head').clear()
 
@@ -328,17 +335,6 @@ class PgdpFileHtml(PgdpFile):
         self.css_sidenote()
         self.css_custom_css()
         self.process_css(self.mycss)
-
-    def convert(self):
-        """Apply needed text conversions"""
-        # noinspection Pylint
-        self.text = etree.XPath("string(/)")(self.tree)
-        for func in self.transform_func:
-            self.text = func(self.text)
-
-        # zero width space
-        if self.args.ignore_0_space:
-            self.text = self.text.replace(chr(0x200b), '')
 
     def process_css(self, mycss):
         """Process each rule from our transformation CSS"""
@@ -568,21 +564,36 @@ class PPComp:
     def __init__(self, args):
         self.args = args
 
-    def convert_both(self):
-        """Apply various conversions to both files"""
-        raise NotImplementedError("Method not implemented")
+    def do_process(self):
+        """Main routine: load & process the files"""
+        files = [None, None]
+        for i, fname in enumerate(self.args.filename):
+            if fname.lower().endswith(('.html', '.htm')):
+                files[i] = PgdpFileHtml(self.args)
+            else:
+                files[i] = PgdpFileText(self.args)
+            files[i].load(fname)
+            files[i].cleanup()  # perform cleanup for each type of file
+
+        # perform common cleanup for both files
+        self.check_characters(files)
+        for file in files:
+            file.remove_nbspaces()
+            file.remove_soft_hyphen()
+
+        # Compare the two versions
+        main_diff = self.compare_texts(files[0].text, files[1].text)
+
+        if self.args.extract_footnotes:
+            fnotes_diff = self.compare_texts(files[0].footnotes, files[1].footnotes)
+        else:
+            fnotes_diff = ""
+        html_content = self.create_html(files, main_diff, fnotes_diff)
+
+        return html_content, files[0].basename, files[1].basename
 
     def compare_texts(self, text1, text2):
         """Compare two sources, using dwdiff"""
-        raise NotImplementedError("Method not implemented")
-
-    def do_process(self):
-        """Main routine: load & process the files
-            1. load()
-            2. prepare()
-            3. convert()
-            4. extract_footnotes()
-        """
         raise NotImplementedError("Method not implemented")
 
     def create_html(self, files, text, footnotes):
@@ -602,22 +613,61 @@ class PPComp:
         print(html_file.text)
 
     @staticmethod
-    def check_char(files, char_best, char_other):
+    def check_characters(files):
         """Check whether each file has the 'best' character. If not, add a conversion request.
         This is used for instance if one version uses curly quotes while the other uses straight.
         In that case, we need to convert one into the other, to get a smaller diff.
         """
-        finds_0 = files[0].text.find(char_best)
-        finds_1 = files[1].text.find(char_best)
-        if finds_0 >= 0 and finds_1 >= 0:  # Both have it
-            return
-        if finds_0 == -1 and finds_1 == -1:  # Neither has it
-            return
-        # Downgrade one version
-        if finds_0 > 0:
-            files[0].transform_func.append(lambda text: text.replace(char_best, char_other))
-        else:
-            files[1].transform_func.append(lambda text: text.replace(char_best, char_other))
+        character_checks = {
+            '’': "'",  # close curly quote to straight
+            '‘': "'",  # open curly quote to straight
+            '”': '"',  # close curly quotes to straight
+            '“': '"',  # open curly quotes to straight
+            'º': 'o',  # ordinal o to letter o
+            'ª': 'a',  # ordinal a to letter a
+            '–': '-',  # ndash to regular dash
+            '—': '--',  # mdash to regular dashes
+            '½': '-1/2',
+            '¼': '-1/4',
+            '¾': '-3/4',
+            '⁄': '/',  # fraction slash
+            '′': "'",  # prime
+            '″': "''",  # double prime
+            '‴': "'''",  # triple prime
+            '₀': '0',  # subscript 0
+            '₁': '1',  # subscript 1
+            '₂': '2',  # subscript 2
+            '₃': '3',  # subscript 3
+            '₄': '4',  # subscript 4
+            '₅': '5',  # subscript 5
+            '₆': '6',  # subscript 6
+            '₇': '7',  # subscript 7
+            '₈': '8',  # subscript 8
+            '₉': '9',  # subscript 9
+            '⁰': '0',  # superscript 0
+            '¹': '1',  # superscript 1
+            '²': '2',  # superscript 2
+            '³': '3',  # superscript 3
+            '⁴': '4',  # superscript 4
+            '⁵': '5',  # superscript 5
+            '⁶': '6',  # superscript 6
+            '⁷': '7',  # superscript 7
+            '⁸': '8',  # superscript 8
+            '⁹': '9'  # superscript 9
+        }
+
+        for char_best, char_other in character_checks.items():
+            finds_0 = files[0].text.find(char_best)
+            finds_1 = files[1].text.find(char_best)
+            if finds_0 >= 0 and finds_1 >= 0:  # Both have it
+                continue
+            if finds_0 == -1 and finds_1 == -1:  # Neither has it
+                continue
+            # Downgrade one version
+            if finds_0 >= 0:
+                files[0].text.replace(char_best, char_other)
+            else:
+                files[1].text.replace(char_best, char_other)
 
 
 def diff_css():
@@ -773,8 +823,8 @@ def main():
     if args.simple_html:
         compare.simple_html()
     else:
-        html_content, fn1, fn2 = compare.do_process
-        output_html(html_content, fn1, fn2)
+        html_content, file1, file2 = compare.do_process()
+        output_html(html_content, file1, file2)
 
 
 if __name__ == '__main__':
