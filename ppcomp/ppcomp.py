@@ -146,7 +146,7 @@ class PgdpFileText(PgdpFile):
             self.text = re.sub(r"\[\*\*[^\]]*?]", '', self.text)
 
     def regroup_split_words(self):
-        """Regroup split words. Run after removing page markers."""
+        """Regroup split words, must run remove page markers 1st"""
         if self.args.regroup_split_words:
             word_splits = {r"(\w+)-\*(\n+)\*": r"\n\1",  # followed by 0 or more blank lines
                            r"(\w+)-\*(\w+)": r"\1\2"}  # same line

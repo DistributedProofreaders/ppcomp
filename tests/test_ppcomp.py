@@ -14,16 +14,8 @@ def test_load_text_file():
     pgdp_text_file = PgdpFileText(load_args(myargs))
     pgdp_text_file.load('fossilplants1.txt')
     length = len(pgdp_text_file.text.splitlines())
-    assert length == 19647
+    assert length == 19649
     assert pgdp_text_file.start_line == 1
-
-
-def test_cleanup_text_file():
-    text_file = PgdpFileText(load_args(myargs))
-    text_file.load('fossilplants1.txt')
-    length = len(text_file.text.splitlines())
-    assert length == 19647
-    assert text_file.start_line == 1
 
 
 def test_remove_thought_breaks():
@@ -39,7 +31,7 @@ def test_load_pgdp_file():
     text_file = PgdpFileText(load_args(myargs))
     text_file.load('projectID5c76226c51b6d.txt')
     length = len(text_file.text.splitlines())
-    assert length == 6970
+    assert length == 6972
     assert text_file.start_line == 1
 
 
@@ -99,9 +91,7 @@ def test_regroup_split_words():
     # no line between
     assert -1 == text_file.text.find("three-*")
     # same line
-    assert -1 == text_file.text.find("light-*wood")
-    with open('outfile.txt', 'w') as f:
-        f.write(text_file.text)
+    assert -1 < text_file.text.find("lightwood")
 
 
 def test_suppress_proofers_notes():
@@ -128,13 +118,15 @@ def test_suppress_sidenote_tags():
     assert -1 == text_file.text.find("[Sidenote:")
 
 
-@pytest.mark.skip
+#@pytest.mark.skip
 def test_suppress_footnote_tags():
     args = myargs + ['--suppress-footnote-tags']
     text_file = PgdpFileText(load_args(args))
     text_file.load('projectID5c76226c51b6d.txt')
     text_file.suppress_footnote_tags()
     assert -1 == text_file.text.find("[Footnote:")
+    with open('outfile.txt', 'w') as f:
+        f.write(text_file.text)
 
 
 ########## HTML file ##########
