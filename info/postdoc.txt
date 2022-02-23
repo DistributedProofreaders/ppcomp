@@ -27,9 +27,9 @@
 [*]--css-add-sidenote
 	HTML: add [color=#0000FF][Sidenote: ...][/color] tags
 [*]--suppress-nbsp-num
-	HTML: Suppress non-breakable spaces between numbers (U+200b) [color=#0000FF](&nbsp;, &#160;)?[/color]
+	HTML: Suppress non-breakable spaces between numbers (U+00A0) [color=#0000FF](should be &nbsp;, &#160;, &#x00A0;?)[/color]
 [*]--ignore-0-space
-	HTML: suppress zero width space (U+200b)
+	HTML: suppress zero width space (U+200B) [color=#0000FF](should be &#x200B;?)[/color]
 [*]--css-smcap TYPE (U, L, T)
 	HTML: Transform small caps into uppercase (U), lowercase (L) or title case (T)
 [*]--css-bold STR
@@ -101,27 +101,28 @@
 [b]Actions for HTML files:[/b]
 [list]
 [*]Remove page numbers
-    span[class^="pagenum"],
-    p[class^="pagenum"],
-    div[class^="pagenum"],
-    span[class^="pageno"],
-    p[class^="pageno"],
-    div[class^="pageno"],
-    p[class^="page"],
-    span[class^="pgnum"],
-    div[id^="Page_"]
+    <span class="pagenum"
+    <span class="pageno"
+    <span class="pgnum"
+    <p class="pagenum"
+    <p class="pageno"
+    <p class="page"
+    <div class="pagenum"
+    <div class="pageno"
+    <div id="Page_"
 [*]Add "[Illustration: ]" tags (option)
 [*]Add "[Sidenote: ]" tags (option)
-[*]Replace entities:
+[*]Replace formatting:
     <i>, <em>, <cite> to '_'
     <b> to '='
     <sup> to "^{}"
     <sub> to "_{}"
+[*]Replace entities:
     &nbsp;, &#160; to space [b](New)[/b]
     &mdash;, &#151; to '--' [b](New)[/b]
-[*]Remove non-breakable spaces between numbers (option)
-[*]Remove zero width space (U+200B) (option)
-[*]Remove soft hyphen (U+00AD)
+[*]Remove non-breakable spaces between numbers (U+00A0) (option) [color=#0000FF](should be &nbsp;, &#160;, &#x00A0;?)[/color]
+[*]Remove zero width space (U+200B) (option) [color=#0000FF](should be &#x200B;?)[/color]
+[*]Remove soft hyphen (U+00AD) [color=#0000FF](should be &#x00AD;?)[/color]
 [/list]
 
 [b]Proposed changes[/b]
