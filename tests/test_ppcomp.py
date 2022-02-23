@@ -1,7 +1,5 @@
 """ Tests for ppcomp functions"""
 
-import pytest
-
 from ppcomp.ppcomp import *
 
 myargs = ['fossilplants1.html',
@@ -31,8 +29,6 @@ def test_ignore_format():
     text_file.load('fossilplants1.txt')
     text_file.ignore_format()
     assert -1 < text_file.text.find("His Einleitung")
-    with open('outfile.txt', 'w', encoding='utf-8') as f:
-        f.write(text_file.text)
 
 
 ########## Text file from rounds ##########
@@ -161,6 +157,16 @@ def test_remove_soft_hyphen():
     html_file.load('fossilplants1.html')
     html_file.remove_soft_hyphen()
     assert not re.search(r"\u00AD", html_file.text)
+
+
+def test_text_transform():
+    html_file = PgdpFileHtml(load_args(myargs))
+    html_file.load('fossilplants1.html')
+    html_file.mycss += ".smcap { text-transform:uppercase; }"
+    html_file.process_css()
+    assert True
+    with open('outfile.txt', 'w', encoding='utf-8') as f:
+        f.write(html_file.text)
 
 
 ########## Both files ##########
