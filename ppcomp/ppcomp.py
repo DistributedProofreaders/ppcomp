@@ -155,12 +155,9 @@ class PgdpFileText(PgdpFile):
 
     def ignore_format(self):
         """Remove italics and bold markers"""
-        # Todo: these can be perfectly valid characters, need to use regex
         if self.args.ignore_format:
-            self.text = self.text.replace('_', '')
-            self.text = self.text.replace('=', '')
-            self.text = re.sub(r"_(.+\n?.+)_", r'\1', self.text)
-            self.text = re.sub(r"=(.+\n?.+)=", r'\1', self.text)
+            self.text = re.sub(r"_((.|\n)+?)_", r'\1', self.text)
+            self.text = re.sub(r"=((.|\n)+?)=", r'\1', self.text)
 
     def remove_thought_breaks(self):
         """Remove thought breaks (5 spaced asterisks)"""
