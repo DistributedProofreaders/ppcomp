@@ -91,18 +91,6 @@ class PgdpFile:
         """Extract the footnotes"""
         raise NotImplementedError("Override this method")
 
-    def remove_nbspaces(self):
-        """Remove non-breakable spaces between numbers. For instance, a
-        text file could have 250000, and the html could have 250 000.
-        """
-        if self.args.suppress_nbsp_num:
-            self.text = re.sub(r"(\d)\u00A0(\d)", r"\1\2", self.text)
-
-    def remove_soft_hyphen(self):
-        """Suppress shy (soft hyphen)"""
-        self.text = re.sub(r"\u00AD", r"", self.text)
-
-
 class PgdpFileText(PgdpFile):
     """Store and process a DP text file"""
 
@@ -319,6 +307,19 @@ class PgdpFileHtml(PgdpFile):
         for css in self.args.css:
             self.mycss += css
 
+    def remove_nbspaces(self):
+        """Remove non-breakable spaces between numbers. For instance, a
+        text file could have 250000, and the html could have 250 000.
+        """
+        # Todo: &nbsp;, &#160;, &#x00A0;
+        if self.args.suppress_nbsp_num:
+            self.text = re.sub(r"(\d)\u00A0(\d)", r"\1\2", self.text)
+
+    def remove_soft_hyphen(self):
+        """Suppress shy (soft hyphen)"""
+        # Todo: &#x00AD;
+        self.text = re.sub(r"\u00AD", r"", self.text)
+
     def cleanup(self):
         """Perform cleanup for this type of file - build up a list of CSS transform rules,
         then process them against tree
@@ -334,11 +335,15 @@ class PgdpFileHtml(PgdpFile):
         self.css_illustration()
         self.css_sidenote()
         self.css_custom_css()
-        self.process_css(self.mycss)
+        self.process_css()  # process transformations
 
-    def process_css(self, mycss):
+        # text fixups
+        self.remove_nbspaces()
+        self.remove_soft_hyphen()
+
+    def process_css(self):
         """Process each rule from our transformation CSS"""
-        stylesheet = tinycss.make_parser().parse_stylesheet(mycss)
+        stylesheet = tinycss.make_parser().parse_stylesheet(self.mycss)
         property_errors = []
         for rule in stylesheet.rules:
             # extract values we care about
@@ -577,9 +582,6 @@ class PPComp:
 
         # perform common cleanup for both files
         self.check_characters(files)
-        for file in files:
-            file.remove_nbspaces()
-            file.remove_soft_hyphen()
 
         # Compare the two versions
         main_diff = self.compare_texts(files[0].text, files[1].text)

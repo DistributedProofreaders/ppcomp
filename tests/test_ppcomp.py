@@ -148,6 +148,34 @@ def test_load_html_file():
     assert html_file.body_line == 606
 
 
+def test_remove_nbspaces():
+    args = myargs + ['--suppress-nbsp-num']
+    html_file = PgdpFileHtml(load_args(args))
+    html_file.load('fossilplants1.html')
+    html_file.remove_nbspaces()
+    assert not re.search(r"(\d)\u00A0(\d)", html_file.text)
+
+
+def test_remove_soft_hyphen():
+    html_file = PgdpFileHtml(load_args(myargs))
+    html_file.load('fossilplants1.html')
+    html_file.remove_soft_hyphen()
+    assert not re.search(r"\u00AD", html_file.text)
+
+
+########## Both files ##########
+
+def test_check_characters():
+    markup = ['<i>', '</i>', '<b>', '</b>']
+    files = [None, None]
+    files[0] = PgdpFileText(load_args(myargs))
+    files[0].load('fossilplants1.txt')
+    files[1] = PgdpFileHtml(load_args(myargs))
+    files[1].load('fossilplants1.html')
+    PPComp.check_characters(files)
+    assert True
+
+
 def load_args(myargs):
     parser = argparse.ArgumentParser(description='Diff text document for PGDP PP.')
     parser.add_argument('filename', metavar='FILENAME', type=str,
