@@ -91,6 +91,7 @@ class PgdpFile:
         """Extract the footnotes"""
         raise NotImplementedError("Override this method")
 
+
 class PgdpFileText(PgdpFile):
     """Store and process a DP text file"""
 
@@ -317,7 +318,7 @@ class PgdpFileHtml(PgdpFile):
 
     def remove_soft_hyphen(self):
         """Suppress shy (soft hyphen)"""
-        # Todo: &#x00AD;
+        # Todo: &#173;, &#x00AD;
         self.text = re.sub(r"\u00AD", r"", self.text)
 
     def cleanup(self):
@@ -337,14 +338,65 @@ class PgdpFileHtml(PgdpFile):
         self.css_custom_css()
         self.process_css()  # process transformations
 
+        # Transform html into text for character search.
+        self.text = etree.XPath("normalize-space(/)")(self.tree)
+
         # text fixups
         self.remove_nbspaces()
         self.remove_soft_hyphen()
+
+    @staticmethod
+    def text_transform(val, errors: list):
+        if len(val.value) != 1:
+            errors += [(val.line, val.column, val.name + " takes 1 argument")]
+        else:
+            value = val.value[0].value
+            if value == "uppercase":
+                return lambda x: x.upper()
+            if value == "lowercase":
+                return lambda x: x.lower()
+            if value == "capitalize":
+                return lambda x: x.title()
+            errors += [(val.line, val.column,
+                        val.name + " accepts only 'uppercase', 'lowercase' or 'capitalize'")]
+        return None
+
+    @staticmethod
+    def text_replace(val, errors: list):
+        # skip S (spaces) tokens
+        values = [v for v in val.value if v.type != "S"]
+        if len(values) != 2:
+            errors += [(val.line, val.column, val.name + " takes 2 string arguments")]
+            return None
+
+        return lambda x: x.replace(values[0].value, values[1].value)
+
+    @staticmethod
+    def text_move(val, errors: list):
+        values = [v for v in val.value if v.type != "S"]
+        if len(values) < 1:
+            errors += [(val.line, val.column, val.name + " takes at least one argument")]
+            return None
+        f_move = []
+        for value in values:
+            if value.value == 'parent':
+                f_move.append(lambda el: el.getparent())
+            elif value.value == 'prev-sib':
+                f_move.append(lambda el: el.getprevious())
+            elif value.value == 'next-sib':
+                f_move.append(lambda el: el.getnext())
+            else:
+                errors += [(val.line, val.column, val.name + " invalid value " + value.value)]
+                f_move = None
+                break
+
+        return f_move
 
     def process_css(self):
         """Process each rule from our transformation CSS"""
         stylesheet = tinycss.make_parser().parse_stylesheet(self.mycss)
         property_errors = []
+
         for rule in stylesheet.rules:
             # extract values we care about
             f_transform = None
@@ -355,66 +407,24 @@ class PgdpFileHtml(PgdpFile):
 
             for val in rule.declarations:
                 if val.name == 'content':
-                    # result depends on element and pseudo elements
-                    pass
+                    pass  # result depends on element and pseudo elements
                 elif val.name == "text-transform":
-                    if len(val.value) != 1:
-                        property_errors += [(val.line, val.column, val.name + " takes 1 argument")]
-                    else:
-                        value = val.value[0].value
-                        if value == "uppercase":
-                            f_transform = lambda x: x.upper()
-                        elif value == "lowercase":
-                            f_transform = lambda x: x.lower()
-                        elif value == "capitalize":
-                            f_transform = lambda x: x.title()
-                        else:
-                            property_errors += [(val.line, val.column,
-                                                 val.name + " accepts only 'uppercase',"
-                                                            " 'lowercase' or 'capitalize'")]
+                    f_transform = self.text_transform(val, property_errors)
                 elif val.name == "_replace_with_attr":
                     f_replace_with_attr = lambda el: el.attrib[val.value[0].value]
                 elif val.name == "text-replace":
-                    # skip S (spaces) tokens
-                    values = [v for v in val.value if v.type != "S"]
-                    if len(values) != 2:
-                        property_errors += [(val.line, val.column, val.name
-                                             + " takes 2 string arguments")]
-                    else:
-                        value1 = values[0].value
-                        value2 = values[1].value
-                        f_text_replace = lambda x: x.replace(value1, value2)
+                    f_text_replace = self.text_replace(val, property_errors)
                 elif val.name == "display":
                     # support display none only. So ignore "none" argument
                     f_element_func = PgdpFileHtml.clear_element
                 elif val.name == "_graft":
-                    values = [v for v in val.value if v.type != "S"]
-                    if len(values) < 1:
-                        property_errors += [(val.line, val.column, val.name
-                                             + " takes at least one argument")]
-                        continue
-                    for value in values:
-                        print("[", value.value, "]")
-                        if value.value == 'parent':
-                            f_move.append(lambda el: el.getparent())
-                        elif value.value == 'prev-sib':
-                            f_move.append(lambda el: el.getprevious())
-                        elif value.value == 'next-sib':
-                            f_move.append(lambda el: el.getnext())
-                        else:
-                            property_errors += [(val.line, val.column, val.name
-                                                 + " invalid value " + value.value)]
-                            f_move = None
-                            break
-                    if not f_move:
-                        continue
+                    f_move = self.text_move(val, property_errors)
                 else:
                     property_errors += [(val.line, val.column, "Unsupported property " + val.name)]
                     continue
 
                 # iterate through each selector in the rule
                 for selector in cssselect.parse(rule.selector.as_css()):
-                    pseudo_element = selector.pseudo_element
                     xpath = cssselect.HTMLTranslator().selector_to_xpath(selector)
                     find = etree.XPath(xpath)
 
@@ -425,9 +435,9 @@ class PgdpFileHtml(PgdpFile):
                             element.text = f_replace_with_attr(element)
                         if val.name == 'content':
                             v_content = self.new_content(element, val)
-                            if pseudo_element == "before":
+                            if selector.pseudo_element == "before":
                                 element.text = v_content + (element.text or '')  # opening tag
-                            elif pseudo_element == "after":
+                            elif selector.pseudo_element == "after":
                                 element.tail = v_content + (element.tail or '')  # closing tag
                             else:  # replace all content
                                 element.text = self.new_content(element, val)
@@ -440,21 +450,23 @@ class PgdpFileHtml(PgdpFile):
                         if f_move:
                             self.move_element(element, f_move)
 
+        return self.css_errors(stylesheet.errors, property_errors)
+
+    def css_errors(self, stylesheet_errors, property_errors):
+        """Collect transformation CSS errors"""
         css_errors = ''
-        if stylesheet.errors or property_errors:
-            # There are transformation CSS errors. If the default css
-            # is included, take the offset into account.
-            i = 0
-            if not self.args.css_no_default:
-                i = DEFAULT_TRANSFORM_CSS.count('\n')
+        if stylesheet_errors or property_errors:
             css_errors = "<div class='error-border bbox'><p>Error(s) in the" \
                          "  transformation CSS:</p><ul>"
-            for err in stylesheet.errors:
+            i = 0
+            # if the default css is included, take the offset into account
+            if not self.args.css_no_default:
+                i = DEFAULT_TRANSFORM_CSS.count('\n')
+            for err in stylesheet_errors:
                 css_errors += f"<li>{err.line - i},{err.column}: {err.reason}</li>"
             for err in property_errors:
                 css_errors += f"<li>{err[0] - i},{err[1]}: {err[2]}</li>"
             css_errors += "</ul>"
-
         return css_errors
 
     @staticmethod
@@ -525,14 +537,15 @@ class PgdpFileHtml(PgdpFile):
 
     def extract_footnotes(self):
         """Extract the footnotes"""
-        if not self.args.extract_footnotes:
-            return
+        raise NotImplementedError("Method not implemented")
+        # if not self.args.extract_footnotes:
+        #     return
 
 
 DEFAULT_TRANSFORM_CSS = '''
         /* Italics */
         i:before, cite:before, em:before,
-        i:after, cite:after, em:after, { content: "_"; }
+        i:after, cite:after, em:after { content: "_"; }
 
         /* Bold */
         b:before, bold:before,
@@ -611,8 +624,10 @@ class PPComp:
         html_file.load(self.args.filename[0])
         html_file.cleanup()
         html_file.convert()
-        html_file.extract_footnotes()
+        #html_file.extract_footnotes()
         print(html_file.text)
+        with open('outhtml.txt', 'w', encoding='utf-8') as f:
+            f.write(html_file.text)
 
     @staticmethod
     def check_characters(files):

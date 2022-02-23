@@ -594,7 +594,6 @@ class PgdpFileHtml(PgdpFile):
                                              + " takes at least one argument")]
                         continue
                     for v in values:
-                        print("[", v.value, "]")
                         if v.value == 'parent':
                             f_move.append(lambda el: el.getparent())
                         elif v.value == 'prev-sib':
@@ -1170,6 +1169,8 @@ class PPComp(object):
         f.transform()
 
         print(f.text)
+        with open('outhtml0.txt', 'w', encoding='utf-8') as f1:
+            f1.write(f.text)
 
 
 ######################################
