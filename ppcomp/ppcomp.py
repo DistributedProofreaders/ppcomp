@@ -17,6 +17,8 @@ Distributable under the GNU General Public License Version 3 or newer.
 import argparse
 import os
 import re
+import subprocess
+import tempfile
 
 import cssselect
 import tinycss
@@ -337,6 +339,8 @@ class PgdpFileHtml(PgdpFile):
 
         # Transform html into text for character search.
         self.text = etree.XPath("string(/)")(self.tree)
+        # removes line breaks
+        #self.char_text = etree.XPath("normalize-space(/)")(self.tree)
 
         # text fixups
         self.remove_nbspaces()
@@ -606,11 +610,112 @@ class PPComp:
 
     def compare_texts(self, text1, text2):
         """Compare two sources, using dwdiff"""
-        raise NotImplementedError("Method not implemented")
+        with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8') as temp1, \
+                tempfile.NamedTemporaryFile(mode='w', encoding='utf-8') as temp2:
+            temp1.write(text1)
+            temp2.write(text2)
+            temp1.flush()
+            temp2.flush()
+            repo_dir = os.environ.get("OPENSHIFT_DATA_DIR", "")
+            if repo_dir:
+                dwdiff_path = os.path.join(repo_dir, "bin", "dwdiff")
+            else:
+                dwdiff_path = "dwdiff"
+
+            """
+            -P Use punctuation characters as delimiters.
+            -R Repeat the begin and end markers at the start and end of line if a change crosses a
+               newline.
+            -C 2 Show <num> lines of context before and after each changes.
+            -L Show line numbers at the start of each line.
+            """
+            cmd = [dwdiff_path,
+                   "-P",
+                   "-R",
+                   "-C 2",
+                   "-L",
+                   "-w ]COMPPP_START_DEL[",
+                   "-x ]COMPPP_STOP_DEL[",
+                   "-y ]COMPPP_START_INS[",
+                   "-z ]COMPPP_STOP_INS["]
+            if self.args.ignore_case:
+                cmd += ["--ignore-case"]
+            cmd += [temp1.name, temp2.name]
+
+            # This shouldn't be needed if openshift was utf8 by default.
+            env = os.environ.copy()
+            env["LANG"] = "en_US.UTF-8"
+            with subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env) as process:
+                # The output is raw, so we have to decode it to UTF-8, which is the default under Ubuntu
+                return process.stdout.read().decode('utf-8')
 
     def create_html(self, files, text, footnotes):
         """Create the output html file"""
-        raise NotImplementedError("Method not implemented")
+
+        def massage_input(text, start0, start1):
+            # Massage the input
+            replacements = {"&": "&amp;",
+                            "<": "&lt;",
+                            ">": "&gt;",
+                            "]COMPPP_START_DEL[": "<del>",
+                            "]COMPPP_STOP_DEL[": "</del>",
+                            "]COMPPP_START_INS[": "<ins>",
+                            "]COMPPP_STOP_INS[": "</ins>"}
+            newtext = text
+            for key, value in replacements.items():
+                newtext = newtext.replace(key, value)
+            if newtext:
+                newtext = "<hr /><pre>\n" + newtext
+            newtext = newtext.replace("\n--\n", "\n</pre><hr /><pre>\n")
+            newtext = re.sub(r"^\s*(\d+):(\d+)",
+                          lambda m: "<span class='lineno'>{0} : {1}</span>".format(
+                              int(m.group(1)) + start0,
+                              int(m.group(2)) + start1),
+                          newtext, flags=re.MULTILINE)
+            if newtext:
+                newtext += "</pre>\n"
+            return newtext
+
+        # Find the number of diff sections
+        nb_diffs_text = 0
+        if text:
+            nb_diffs_text = len(re.findall("\n--\n", text)) + 1
+            # Text, with correct (?) line numbers
+            text = massage_input(text, files[0].start_line, files[1].start_line)
+        html_content = "<div>"
+        if nb_diffs_text == 0:
+            html_content += "<p>There is no diff section in the main text.</p>"
+        elif nb_diffs_text == 1:
+            html_content += "<p>There is 1 diff section in the main text.</p>"
+        else:
+            html_content += f"<p>There are {nb_diffs_text} diff sections in the main text.</p>"
+
+        if footnotes:
+            nb_diffs_footnotes = len(re.findall("\n--\n", footnotes or "")) + 1
+            # Footnotes - line numbers are meaningless right now. We could fix that.
+            footnotes = massage_input(footnotes, 0, 0)
+            html_content += "<p>Footnotes are diff'ed separately <a href='#footnotes'>here</a></p>"
+            if nb_diffs_footnotes == 0:
+                html_content += "<p>There is no diff section in the footnotes.</p>"
+            elif nb_diffs_footnotes == 1:
+                html_content += "<p>There is 1 diff section in the footnotes.</p>"
+            else:
+                html_content += f"<p>There are {nb_diffs_footnotes}" \
+                                " diff sections in the footnotes.</p>"
+        else:
+            if self.args.extract_footnotes:
+                html_content += "<p>There is no diff section in the footnotes.</p>"
+
+        if nb_diffs_text:
+            html_content += "<h2 class='sep4'>Main text</h2>"
+            html_content += text
+        if footnotes:
+            html_content += "<h2 id='footnotes' class='sep4'>Footnotes</h2>"
+            html_content += "<pre class='sep4'>"
+            html_content += footnotes
+            html_content += "</pre>"
+        html_content += "</div>"
+        return html_content
 
     def simple_html(self):
         """Debugging only, transform the html and print the text output"""
@@ -623,8 +728,8 @@ class PPComp:
         html_file.convert()
         #html_file.extract_footnotes()
         print(html_file.text)
-        with open('outhtml.txt', 'w', encoding='utf-8') as f:
-            f.write(html_file.text)
+        with open('outhtml.txt', 'w', encoding='utf-8') as file:
+            file.write(html_file.text)
 
     @staticmethod
     def check_characters(files):
