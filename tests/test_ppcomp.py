@@ -52,7 +52,7 @@ def test_remove_block_markup():
     text_file.remove_block_markup()
     for txt in markup:
         assert -1 == text_file.text.find(txt)
-#    with open('outfile.txt', 'w') as f:
+#    with open('outfile.txt', 'w', encoding='utf-8') as f:
 #        f.write(text_file.text)
 
 

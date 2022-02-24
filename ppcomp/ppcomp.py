@@ -336,7 +336,7 @@ class PgdpFileHtml(PgdpFile):
         self.process_css()  # process transformations
 
         # Transform html into text for character search.
-        self.text = etree.XPath("normalize-space(/)")(self.tree)
+        self.text = etree.XPath("string(/)")(self.tree)
 
         # text fixups
         self.remove_nbspaces()

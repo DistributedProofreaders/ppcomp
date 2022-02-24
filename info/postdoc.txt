@@ -120,8 +120,13 @@
 [*]Replace entities:
     &nbsp;, &#160; to space [b](New)[/b]
     &mdash;, &#151; to '--' [b](New)[/b]
-[*]Remove non-breakable spaces between numbers (U+00A0) (option) [color=#0000FF](should be &nbsp;, &#160;, &#x00A0;?)[/color]
 [*]Remove zero width space (U+200B) (option) [color=#0000FF](should be &#x200B;?)[/color]
+[/list]
+
+[b]Actions for both text and HTML files:[/b]
+These search for actual Unicode chars in both. Should they only apply to HTML, and search for entity codes?
+[list]
+[*]Remove non-breakable spaces between numbers (U+00A0) (option) [color=#0000FF](should be &nbsp;, &#160;, &#x00A0;?)[/color]
 [*]Remove soft hyphen (U+00AD) [color=#0000FF](should be &#x00AD;?)[/color]
 [/list]
 

@@ -428,7 +428,7 @@ class PgdpFileHtml(PgdpFile):
         # Remove the namespace from the tags
         remove_namespace(self)
 
-        # Remove PG boilerplate. These are kept in a <pre> tag.
+         # Remove PG boilerplate. These are kept in a <pre> tag.
         # BUG: this doesn't save anything
         # RT: this has changed:
         # old: <pre save_image_to_download="true">
