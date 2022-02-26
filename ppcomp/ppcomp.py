@@ -33,14 +33,7 @@ PG_EBOOK_START_REGEX = r".*?\*\*\* START OF THE PROJECT GUTENBERG EBOOK.*?\*\*\*
 
 
 class PgdpFile:
-    """Base class: Store and process a DP text or html file
-    Function order from PPComp.do_process():
-        1. load()
-        2. prepare()
-        3. convert()
-        4. extract_footnotes()
-        5. transform()
-    """
+    """Base class: Store and process a DP text or html file"""
 
     def __init__(self, args):
         self.args = args
@@ -235,9 +228,9 @@ class PgdpFileHtml(PgdpFile):
             """Remove namespace URI in elements names
             "{http://www.w3.org/1999/xhtml}html" -> "html"
             """
-            for elem in self.tree.iter():
-                if not isinstance(elem, (etree._Comment, etree._ProcessingInstruction)):
-                    elem.tag = etree.QName(elem).localname
+            for node in self.tree.iter():
+                if not isinstance(node, (etree._Comment, etree._ProcessingInstruction)):
+                    node.tag = etree.QName(node).localname
             etree.cleanup_namespaces(self.tree)  # Remove unused namespace declarations
 
         if not filename.lower().endswith(('.html', '.htm')):
@@ -261,8 +254,11 @@ class PgdpFileHtml(PgdpFile):
                 self.body_line = lineno
                 break
 
-        # empty the head - we only want the body
-        self.tree.find('head').clear()
+        # remove the head - we only want the body
+        node = self.tree.find('head')
+        if node:
+            node.getparent().remove(node)
+        #dumptree(self.tree)
 
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from the text if present."""
@@ -272,18 +268,16 @@ class PgdpFileHtml(PgdpFile):
         # end: from <div>*** END OF THE ...</div> to </body
         start_found = False
         end_found = False
-        for element in self.tree.find('body').iter():
-            if element.tag == "div" and element.text and element.text.startswith(PG_EBOOK_END1):
-                end_found = True
-                element.text = ""
-                element.tail = ""
-            elif element.tag == "div" and element.text and element.text.startswith(PG_EBOOK_START1):
+        for node in self.tree.find('body').iter():
+            if node.tag == "div" and node.text and node.text.startswith(PG_EBOOK_START1):
                 start_found = True
-                element.text = ""
-                element.tail = ""
-            elif end_found or not start_found:
-                element.text = ""
-                element.tail = ""
+                node.text = ''
+                node.tail = ''
+            elif node.tag == 'div' and node.text and node.text.startswith(PG_EBOOK_END1):
+                end_found = True
+            if end_found or not start_found:
+                node.text = ''
+                node.tail = ''
 
     def css_smallcaps(self):
         """Transform small caps"""
