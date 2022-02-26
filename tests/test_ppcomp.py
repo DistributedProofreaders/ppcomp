@@ -9,11 +9,20 @@ myargs = ['fossilplants1.html',
 ########## Text file ##########
 
 def test_load_text_file():
-    pgdp_text_file = PgdpFileText(load_args(myargs))
-    pgdp_text_file.load('fossilplants1.txt')
-    length = len(pgdp_text_file.text.splitlines())
+    text_file = PgdpFileText(load_args(myargs))
+    text_file.load('fossilplants1.txt')
+    length = len(text_file.text.splitlines())
     assert length == 19649
-    assert pgdp_text_file.start_line == 1
+    assert text_file.start_line == 1
+
+
+def test_strip_pg_boilerplate():
+    text_file = PgdpFileText(load_args(myargs))
+    text_file.load('fossilplants1pg.txt')
+    text_file.strip_pg_boilerplate()
+    length = len(text_file.text.splitlines())
+    assert length == 19649
+    assert text_file.start_line == 27
 
 
 def test_remove_thought_breaks():
@@ -84,6 +93,22 @@ def test_remove_formatting_ignore():
         assert -1 == text_file.text.find(txt)
 
 
+def test_remove_formatting_no_ignore():
+    markup = ['<i>', '</i>', '<b>', '</b>']
+    text_file = PgdpFileText(load_args(myargs))
+    text_file.load('projectID5c76226c51b6d.txt')
+    text_file.remove_formatting()
+    assert re.search(r"_((.|\n)+?)_", text_file.text)
+
+
+def test_suppress_proofers_notes():
+    args = myargs + ['--suppress-proofers-notes']
+    text_file = PgdpFileText(load_args(args))
+    text_file.load('projectID5c76226c51b6d.txt')
+    text_file.suppress_proofers_notes()
+    assert -1 == text_file.text.find("[**probably speck,")
+
+
 def test_regroup_split_words():
     args = myargs + ['--regroup-split-words']
     text_file = PgdpFileText(load_args(args))
@@ -100,12 +125,13 @@ def test_regroup_split_words():
     assert -1 < text_file.text.find("lightwood")
 
 
-def test_suppress_proofers_notes():
-    args = myargs + ['--suppress-proofers-notes']
+#@pytest.mark.skip
+def test_suppress_footnote_tags():
+    args = myargs + ['--suppress-footnote-tags']
     text_file = PgdpFileText(load_args(args))
     text_file.load('projectID5c76226c51b6d.txt')
-    text_file.suppress_proofers_notes()
-    assert -1 == text_file.text.find("[**probably speck,")
+    text_file.suppress_footnote_tags()
+    assert -1 == text_file.text.find("[Footnote:")
 
 
 def test_suppress_illustration_tags():
@@ -124,24 +150,27 @@ def test_suppress_sidenote_tags():
     assert -1 == text_file.text.find("[Sidenote:")
 
 
-#@pytest.mark.skip
-def test_suppress_footnote_tags():
-    args = myargs + ['--suppress-footnote-tags']
-    text_file = PgdpFileText(load_args(args))
-    text_file.load('projectID5c76226c51b6d.txt')
-    text_file.suppress_footnote_tags()
-    assert -1 == text_file.text.find("[Footnote:")
-
-
 ########## HTML file ##########
 
 def test_load_html_file():
     html_file = PgdpFileHtml(load_args(myargs))
-    html_file.load('fossilplants1.html')
+    html_file.load('fossilplants1pg.html')
     length = len(html_file.text.splitlines())
     assert length == 24190
     assert html_file.tree
     assert html_file.body_line == 606
+
+
+def test_strip_pg_boilerplate_html():
+    html_file = PgdpFileHtml(load_args(myargs))
+    html_file.load('fossilplants1pg.html')
+    html_file.strip_pg_boilerplate()
+    length = len(html_file.text.splitlines())
+    #dumptree(html_file.tree)
+    with open('tmpoutfile.txt', 'w', encoding='utf-8') as f:
+        f.write(html_file.text)
+    #assert length == 23581
+    #assert html_file.start_line == 27
 
 
 def test_remove_nbspaces():
@@ -165,8 +194,6 @@ def test_text_transform():
     html_file.mycss += ".smcap { text-transform:uppercase; }"
     html_file.process_css()
     assert True
-    with open('outfile.txt', 'w', encoding='utf-8') as f:
-        f.write(html_file.text)
 
 
 ########## Both files ##########

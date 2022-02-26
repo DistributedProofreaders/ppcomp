@@ -130,7 +130,7 @@ class PgdpFileText(PgdpFile):
             self.text = self.text.replace('\n' + markup + '\n', '\n\n')
 
     def remove_formatting(self):
-        """Ignore or replace italics and bold html"""
+        """Ignore or replace italics and bold html in file from rounds"""
         if self.args.ignore_format:  # silence formatting differences
             for tag in ['<i>', '</i>', '<b>', '</b>']:
                 self.text = self.text.replace(tag, '')
@@ -143,7 +143,7 @@ class PgdpFileText(PgdpFile):
         self.text = re.sub('<.*?>', '', self.text)
 
     def suppress_proofers_notes(self):
-        """suppress proofers notes"""
+        """suppress proofers notes in file from rounds"""
         if self.args.suppress_proofers_notes:
             self.text = re.sub(r"\[\*\*[^]]*?]", '', self.text)
 
@@ -156,7 +156,7 @@ class PgdpFileText(PgdpFile):
                 self.text = re.sub(key, value, self.text)
 
     def ignore_format(self):
-        """Remove italics and bold markers"""
+        """Remove italics and bold markers in proofed file"""
         if self.args.ignore_format:
             self.text = re.sub(r"_((.|\n)+?)_", r'\1', self.text)
             self.text = re.sub(r"=((.|\n)+?)=", r'\1', self.text)
@@ -261,19 +261,29 @@ class PgdpFileHtml(PgdpFile):
                 self.body_line = lineno
                 break
 
+        # empty the head - we only want the body
+        self.tree.find('head').clear()
+
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from the text if present."""
-        new_text = []
-        for lineno, line in enumerate(self.text.splitlines(), start=self.body_line):
-            # Find the markers. Unfortunately PG lacks consistency
-            if PG_EBOOK_START1 in line or PG_EBOOK_START2 in line:
-                new_text = []  # PG found, remove previous lines
-                self.start_line = lineno
-            elif PG_EBOOK_END1 in line or PG_EBOOK_END2 in line:
-                break  # ignore following lines
-            else:
-                new_text.append(line)
-        self.text = '\n'.join(new_text)
+        if not self.text.find(PG_EBOOK_START1):
+            return
+        # start: from <body to <div>*** START OF THE ...</div>
+        # end: from <div>*** END OF THE ...</div> to </body
+        start_found = False
+        end_found = False
+        for element in self.tree.find('body').iter():
+            if element.tag == "div" and element.text and element.text.startswith(PG_EBOOK_END1):
+                end_found = True
+                element.text = ""
+                element.tail = ""
+            elif element.tag == "div" and element.text and element.text.startswith(PG_EBOOK_START1):
+                start_found = True
+                element.text = ""
+                element.tail = ""
+            elif end_found or not start_found:
+                element.text = ""
+                element.tail = ""
 
     def css_smallcaps(self):
         """Transform small caps"""
@@ -324,9 +334,7 @@ class PgdpFileHtml(PgdpFile):
         """Perform cleanup for this type of file - build up a list of CSS transform rules,
         then process them against tree
         """
-        # empty the head - we only want the body
-        self.tree.find('head').clear()
-
+        self.strip_pg_boilerplate()
         # load default CSS for transformations
         if not self.args.css_no_default:
             self.mycss = DEFAULT_TRANSFORM_CSS
@@ -944,6 +952,15 @@ def main():
     else:
         html_content, file1, file2 = compare.do_process()
         output_html(html_content, file1, file2)
+
+
+def dumptree(tree):
+    with open('tmptree.txt', 'w', encoding='utf-8') as f:
+        for node in tree.iter():
+            if node.text:
+                f.write(node.tag + ': ' + node.text + '\n')
+            else:
+                f.write(node.tag + '\n')
 
 
 if __name__ == '__main__':
