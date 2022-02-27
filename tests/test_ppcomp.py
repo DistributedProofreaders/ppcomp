@@ -21,7 +21,7 @@ def test_strip_pg_boilerplate():
     text_file.load('fossilplants1pg.txt')
     text_file.strip_pg_boilerplate()
     length = len(text_file.text.splitlines())
-    assert length == 19649
+    assert length == 19647
     assert text_file.start_line == 27
 
 
@@ -154,7 +154,7 @@ def test_suppress_sidenote_tags():
 
 def test_load_html_file():
     html_file = PgdpFileHtml(load_args(myargs))
-    html_file.load('fossilplants1pg.html')
+    html_file.load('fossilplants1.html')
     length = len(html_file.text.splitlines())
     assert length == 24190
     assert html_file.tree
