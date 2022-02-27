@@ -6,7 +6,7 @@ Applies various transformations according to program options before passing the 
 program dwdiff.
 
 Copyright (C) 2012-2013 bibimbop at pgdp
-Copyright 2019-2022 Robert Tonsing
+Copyright 2022 Robert Tonsing
 
 Originally written as the standalone program comp_pp.py by bibimbop at PGDP as part of his PPTOOLS
 program. It is used as part of the PP Workbench with permission.
@@ -40,8 +40,7 @@ class PgdpFile:
         self.basename = ''
         self.text = ''  # file text
         self.start_line = 0  # line text started, before stripping boilerplate and/or head
-        self.footnotes = ''  # footnotes, if extracted
-        self.transform_func = []  # List of transforms to perform
+        self.footnotes = ''  # footnotes text, if extracted
 
     def load(self, filename):
         """Load a file (text or html)
@@ -62,7 +61,7 @@ class PgdpFile:
             with open(filename, 'r', encoding='latin-1') as file:
                 self.text = file.read()
         except FileNotFoundError as ex:
-            raise IOError("Cannot load file: " + filename) from ex
+            raise FileNotFoundError("Cannot load file: " + filename) from ex
         if len(self.text) < 10:
             raise SyntaxError("File is too short: " + filename)
         self.start_line = 1
@@ -74,13 +73,6 @@ class PgdpFile:
     def cleanup(self):
         """Remove tags from the file"""
         raise NotImplementedError("Override this method")
-
-    def convert(self):
-        """Apply needed text conversions"""
-        # handle universal ones here, particular ones in subclass,
-        # comparisons (do_process) elsewhere
-        for func in self.transform_func:
-            self.text = func(self.text)
 
     def extract_footnotes(self):
         """Extract the footnotes"""
@@ -124,7 +116,7 @@ class PgdpFileText(PgdpFile):
 
     def remove_formatting(self):
         """Ignore or replace italics and bold html in file from rounds"""
-        if self.args.ignore_format:  # silence formatting differences
+        if self.args.ignore_format:
             for tag in ['<i>', '</i>', '<b>', '</b>']:
                 self.text = self.text.replace(tag, '')
         else:
@@ -290,8 +282,9 @@ class PgdpFileHtml(PgdpFile):
 
     def css_bold(self):
         """Surround bold strings with this string"""
-        if self.args.css_bold:
-            self.mycss += "b:before, b:after { content: " + self.args.css_bold + "; }"
+        if not self.args.css_bold:
+            self.args.css_bold = '='
+        self.mycss += "b:before, b:after { content: " + self.args.css_bold + "; }"
 
     def css_illustration(self):
         """Add [Illustration: ...] markup"""
@@ -414,7 +407,8 @@ class PgdpFileHtml(PgdpFile):
                 elif val.name == "text-transform":
                     f_transform = self.text_transform(val, property_errors)
                 elif val.name == "_replace_with_attr":
-                    def f_replace_with_attr(el): return el.attrib[val.value[0].value]
+                    def f_replace_with_attr(el):
+                        return el.attrib[val.value[0].value]
                 elif val.name == "text-replace":
                     f_text_replace = self.text_replace(val, property_errors)
                 elif val.name == "display":
@@ -587,10 +581,6 @@ DEFAULT_TRANSFORM_CSS = '''
         i:before, cite:before, em:before,
         i:after, cite:after, em:after { content: "_"; }
 
-        /* Bold */
-        b:before, bold:before,
-        b:after, bold:after { content: "="; }
-
         /* line breaks with <br /> will be ignored by normalize-space().
          * Add a space in all of them to work around. */
         br:before { content: " "; }
@@ -760,7 +750,6 @@ class PPComp:
         html_file = PgdpFileHtml(self.args)
         html_file.load(self.args.filename[0])
         html_file.cleanup()
-        html_file.convert()
         html_file.extract_footnotes()
         print(html_file.text)
         with open('outhtml.txt', 'w', encoding='utf-8') as file:
