@@ -166,9 +166,7 @@ def test_strip_pg_boilerplate_html():
     html_file.load('fossilplants1pg.html')
     html_file.strip_pg_boilerplate()
     length = len(html_file.text.splitlines())
-    #dumptree(html_file.tree)
-    with open('tmpoutfile.txt', 'w', encoding='utf-8') as f:
-        f.write(html_file.text)
+    dumptree(html_file.tree)
     #assert length == 23581
     #assert html_file.start_line == 27
 
@@ -194,6 +192,17 @@ def test_text_transform():
     html_file.mycss += ".smcap { text-transform:uppercase; }"
     html_file.process_css()
     assert True
+
+
+def test_html_extract_footnotes():
+    args = myargs + ['--extract-footnotes']
+    html_file = PgdpFileHtml(load_args(args))
+    html_file.load('fossilplants1.html')
+    html_file.extract_footnotes()
+    length = len(html_file.footnotes.splitlines())
+    assert length > 0
+    with open('tmpoutfile.txt', 'w', encoding='utf-8') as f:
+        f.write(html_file.footnotes)
 
 
 ########## Both files ##########

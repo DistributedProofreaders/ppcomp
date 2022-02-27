@@ -762,7 +762,6 @@ class PgdpFileHtml(PgdpFile):
                 for find in ["//div[@id[starts-with(.,'FN_')]]",
                              "//p[a[@id[starts-with(.,'Footnote_')]]]",
                              "//div/p[span/a[@id[starts-with(.,'Footnote_')]]]",
-                             "//div/p[span/a[@id[starts-with(.,'Footnote_')]]]",
                              "//p[@class='footnote']",
                              "//div[@class='footnote']"]:
                     for element in etree.XPath(find)(self.tree):

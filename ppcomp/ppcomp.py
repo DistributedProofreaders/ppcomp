@@ -540,9 +540,46 @@ class PgdpFileHtml(PgdpFile):
 
     def extract_footnotes(self):
         """Extract the footnotes"""
-        raise NotImplementedError("Method not implemented")
-        # if not self.args.extract_footnotes:
-        #     return
+
+        def strip_note_tag(string):
+            """Remove note tag and number. "Note 123: lorem ipsum" becomes "lorem ipsum"."""
+            for regex in [r"\s*\[([\w-]+)\](.*)",
+                          r"\s*([\d]+)\s+(.*)",
+                          r"\s*([\d]+):(.*)",
+                          r"\s*Note ([\d]+):\s+(.*)"]:
+                match = re.match(regex, string, re.DOTALL)
+                if match:
+                    return match.group(2)
+            return string  # That may be bad
+
+        if not self.args.extract_footnotes:
+            return
+        footnotes = []
+        # Special case for PPers who do not keep the marking around
+        # the whole footnote. They only mark the first paragraph.
+        elements = etree.XPath("//div[@class='footnote']")(self.tree)
+        if len(elements) == 1:
+            element = elements[0]
+            # Clean footnote number
+            for node in element:
+                footnotes += [strip_note_tag(node.xpath("string()"))]
+            # Remove the footnote from the main document
+            element.getparent().remove(element)
+        else:
+            for find in ["//div[@class='footnote']",
+                         "//div[@id[starts-with(.,'FN_')]]",
+                         "//p[a[@id[starts-with(.,'Footnote_')]]]",
+                         "//div/p[span/a[@id[starts-with(.,'Footnote_')]]]",
+                         "//p[@class='footnote']"]:
+                for element in etree.XPath(find)(self.tree):
+                    # Grab the text and remove the footnote number
+                    footnotes += [strip_note_tag(element.xpath("string()"))]
+                    # Remove the footnote from the main document
+                    element.getparent().remove(element)
+                if len(self.footnotes):  # found them, stop now
+                    break
+        # save as text string
+        self.footnotes = "\n".join(footnotes)
 
 
 DEFAULT_TRANSFORM_CSS = '''
