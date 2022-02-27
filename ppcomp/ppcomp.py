@@ -255,10 +255,10 @@ class PgdpFileHtml(PgdpFile):
                 break
 
         # remove the head - we only want the body
-        node = self.tree.find('head')
-        if node:
-            node.getparent().remove(node)
-        #dumptree(self.tree)
+        head = self.tree.find('head')
+        if head:
+            head.getparent().remove(head)
+        # dumptree(self.tree)
 
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from the text if present."""
@@ -342,7 +342,7 @@ class PgdpFileHtml(PgdpFile):
         # Transform html into text for character search.
         self.text = etree.XPath("string(/)")(self.tree)
         # removes line breaks
-        #self.char_text = etree.XPath("normalize-space(/)")(self.tree)
+        # self.char_text = etree.XPath("normalize-space(/)")(self.tree)
 
         # text fixups
         self.remove_nbspaces()
@@ -350,6 +350,7 @@ class PgdpFileHtml(PgdpFile):
 
     @staticmethod
     def text_transform(val, errors: list):
+        """Transform smcaps"""
         if len(val.value) != 1:
             errors += [(val.line, val.column, val.name + " takes 1 argument")]
         else:
@@ -366,16 +367,16 @@ class PgdpFileHtml(PgdpFile):
 
     @staticmethod
     def text_replace(val, errors: list):
-        # skip S (spaces) tokens
+        """Skip S (spaces) tokens"""
         values = [v for v in val.value if v.type != "S"]
         if len(values) != 2:
             errors += [(val.line, val.column, val.name + " takes 2 string arguments")]
             return None
-
         return lambda x: x.replace(values[0].value, values[1].value)
 
     @staticmethod
     def text_move(val, errors: list):
+        """Move a node"""
         values = [v for v in val.value if v.type != "S"]
         if len(values) < 1:
             errors += [(val.line, val.column, val.name + " takes at least one argument")]
@@ -392,7 +393,6 @@ class PgdpFileHtml(PgdpFile):
                 errors += [(val.line, val.column, val.name + " invalid value " + value.value)]
                 f_move = None
                 break
-
         return f_move
 
     def process_css(self):
@@ -414,7 +414,7 @@ class PgdpFileHtml(PgdpFile):
                 elif val.name == "text-transform":
                     f_transform = self.text_transform(val, property_errors)
                 elif val.name == "_replace_with_attr":
-                    f_replace_with_attr = lambda el: el.attrib[val.value[0].value]
+                    def f_replace_with_attr(el): return el.attrib[val.value[0].value]
                 elif val.name == "text-replace":
                     f_text_replace = self.text_replace(val, property_errors)
                 elif val.name == "display":
@@ -576,7 +576,7 @@ class PgdpFileHtml(PgdpFile):
                     footnotes += [strip_note_tag(element.xpath("string()"))]
                     # Remove the footnote from the main document
                     element.getparent().remove(element)
-                if len(self.footnotes):  # found them, stop now
+                if footnotes:  # found them, stop now
                     break
         # save as text string
         self.footnotes = "\n".join(footnotes)
@@ -661,13 +661,11 @@ class PPComp:
             else:
                 dwdiff_path = "dwdiff"
 
-            """
-            -P Use punctuation characters as delimiters.
-            -R Repeat the begin and end markers at the start and end of line if a change crosses a
-               newline.
-            -C 2 Show <num> lines of context before and after each changes.
-            -L Show line numbers at the start of each line.
-            """
+            # -P Use punctuation characters as delimiters.
+            # -R Repeat the begin and end markers at the start and end of line if a change crosses
+            #    a newline.
+            # -C 2 Show <num> lines of context before and after each changes.
+            # -L Show line numbers at the start of each line.
             cmd = [dwdiff_path,
                    "-P",
                    "-R",
@@ -685,13 +683,12 @@ class PPComp:
             env = os.environ.copy()
             env["LANG"] = "en_US.UTF-8"
             with subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env) as process:
-                # The output is raw, so we have to decode it to UTF-8, which is the default under Ubuntu
                 return process.stdout.read().decode('utf-8')
 
     def create_html(self, files, text, footnotes):
         """Create the output html file"""
 
-        def massage_input(text, start0, start1):
+        def massage_input(txt, start0, start1):
             # Massage the input
             replacements = {"&": "&amp;",
                             "<": "&lt;",
@@ -700,17 +697,16 @@ class PPComp:
                             "]COMPPP_STOP_DEL[": "</del>",
                             "]COMPPP_START_INS[": "<ins>",
                             "]COMPPP_STOP_INS[": "</ins>"}
-            newtext = text
+            newtext = txt
             for key, value in replacements.items():
                 newtext = newtext.replace(key, value)
             if newtext:
                 newtext = "<hr /><pre>\n" + newtext
             newtext = newtext.replace("\n--\n", "\n</pre><hr /><pre>\n")
             newtext = re.sub(r"^\s*(\d+):(\d+)",
-                          lambda m: "<span class='lineno'>{0} : {1}</span>".format(
-                              int(m.group(1)) + start0,
-                              int(m.group(2)) + start1),
-                          newtext, flags=re.MULTILINE)
+                             lambda m: "<span class='lineno'>{0} : {1}</span>".format(
+                                 int(m.group(1)) + start0, int(m.group(2)) + start1),
+                             newtext, flags=re.MULTILINE)
             if newtext:
                 newtext += "</pre>\n"
             return newtext
@@ -765,7 +761,7 @@ class PPComp:
         html_file.load(self.args.filename[0])
         html_file.cleanup()
         html_file.convert()
-        #html_file.extract_footnotes()
+        html_file.extract_footnotes()
         print(html_file.text)
         with open('outhtml.txt', 'w', encoding='utf-8') as file:
             file.write(html_file.text)
@@ -817,6 +813,7 @@ class PPComp:
         for char_best, char_other in character_checks.items():
             finds_0 = files[0].text.find(char_best)
             finds_1 = files[1].text.find(char_best)
+            # Todo: should apply to footnotes too
             if finds_0 >= 0 and finds_1 >= 0:  # Both have it
                 continue
             if finds_0 == -1 and finds_1 == -1:  # Neither has it
@@ -986,12 +983,13 @@ def main():
 
 
 def dumptree(tree):
-    with open('tmptree.txt', 'w', encoding='utf-8') as f:
+    """Save tree for debug"""
+    with open('tmptree.txt', 'w', encoding='utf-8') as file:
         for node in tree.iter():
             if node.text:
-                f.write(node.tag + ': ' + node.text + '\n')
+                file.write(node.tag + ': ' + node.text + '\n')
             else:
-                f.write(node.tag + '\n')
+                file.write(node.tag + '\n')
 
 
 if __name__ == '__main__':

@@ -1,12 +1,12 @@
 /mnt/f/tools/ppcomp/ppcomp$ python3 ppcomp.py ../tests/fossilplants1.html ../tests/fossilplants1.txt >test.html
 ==========================================
 html:
-load text, parse to tree
-remove namespace from elements
-remove <head>
+load text, parse to tree - test
+	remove namespace from elements
+	remove <head>
 cleanup:
 	perform operations on etree nodes:
-	strip_pg_boilerplate() - clear nodes
+	strip_pg_boilerplate() - clear nodes - test
 	if not self.args.css_no_default: - default transformations
 		self.mycss = DEFAULT_TRANSFORM_CSS
 	css_smallcaps() - to upper, lower, cap
@@ -16,15 +16,35 @@ cleanup:
 	css_custom_css()
 	process_css() - process transformations
 	
-	when do we extract footnotes?
+	when do we extract footnotes? - test
 	
 	convert to text
 	
 	perform operations on text:
-	remove_nbspaces() - Remove non-breakable spaces between numbers
-	remove_soft_hyphen() - Suppress shy (soft hyphen)
+	remove_nbspaces() - Remove non-breakable spaces between numbers - test
+	remove_soft_hyphen() - Suppress shy (soft hyphen) - test
 
-	   
+text:
+load text - test
+if not from_pgdp_rounds:
+    strip_pg_boilerplate() - test
+if from_pgdp_rounds:
+    remove_paging() - test
+    remove_block_markup() - test
+    remove_formatting() - test
+    suppress_proofers_notes() - test
+    regroup_split_words() - test
+else:  # processed text file
+    ignore_format() - test
+    remove_thought_breaks() - test
+# all text files
+suppress_footnote_tags() - test
+suppress_illustration_tags() - test
+suppress_sidenote_tags() - test
+
+both:
+check_characters()
+
 General options:
 	Ignore case when comparing
 	Extract and process footnotes separately
