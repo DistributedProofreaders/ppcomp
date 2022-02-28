@@ -248,13 +248,13 @@ class PgdpFileHtml(PgdpFile):
 
         # remove the head - we only want the body
         head = self.tree.find('head')
-        if head:
+        if head is not None:
             head.getparent().remove(head)
         # dumptree(self.tree)
 
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from the text if present."""
-        if not self.text.find(PG_EBOOK_START1):
+        if -1 == self.text.find(PG_EBOOK_START1):
             return
         # start: from <body to <div>*** START OF THE ...</div>
         # end: from <div>*** END OF THE ...</div> to </body
@@ -628,13 +628,11 @@ class PPComp:
 
         # Compare the two versions
         main_diff = self.compare_texts(files[0].text, files[1].text)
-
         if self.args.extract_footnotes:
             fnotes_diff = self.compare_texts(files[0].footnotes, files[1].footnotes)
         else:
             fnotes_diff = ""
         html_content = self.create_html(files, main_diff, fnotes_diff)
-
         return html_content, files[0].basename, files[1].basename
 
     def compare_texts(self, text1, text2):
