@@ -156,9 +156,9 @@ def test_load_html_file():
     html_file = PgdpFileHtml(load_args(myargs))
     html_file.load('fossilplants1.html')
     length = len(html_file.text.splitlines())
-    assert length == 24190
+    assert length == 24192
     assert html_file.tree
-    assert html_file.body_line == 606
+    assert html_file.body_line == 611
 
 
 def test_strip_pg_boilerplate_html():
