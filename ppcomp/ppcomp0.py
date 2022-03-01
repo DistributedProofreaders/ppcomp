@@ -322,10 +322,8 @@ def extract_footnotes_pp(pp_text):
             for (regex, fn_type) in fn_regexes:
                 matches = re.match(regex, block[0])
                 if matches:
-                    if matches.group(2).startswith(("Illustration",
-                                                    "Décoration",
-                                                    "Décoration", "Bandeau",
-                                                    "Logo", "Ornement")):
+                    if matches.group(2).startswith(("Illustration", "Décoration",
+                                                    "Bandeau", "Logo", "Ornement")):
                         # An illustration, possibly inside a footnote. Treat
                         # as part of text or footnote.
                         continue

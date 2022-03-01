@@ -280,10 +280,8 @@ class PgdpFileText(PgdpFile):
                 for (regex, fn_type) in fn_regexes:
                     matches = re.match(regex, block[0])
                     if matches:
-                        if matches.group(2).startswith(("Illustration",
-                                                        "Décoration",
-                                                        "Décoration", "Bandeau",
-                                                        "Logo", "Ornement")):
+                        if matches.group(2).startswith(("Illustration", "Décoration",
+                                                        "Bandeau", "Logo", "Ornement")):
                             # An illustration, possibly inside a footnote. Treat
                             # as part of text or footnote.
                             continue
@@ -466,7 +464,7 @@ class PgdpFileHtml(PgdpFile):
 
     def cleanup(self):
         """Perform cleanup for this type of file - build up a list of CSS transform rules,
-        then process them against tree
+        process them against tree, then convert to text.
         """
         self.strip_pg_boilerplate()
         # load default CSS for transformations

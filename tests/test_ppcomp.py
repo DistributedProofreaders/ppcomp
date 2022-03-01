@@ -41,6 +41,7 @@ def test_ignore_format():
     assert -1 < text_file.text.find("His Einleitung")
 
 
+@pytest.mark.skip
 def test_text_extract_footnotes_pp():
     args = myargs + ['--extract-footnotes']
     text_file = PgdpFileText(load_args(args))
