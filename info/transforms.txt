@@ -15,8 +15,7 @@ cleanup:
 	css_sidenote() - Add [Sidenote: ...] markup
 	css_custom_css()
 	process_css() - process transformations
-	
-	when do we extract footnotes? - test
+	extract footnotes - test
 	
 	convert to text
 	

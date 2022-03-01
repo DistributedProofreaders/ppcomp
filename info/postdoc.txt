@@ -39,13 +39,13 @@
 [*]--css-no-default
 	HTML: do not use default transformation CSS
 [*]--simple-html
-	HTML: Process an html file and print the output (debug)
+	HTML: Process just the html file and print the output (debug)
 [/list]
 
 [b]Actions for all files:[/b]
 [list]
-[*]Extract footnotes (option)
-[*]"[oe]", "oe", "œ" ligature replacements [color=#FF0000]Obsolete: should now treat same as ae, do nothing[/color]
+[*]Extract footnotes and compare seperately (option)
+[*]"[oe]", "oe", "œ" ligature replacements [color=#FF0000]Obsolete: should now treat same as "æ", do nothing[/color]
 [*]Character conversions - if one file has 1st char & other does not, convert
 "’", "'"  # close curly quote to straight
 "‘", "'"  # open curly quote to straight
@@ -80,7 +80,7 @@
 [b]Actions for text file from rounds:[/b]
 [list]
 [*]Remove page numbers, [Blank page]
-[*]if Silence formatting differences: remove <i> and <b>
+[*]if ignore-format: remove <i> and <b>
 			else replace with _, =
 [*]Remove proofers notes (option)
 [*]Regroup split words (option)
@@ -92,15 +92,17 @@
     "/X", "X/"
 [/list]
 
-[b]Actions for processed files:[/b]
+[b]Actions for processed text files:[/b]
 [list]
-[*]Remove thought breaks "*     *     *     *     *"
-[*]If ignore format remove '_', '='
+[*]Remove PG boilerplate
+[*]Remove thought breaks "*     *     *     *     *" (any spacing)
+[*]If ignore-format remove '_', '='
 [/list]
 
 [b]Actions for HTML files:[/b]
 [list]
-[*]Remove page numbers
+[*]Remove PG boilerplate
+[*]Remove page numbers:
     <span class="pagenum"
     <span class="pageno"
     <span class="pgnum"
@@ -113,13 +115,10 @@
 [*]Add "[Illustration: ]" tags (option)
 [*]Add "[Sidenote: ]" tags (option)
 [*]Replace formatting:
-    <i>, <em>, <cite> to '_'
-    <b> to '='
+    <i>, <em>, <cite> to '_' or remove (ignore-format)
+    <b> to '=' or remove (ignore-format)
     <sup> to "^{}"
     <sub> to "_{}"
-[*]Replace entities:
-    &nbsp;, &#160; to space [b](New)[/b]
-    &mdash;, &#151; to '--' [b](New)[/b]
 [*]Remove zero width space (U+200B) (option) [color=#0000FF](should be &#x200B;?)[/color]
 [/list]
 
@@ -133,7 +132,14 @@ These search for actual Unicode chars in both. Should they only apply to HTML, a
 [b]Proposed changes[/b]
 [list]
 [*]HTML5 parsing
-[*]Update PG boilerplate removal
+[*]Update PG boilerplate removal [color=#0000FF](do we need to handle old formats?)[/color]
+[*]Remove [oe] handling
+[*]Replace entities:
+    &nbsp;, &#160; to space
+    &mdash;, &#151; to '--'
+[*]Curly/straight quote character conversions - should be all or nothing
 [*]Improve handling of superscripts and subscripts - Unicode/text markup/html markup
-    Superscripts should handle Unicode or ^{} in text, Unicode or \<sup> in html
-	Subscripts should handle Unicode or _{} in text, Unicode or \<sub> in html
+    Superscripts should handle Unicode or ^{} in text, Unicode or <sup> in html (no braces for single char)
+	Subscripts should handle Unicode or _{} in text, Unicode or <sub> in html
+[*]Special character removals (U+200B, U+00A0, U+00AD) should apply to entities, not actual characters [color=#0000FF](or obsolete?)[/color]
+[*]Remove css-greek-title-plus? (I don't even understand it)

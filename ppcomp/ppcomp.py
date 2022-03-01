@@ -74,10 +74,6 @@ class PgdpFile:
         """Remove tags from the file"""
         raise NotImplementedError("Override this method")
 
-    def extract_footnotes(self):
-        """Extract the footnotes"""
-        raise NotImplementedError("Override this method")
-
 
 class PgdpFileText(PgdpFile):
     """Store and process a DP text file"""
@@ -191,14 +187,165 @@ class PgdpFileText(PgdpFile):
             self.remove_thought_breaks()
 
         # all text files
-        self.suppress_footnote_tags()
+        if self.args.extract_footnotes:
+            if from_pgdp_rounds:  # always [Footnote 1: text]
+                self.extract_footnotes_pgdp()
+            else:  # probably [1] text
+                self.extract_footnotes_pp()
+        else:
+            self.suppress_footnote_tags()
         self.suppress_illustration_tags()
         self.suppress_sidenote_tags()
 
-    def extract_footnotes(self):
-        """Extract the footnotes."""
-        if not self.args.extract_footnotes:
-            return
+    def extract_footnotes_pgdp(self):
+        """ Extract the footnotes from an F round
+        Start with [Footnote ... and finish with ] at the end of a line
+        """
+        # Note: this is really dirty code. Should rewrite. Don't use current_fnote[0].
+        in_footnote = False  # currently processing a footnote
+        current_fnote = []  # keeping current footnote
+        text = []  # new text without footnotes
+        footnotes = []
+
+        for line in self.text.splitlines():
+            # New footnote?
+            if "[Footnote" in line:
+                in_footnote = True
+                if "*[Footnote" in line:
+                    # Join to previous - Remove the last from the existing footnotes.
+                    line = line.replace("*[Footnote: ", "")
+                    current_fnote, footnotes = footnotes[-1], footnotes[:-1]
+                else:
+                    line = re.sub(r"\[Footnote \d+: ", "", line)
+                    current_fnote = [-1, ""]
+            # Inside a footnote?
+            if in_footnote:
+                current_fnote[1] = "\n".join([current_fnote[1], line])
+                # End of footnote? We don't try to regroup yet
+                if line.endswith(']'):
+                    current_fnote[1] = current_fnote[1][:-1]
+                    footnotes.append(current_fnote)
+                    in_footnote = False
+                elif line.endswith("]*"):  # Footnote continuation
+                    current_fnote[1] = current_fnote[1][:-2]
+                    footnotes.append(current_fnote)
+                    in_footnote = False
+            else:
+                text.append(line)
+
+        # Rebuild text, now without footnotes
+        self.text = '\n'.join(text)
+        self.footnotes = "\n".join([x[1] for x in footnotes])
+
+    def extract_footnotes_pp(self):
+        """Extract footnotes from a PP text file. Text is iterable. Returns the text as an iterable,
+        without the footnotes, and footnotes as a list of (footnote string id, line number of the
+        start of the footnote, list of strings comprising the footnote). fn_regexes is a list of
+        (regex, fn_type) that identify the beginning and end of a footnote. The fn_type is 1 when
+        a ] terminates it, or 2 when a new block terminates it.
+        """
+        # RT: Why is this different from extract_footnotes_pgdp, except
+        # tidied would be "[1] text" instead of [Footnote 1: text]? 1st regex?
+
+        # If the caller didn't give a list of regex to identify the
+        # footnotes, build one, taking only the most common.
+        all_regexes = [(r"(\s*)\[([\w-]+)\](.*)", 1),
+                       (r"(\s*)\[Note (\d+):( .*|$)", 2),
+                       (r"(      )Note (\d+):( .*|$)", 1)]
+        regex_count = [0] * len(all_regexes)  # i.e. [0, 0, 0]
+
+        text_lines = self.text.splitlines()
+
+        for block, empty_lines in self.get_block(text_lines):
+            if not block or not len(block):
+                continue
+            for i, (regex, fn_type) in enumerate(all_regexes):
+                matches = re.match(regex, block[0])
+                if matches:
+                    regex_count[i] += 1
+                    break
+        # Pick the regex with the most matches
+        fn_regexes = [all_regexes[regex_count.index(max(regex_count))]]
+
+        # Different types of footnote. 0 means not in footnote.
+        cur_fn_type, cur_fn_indent = 0, 0
+        footnotes = []
+        text = []
+        prev_block = None
+
+        for block, empty_lines in self.get_block(text_lines):
+            # Is the block a new footnote?
+            next_fn_type = 0
+            if len(block):
+                for (regex, fn_type) in fn_regexes:
+                    matches = re.match(regex, block[0])
+                    if matches:
+                        if matches.group(2).startswith(("Illustration",
+                                                        "Décoration",
+                                                        "Décoration", "Bandeau",
+                                                        "Logo", "Ornement")):
+                            # An illustration, possibly inside a footnote. Treat
+                            # as part of text or footnote.
+                            continue
+                        next_fn_type = fn_type
+                        # Update first line of block, because we want the number outside.
+                        block[0] = matches.group(3)
+                        break
+
+            # Try to close previous footnote
+            next_fn_indent = None
+            if cur_fn_type:
+                if next_fn_type:
+                    # New block is footnote, so it ends the previous footnote
+                    footnotes += prev_block + [""]
+                    text += [""] * (len(prev_block) + 1)
+                    cur_fn_type, cur_fn_indent = next_fn_type, next_fn_indent
+                elif block[0].startswith(cur_fn_indent):
+                    # Same indent or more. This is a continuation. Merge with one empty line.
+                    block = prev_block + [""] + block
+                else:
+                    # End of footnote - current block is not a footnote
+                    footnotes += prev_block + [""]
+                    text += [""] * (len(prev_block) + 1)
+                    cur_fn_type = 0
+            if not cur_fn_type and next_fn_type:
+                # Account for new footnote
+                cur_fn_type, cur_fn_indent = next_fn_type, next_fn_indent
+            if cur_fn_type and (empty_lines >= 2 or
+                                (cur_fn_type == 2 and block[-1].endswith("]"))):
+                # End of footnote
+                if cur_fn_type == 2 and block[-1].endswith("]"):
+                    # Remove terminal bracket
+                    block[-1] = block[-1][:-1]
+                footnotes += block
+                text += [""] * (len(block))
+                cur_fn_type = 0
+                block = None
+            if not cur_fn_type:
+                # Add to text, with white lines
+                text += (block or []) + [""] * empty_lines
+                footnotes += [""] * (len(block or []) + empty_lines)
+
+            prev_block = block
+        # Rebuild text, now without footnotes
+        self.text = '\n'.join(text)
+        self.footnotes = '\n'.join(footnotes)
+
+    @staticmethod
+    def get_block(pp_text):
+        """Generator to get a block of text, followed by the number of empty lines."""
+        empty_lines = 0
+        block = []
+        for line in pp_text:
+            if len(line):
+                if empty_lines:  # one or more empty lines will stop a block
+                    yield block, empty_lines
+                    block = []
+                    empty_lines = 0
+                block += [line]
+            else:
+                empty_lines += 1
+        yield block, empty_lines
 
 
 class PgdpFileHtml(PgdpFile):
@@ -331,6 +478,8 @@ class PgdpFileHtml(PgdpFile):
         self.css_sidenote()
         self.css_custom_css()
         self.process_css()  # process transformations
+
+        self.extract_footnotes()
 
         # Transform html into text for character search.
         self.text = etree.XPath("string(/)")(self.tree)
@@ -748,7 +897,6 @@ class PPComp:
         html_file = PgdpFileHtml(self.args)
         html_file.load(self.args.filename[0])
         html_file.cleanup()
-        html_file.extract_footnotes()
         print(html_file.text)
         with open('outhtml.txt', 'w', encoding='utf-8') as file:
             file.write(html_file.text)
@@ -958,8 +1106,11 @@ def main():
     parser.add_argument('--css-greek-title-plus', action='store_true', default=False,
                         help="HTML: use greek transliteration in title attribute")
     parser.add_argument('--simple-html', action='store_true', default=False,
-                        help="HTML: Process the html file and print the output (debug)")
+                        help="HTML: Process just the html file and print the output (debug)")
     args = parser.parse_args()
+
+    if args.extract_footnotes and args.suppress_footnote_tags:
+        raise SyntaxError("Cannot use both --extract-footnotes and --suppress-footnote-tags")
 
     compare = PPComp(args)
     if args.simple_html:

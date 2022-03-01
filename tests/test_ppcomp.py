@@ -1,5 +1,6 @@
 """ Tests for ppcomp functions"""
 
+import pytest
 from ppcomp.ppcomp import *
 
 myargs = ['fossilplants1.html',
@@ -38,6 +39,17 @@ def test_ignore_format():
     text_file.load('fossilplants1.txt')
     text_file.ignore_format()
     assert -1 < text_file.text.find("His Einleitung")
+
+
+def test_text_extract_footnotes_pp():
+    args = myargs + ['--extract-footnotes']
+    text_file = PgdpFileText(load_args(args))
+    text_file.load('fossilplants1.txt')
+    text_file.extract_footnotes_pp()
+    length = len(text_file.footnotes.splitlines())
+    with open('tmpoutfile.txt', 'w', encoding='utf-8') as f:
+        f.write(text_file.footnotes)
+    assert length == 2093
 
 
 ########## Text file from rounds ##########
@@ -150,6 +162,18 @@ def test_suppress_sidenote_tags():
     assert -1 == text_file.text.find("[Sidenote:")
 
 
+@pytest.mark.skip
+def test_text_extract_footnotes_pgdp():
+    args = myargs + ['--extract-footnotes']
+    text_file = PgdpFileText(load_args(args))
+    text_file.load('fossilplants1pg.txt')
+    text_file.extract_footnotes_pgdp()
+    length = len(text_file.footnotes.splitlines())
+    with open('tmpoutfile.txt', 'w', encoding='utf-8') as f:
+        f.write(text_file.footnotes)
+    assert length == 2093
+
+
 ########## HTML file ##########
 
 def test_load_html_file():
@@ -200,7 +224,7 @@ def test_html_extract_footnotes():
     html_file.load('fossilplants1.html')
     html_file.extract_footnotes()
     length = len(html_file.footnotes.splitlines())
-    assert length > 0
+    assert length == 2093
     with open('tmpoutfile.txt', 'w', encoding='utf-8') as f:
         f.write(html_file.footnotes)
 
