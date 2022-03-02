@@ -19,6 +19,7 @@ import os
 import re
 import subprocess
 import tempfile
+import warnings
 
 import cssselect
 import tinycss
@@ -374,6 +375,8 @@ class PgdpFileHtml(PgdpFile):
         if not filename.lower().endswith(('.html', '.htm')):
             raise SyntaxError("Not an html file: " + filename)
         super().load(filename)
+        # ignore warning caused by "xml:lang"
+        warnings.filterwarnings("ignore", message='Coercing non-XML name: xml:lang')
         parser = html5parser.HTMLParser()
         try:
             tree = html5parser.document_fromstring(self.text)
