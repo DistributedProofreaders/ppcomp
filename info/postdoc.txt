@@ -143,3 +143,4 @@ These search for actual Unicode chars in both. Should they only apply to HTML, a
 	Subscripts should handle Unicode or _{} in text, Unicode or <sub> in html
 [*]Special character removals (U+200B, U+00A0, U+00AD) should apply to entities, not actual characters [color=#0000FF](or obsolete?)[/color]
 [*]Remove css-greek-title-plus? (I don't even understand it)
+[*]Remove "[Illustration: ]" tags: also "Décoration", "Bandeau", "Logo", "Ornement", others?

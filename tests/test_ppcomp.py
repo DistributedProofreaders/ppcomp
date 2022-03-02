@@ -41,7 +41,7 @@ def test_ignore_format():
     assert -1 < text_file.text.find("His Einleitung")
 
 
-@pytest.mark.skip
+#@pytest.mark.skip
 def test_text_extract_footnotes_pp():
     args = myargs + ['--extract-footnotes']
     text_file = PgdpFileText(load_args(args))
@@ -188,7 +188,7 @@ def test_load_html_file():
 
 def test_strip_pg_boilerplate_html():
     html_file = PgdpFileHtml(load_args(myargs))
-    html_file.load('fossilplants1pg.html')
+    html_file.load('Americans.htm')
     html_file.strip_pg_boilerplate()
     length = len(html_file.text.splitlines())
     dumptree(html_file.tree)

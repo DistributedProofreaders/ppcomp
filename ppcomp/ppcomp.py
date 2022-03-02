@@ -89,9 +89,12 @@ class PgdpFileText(PgdpFile):
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from the text if present."""
         new_text = []
+        start_found = False
         for lineno, line in enumerate(self.text.splitlines(), start=1):
             # Find the markers. Unfortunately PG lacks consistency
             if line.startswith((PG_EBOOK_START1, PG_EBOOK_START2)):
+                start_found = True
+            if start_found and line.endswith("***"):  # may take multiple lines
                 new_text = []  # PG found, remove previous lines
                 self.start_line = lineno + 1
             elif line.startswith((PG_EBOOK_END1, PG_EBOOK_END2)):
