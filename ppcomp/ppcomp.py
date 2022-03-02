@@ -39,7 +39,7 @@ class PgdpFile:
         self.args = args
         self.basename = ''
         self.text = ''  # file text
-        self.start_line = 0  # line text started, before stripping boilerplate and/or head
+        self.start_line = 1  # line text started, before stripping boilerplate and/or head
         self.footnotes = ''  # footnotes text, if extracted
 
     def load(self, filename):
@@ -64,7 +64,6 @@ class PgdpFile:
             raise FileNotFoundError("Cannot load file: " + filename) from ex
         if len(self.text) < 10:
             raise SyntaxError("File is too short: " + filename)
-        self.start_line = 1
 
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from the text if present."""
@@ -355,7 +354,6 @@ class PgdpFileHtml(PgdpFile):
     def __init__(self, args):
         super().__init__(args)
         self.tree = None
-        self.body_line = 0  # line number of <body> tag
         self.mycss = ''
 
     def load(self, filename):
@@ -391,14 +389,13 @@ class PgdpFileHtml(PgdpFile):
         # save line number of <body> tag - actual text start
         for lineno, line in enumerate(self.text.splitlines(), start=1):
             if '<body' in line:
-                self.body_line = lineno
+                self.start_line = lineno + 1
                 break
 
         # remove the head - we only want the body
         head = self.tree.find('head')
         if head is not None:
             head.getparent().remove(head)
-        # dumptree(self.tree)
 
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from the text if present."""
@@ -418,6 +415,12 @@ class PgdpFileHtml(PgdpFile):
             if end_found or not start_found:
                 node.text = ''
                 node.tail = ''
+        # we need the start line, html5parser does not save source line
+        for lineno, line in enumerate(self.text.splitlines(), start=1):
+            if PG_EBOOK_START1 in line:
+                self.start_line = lineno + 1
+                break
+
 
     def css_smallcaps(self):
         """Transform small caps"""
