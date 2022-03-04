@@ -5,8 +5,7 @@ of Distributed Proofreaders (https://www.pgdp.net)
 Applies various transformations according to program options before passing the files to the Linux
 program dwdiff.
 
-Copyright (C) 2012-2013 bibimbop at pgdp
-Copyright 2022 Robert Tonsing
+Copyright (C) 2012-2013 bibimbop at pgdp, 2022 Robert Tonsing
 
 Originally written as the standalone program comp_pp.py by bibimbop at PGDP as part of his PPTOOLS
 program. It is used as part of the PP Workbench with permission.
@@ -26,10 +25,8 @@ import tinycss
 from lxml import etree
 from lxml.html import html5parser
 
-PG_EBOOK_START1 = "*** START OF THE PROJECT GUTENBERG EBOOK"
-PG_EBOOK_START2 = "*** START OF THIS PROJECT GUTENBERG EBOOK"
-PG_EBOOK_END1 = "*** END OF THE PROJECT GUTENBERG EBOOK"
-PG_EBOOK_END2 = "*** END OF THIS PROJECT GUTENBERG EBOOK"
+PG_EBOOK_START = "*** START OF"
+PG_EBOOK_END = "*** END OF"
 PG_EBOOK_START_REGEX = r".*?\*\*\* START OF THE PROJECT GUTENBERG EBOOK.*?\*\*\*(.*)"
 
 
@@ -92,12 +89,12 @@ class PgdpFileText(PgdpFile):
         start_found = False
         for lineno, line in enumerate(self.text.splitlines(), start=1):
             # Find the markers. Unfortunately PG lacks consistency
-            if line.startswith((PG_EBOOK_START1, PG_EBOOK_START2)):
+            if line.startswith(PG_EBOOK_START):
                 start_found = True
             if start_found and line.endswith("***"):  # may take multiple lines
                 new_text = []  # PG found, remove previous lines
                 self.start_line = lineno + 1
-            elif line.startswith((PG_EBOOK_END1, PG_EBOOK_END2)):
+            elif line.startswith(PG_EBOOK_END):
                 break  # ignore following lines
             else:
                 new_text.append(line)
@@ -122,7 +119,7 @@ class PgdpFileText(PgdpFile):
             for tag in ['<i>', '</i>']:
                 self.text = self.text.replace(tag, '_')
             for tag in ['<b>', '</b>']:
-                self.text = self.text.replace(tag, '=')
+                self.text = self.text.replace(tag, self.args.bold_string)
         # remove other markup
         self.text = re.sub('<.*?>', '', self.text)
 
@@ -170,12 +167,9 @@ class PgdpFileText(PgdpFile):
     def cleanup(self):
         """Perform cleanup for this type of file"""
         from_pgdp_rounds = self.basename.startswith('projectID')
-        if not from_pgdp_rounds:
-            self.strip_pg_boilerplate()
-        if self.args.txt_cleanup_type == 'n':  # none
-            return
-
         if from_pgdp_rounds:
+            if self.args.txt_cleanup_type == 'n':  # none
+                return
             # remove page markers & blank pages
             self.remove_paging()
             if self.args.txt_cleanup_type == 'p':  # proofers, all done
@@ -186,6 +180,7 @@ class PgdpFileText(PgdpFile):
             self.suppress_proofers_notes()
             self.regroup_split_words()
         else:  # processed text file
+            self.strip_pg_boilerplate()
             self.ignore_format()
             self.remove_thought_breaks()
 
@@ -402,25 +397,25 @@ class PgdpFileHtml(PgdpFile):
 
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from the text if present."""
-        if -1 == self.text.find(PG_EBOOK_START1):
+        if -1 == self.text.find(PG_EBOOK_START):
             return
         # start: from <body to <div>*** START OF THE ...</div>
         # end: from <div>*** END OF THE ...</div> to </body
         start_found = False
         end_found = False
         for node in self.tree.find('body').iter():
-            if node.tag == "div" and node.text and node.text.startswith(PG_EBOOK_START1):
+            if node.tag == "div" and node.text and node.text.startswith(PG_EBOOK_START):
                 start_found = True
                 node.text = ''
                 node.tail = ''
-            elif node.tag == 'div' and node.text and node.text.startswith(PG_EBOOK_END1):
+            elif node.tag == 'div' and node.text and node.text.startswith(PG_EBOOK_END):
                 end_found = True
             if end_found or not start_found:
                 node.text = ''
                 node.tail = ''
         # we need the start line, html5parser does not save source line
         for lineno, line in enumerate(self.text.splitlines(), start=1):
-            if PG_EBOOK_START1 in line:
+            if PG_EBOOK_START in line:
                 self.start_line = lineno + 1
                 break
 
@@ -434,11 +429,9 @@ class PgdpFileHtml(PgdpFile):
         elif self.args.css_smcap == 'T':
             self.mycss += ".smcap { text-transform:capitalize; }"
 
-    def css_bold(self):
+    def bold_string(self):
         """Surround bold strings with this string"""
-        if not self.args.css_bold:
-            self.args.css_bold = '='
-        self.mycss += "b:before, b:after { content: " + self.args.css_bold + "; }"
+        self.mycss += "b:before, b:after { content: " + self.args.bold_string + "; }"
 
     def css_illustration(self):
         """Add [Illustration: ...] markup"""
@@ -480,7 +473,7 @@ class PgdpFileHtml(PgdpFile):
         if not self.args.css_no_default:
             self.mycss = DEFAULT_TRANSFORM_CSS
         self.css_smallcaps()
-        self.css_bold()
+        self.bold_string()
         self.css_illustration()
         self.css_sidenote()
         self.css_custom_css()
@@ -1078,6 +1071,8 @@ def main():
                         help='Ignore case when comparing')
     parser.add_argument('--extract-footnotes', action='store_true', default=False,
                         help='Extract and process footnotes separately')
+    parser.add_argument('--bold-string', type=str, default='=',
+                        help="Surround bold strings with this string")
     parser.add_argument('--suppress-footnote-tags', action='store_true', default=False,
                         help='TXT: Suppress "[Footnote ?:" marks')
     parser.add_argument('--suppress-illustration-tags', action='store_true', default=False,
@@ -1100,8 +1095,6 @@ def main():
     parser.add_argument('--css-smcap', type=str, default=None,
                         help="HTML: Transform small caps into uppercase (U), lowercase (L) or"
                              " title case (T)")
-    parser.add_argument('--css-bold', type=str, default=None,
-                        help="HTML: Surround bold strings with this string")
     parser.add_argument('--css', type=str, default=[], action='append',
                         help="HTML: Insert transformation CSS")
     parser.add_argument('--css-no-default', action='store_true', default=False,
