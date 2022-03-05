@@ -3,7 +3,7 @@
 
 
                  ~Cambridge Natural Science Manuals.~
-                          BIOLOGICAL SERIES.
+                         =BIOLOGICAL SERIES.=
 
                 GENERAL EDITOR:—ARTHUR E. SHIPLEY, M.A.
            FELLOW AND TUTOR OF CHRIST’S COLLEGE, CAMBRIDGE.
@@ -4010,7 +4010,7 @@ An interesting example of this striking similarity between a purely
 mineral deposit and the external form of a plant is afforded by some
 specimens originally described as impressions of the oldest known fern.
 The frontispiece to a well-known work on fossil plants, _Le monde des
-plantes avant l’apparition de_ _l’homme_[152], represents a fern-like
+plantes avant l’apparition de l’homme_[152], represents a fern-like
 fossil on the surface of a piece of Silurian slate. The supposed plant
 was named _Eopteris Morierei_ Sap., and it is occasionally referred
 to as the oldest land plant in books of comparatively recent date. In
@@ -7224,8 +7224,6 @@ alga.
 Without attempting a full diagnosis of the genus, we may briefly refer
 to its most striking characters.
 
-     *     *     *     *     *
-	 
 _Pachytheca_ usually occurs in the form of small spherical bodies,
 about ·5 cm. in diameter, in Old Red Sandstone or Silurian rocks. In
 section a single sphere is found to consist of two well marked regions;

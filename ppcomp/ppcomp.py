@@ -381,37 +381,23 @@ class PgdpFileHtml(PgdpFile):
         self.mycss = ''
 
     def load(self, filename):
-        """Load the file. If parsing succeeded, then self.tree is set, and parser.errors is []
-        @param filename: filename to load
-        """
-
-        # noinspection PyProtectedMember,Pylint
-        def remove_namespace():
-            """Remove namespace URI in elements names
-            "{http://www.w3.org/1999/xhtml}html" -> "html"
-            """
-            for node in self.tree.iter():
-                if not isinstance(node, (etree._Comment, etree._ProcessingInstruction)):
-                    node.tag = etree.QName(node).localname
-            etree.cleanup_namespaces(self.tree)  # Remove unused namespace declarations
-
+        """Load the file. If parsing succeeded, then self.tree is set, and parser.errors is []"""
         if not filename.lower().endswith(('.html', '.htm')):
             raise SyntaxError("Not an html file: " + filename)
         super().load(filename)
         # ignore warning caused by "xml:lang"
         warnings.filterwarnings("ignore", message='Coercing non-XML name: xml:lang')
-        parser = html5parser.HTMLParser(namespaceHTMLElements=False)
+        # don't include namespace in elements
+        myparser = html5parser.HTMLParser(namespaceHTMLElements=False)
         try:
-            tree = html5parser.document_fromstring(self.text)
+            tree = html5parser.document_fromstring(self.text, parser=myparser)
         except Exception as ex:
             raise SyntaxError("File cannot be parsed: " + filename) from ex
 
-        if parser.errors:
+        if myparser.errors:
             raise SyntaxError("Parsing errors in document: " + filename)
 
         self.tree = tree.getroottree()
-        # remove the namespace from the tags
-        remove_namespace()
         # save line number of <body> tag - actual text start
         for lineno, line in enumerate(self.text.splitlines(), start=1):
             if '<body' in line:
