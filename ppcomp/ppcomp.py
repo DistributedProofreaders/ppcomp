@@ -5,7 +5,7 @@ of Distributed Proofreaders (https://www.pgdp.net)
 Applies various transformations according to program options before passing the files to the Linux
 program dwdiff.
 
-Copyright (C) 2012-2013 bibimbop at pgdp, 2022 Robert Tonsing
+Copyright (C) 2012-2013, 2021 bibimbop at pgdp
 
 Originally written as the standalone program comp_pp.py by bibimbop at PGDP as part of his PPTOOLS
 program. It is used as part of the PP Workbench with permission.
@@ -28,6 +28,34 @@ from lxml.html import html5parser
 PG_EBOOK_START = "*** START OF"
 PG_EBOOK_END = "*** END OF"
 PG_EBOOK_START_REGEX = r".*?\*\*\* START OF THE PROJECT GUTENBERG EBOOK.*?\*\*\*(.*)"
+DEFAULT_TRANSFORM_CSS = '''
+    /* Italics */
+    i:before, cite:before, em:before,
+    i:after, cite:after, em:after { content: "_"; }
+
+    /* line breaks with <br /> will be ignored by normalize-space().
+     * Add a space in all of them to work around. */
+    br:before { content: " "; }
+
+    /* Add spaces around td tags. */
+    td:before, td:after { content: " "; }
+
+    /* Remove page numbers. It seems every PP has a different way. */
+    span[class^="pagenum"],
+    p[class^="pagenum"],
+    div[class^="pagenum"],
+    span[class^="pageno"],
+    p[class^="pageno"],
+    div[class^="pageno"],
+    p[class^="page"],
+    span[class^="pgnum"],
+    div[id^="Page_"] { display: none }
+
+    /* Superscripts, Subscripts */
+    sup:before              { content: "^{"; }
+    sub:before              { content: "_{"; }
+    sup:after, sub:after    { content: "}"; }
+'''
 
 
 class PgdpFile:
@@ -37,7 +65,7 @@ class PgdpFile:
         self.args = args
         self.basename = ''
         self.text = ''  # file text
-        self.start_line = 1  # line text started, before stripping boilerplate and/or head
+        self.start_line = 0  # line text started, before stripping boilerplate and/or head
         self.footnotes = ''  # footnotes text, if extracted
 
     def load(self, filename):
@@ -119,7 +147,7 @@ class PgdpFileText(PgdpFile):
             for tag in ['<i>', '</i>']:
                 self.text = self.text.replace(tag, '_')
             for tag in ['<b>', '</b>']:
-                self.text = self.text.replace(tag, self.args.bold_string)
+                self.text = self.text.replace(tag, '=')
         # remove other markup
         self.text = re.sub('<.*?>', '', self.text)
 
@@ -255,7 +283,7 @@ class PgdpFileText(PgdpFile):
         text_lines = self.text.splitlines()
 
         for block, empty_lines in self.get_block(text_lines):
-            if not block or not len(block):
+            if not block:
                 continue
             for i, (regex, fn_type) in enumerate(all_regexes):
                 matches = re.match(regex, block[0])
@@ -372,7 +400,7 @@ class PgdpFileHtml(PgdpFile):
         super().load(filename)
         # ignore warning caused by "xml:lang"
         warnings.filterwarnings("ignore", message='Coercing non-XML name: xml:lang')
-        parser = html5parser.HTMLParser()
+        parser = html5parser.HTMLParser(namespaceHTMLElements=False)
         try:
             tree = html5parser.document_fromstring(self.text)
         except Exception as ex:
@@ -387,7 +415,7 @@ class PgdpFileHtml(PgdpFile):
         # save line number of <body> tag - actual text start
         for lineno, line in enumerate(self.text.splitlines(), start=1):
             if '<body' in line:
-                self.start_line = lineno + 1
+                self.start_line = lineno
                 break
 
         # remove the head - we only want the body
@@ -419,7 +447,6 @@ class PgdpFileHtml(PgdpFile):
                 self.start_line = lineno + 1
                 break
 
-
     def css_smallcaps(self):
         """Transform small caps"""
         if self.args.css_smcap == 'U':
@@ -429,9 +456,9 @@ class PgdpFileHtml(PgdpFile):
         elif self.args.css_smcap == 'T':
             self.mycss += ".smcap { text-transform:capitalize; }"
 
-    def bold_string(self):
+    def css_bold(self):
         """Surround bold strings with this string"""
-        self.mycss += "b:before, b:after { content: " + self.args.bold_string + "; }"
+        self.mycss += 'b:before, b:after { content: "' + self.args.css_bold + '"; }'
 
     def css_illustration(self):
         """Add [Illustration: ...] markup"""
@@ -473,7 +500,7 @@ class PgdpFileHtml(PgdpFile):
         if not self.args.css_no_default:
             self.mycss = DEFAULT_TRANSFORM_CSS
         self.css_smallcaps()
-        self.bold_string()
+        self.css_bold()
         self.css_illustration()
         self.css_sidenote()
         self.css_custom_css()
@@ -542,59 +569,59 @@ class PgdpFileHtml(PgdpFile):
         stylesheet = tinycss.make_parser().parse_stylesheet(self.mycss)
         property_errors = []
 
+        def process_element():
+            # replace text with content of an attribute.
+            if value.name == 'content':
+                v_content = self.new_content(element, value)
+                if selector.pseudo_element == 'before':
+                    element.text = v_content + (element.text or '')  # opening tag
+                elif selector.pseudo_element == 'after':
+                    element.tail = v_content + (element.tail or '')  # closing tag
+                else:  # replace all content
+                    element.text = self.new_content(element, value)
+            elif f_replace_with_attr:
+                element.text = f_replace_with_attr(element)
+            elif f_transform:
+                self.text_apply(element, f_transform)
+            elif f_element_func:
+                f_element_func(element)
+            elif f_move:
+                self.move_element(element, f_move)
+
         for rule in stylesheet.rules:
             # extract values we care about
             f_transform = None
             f_replace_with_attr = None
-            f_text_replace = None
             f_element_func = None
             f_move = []
 
-            for val in rule.declarations:
-                if val.name == 'content':
+            for value in rule.declarations:
+                if value.name == 'content':
                     pass  # result depends on element and pseudo elements
-                elif val.name == "text-transform":
-                    f_transform = self.text_transform(val, property_errors)
-                elif val.name == "_replace_with_attr":
+                elif value.name == 'text-transform':
+                    f_transform = self.text_transform(value, property_errors)
+                elif value.name == 'text-replace':
+                    f_transform = self.text_replace(value, property_errors)
+                elif value.name == '_replace_with_attr':
                     def f_replace_with_attr(el):
-                        return el.attrib[val.value[0].value]
-                elif val.name == "text-replace":
-                    f_text_replace = self.text_replace(val, property_errors)
-                elif val.name == "display":
+                        return el.attrib[value.value[0].value]
+                elif value.name == 'display':
                     # support display none only. So ignore "none" argument
                     f_element_func = PgdpFileHtml.clear_element
-                elif val.name == "_graft":
-                    f_move = self.text_move(val, property_errors)
+                elif value.name == '_graft':
+                    f_move = self.text_move(value, property_errors)
                 else:
-                    property_errors += [(val.line, val.column, "Unsupported property " + val.name)]
+                    property_errors += [(value.line, value.column, "Unsupported property "
+                                         + value.name)]
                     continue
 
                 # iterate through each selector in the rule
                 for selector in cssselect.parse(rule.selector.as_css()):
                     xpath = cssselect.HTMLTranslator().selector_to_xpath(selector)
                     find = etree.XPath(xpath)
-
                     # find each matching element in the HTML document
                     for element in find(self.tree):
-                        # replace text with content of an attribute.
-                        if f_replace_with_attr:
-                            element.text = f_replace_with_attr(element)
-                        if val.name == 'content':
-                            v_content = self.new_content(element, val)
-                            if selector.pseudo_element == "before":
-                                element.text = v_content + (element.text or '')  # opening tag
-                            elif selector.pseudo_element == "after":
-                                element.tail = v_content + (element.tail or '')  # closing tag
-                            else:  # replace all content
-                                element.text = self.new_content(element, val)
-                        if f_transform:
-                            self.text_apply(element, f_transform)
-                        if f_text_replace:
-                            self.text_apply(element, f_text_replace)
-                        if f_element_func:
-                            f_element_func(element)
-                        if f_move:
-                            self.move_element(element, f_move)
+                        process_element()
 
         return self.css_errors(stylesheet.errors, property_errors)
 
@@ -723,36 +750,6 @@ class PgdpFileHtml(PgdpFile):
                     break
         # save as text string
         self.footnotes = "\n".join(footnotes)
-
-
-DEFAULT_TRANSFORM_CSS = '''
-        /* Italics */
-        i:before, cite:before, em:before,
-        i:after, cite:after, em:after { content: "_"; }
-
-        /* line breaks with <br /> will be ignored by normalize-space().
-         * Add a space in all of them to work around. */
-        br:before { content: " "; }
-
-        /* Add spaces around td tags. */
-        td:before, td:after { content: " "; }
-
-        /* Remove page numbers. It seems every PP has a different way. */
-        span[class^="pagenum"],
-        p[class^="pagenum"],
-        div[class^="pagenum"],
-        span[class^="pageno"],
-        p[class^="pageno"],
-        div[class^="pageno"],
-        p[class^="page"],
-        span[class^="pgnum"],
-        div[id^="Page_"] { display: none }
-
-        /* Superscripts, Subscripts */
-        sup:before              { content: "^{"; }
-        sub:before              { content: "_{"; }
-        sup:after, sub:after    { content: "}"; }
-    '''
 
 
 class PPComp:
@@ -1064,17 +1061,16 @@ def output_html(html_content, filename1, filename2):
 
 def main():
     """Main program"""
-    parser = argparse.ArgumentParser(description='Diff text document for PGDP PP.')
+    parser = argparse.ArgumentParser(description='Diff text/HTML documents for PGDP'
+                                                 ' Post-Processors.')
     parser.add_argument('filename', metavar='FILENAME', type=str,
                         help='input files', nargs=2)
     parser.add_argument('--ignore-case', action='store_true', default=False,
                         help='Ignore case when comparing')
     parser.add_argument('--extract-footnotes', action='store_true', default=False,
                         help='Extract and process footnotes separately')
-    parser.add_argument('--bold-string', type=str, default='=',
-                        help="Surround bold strings with this string")
     parser.add_argument('--suppress-footnote-tags', action='store_true', default=False,
-                        help='TXT: Suppress "[Footnote ?:" marks')
+                        help='TXT: Suppress "[Footnote #:" marks')
     parser.add_argument('--suppress-illustration-tags', action='store_true', default=False,
                         help='TXT: Suppress "[Illustration:" marks')
     parser.add_argument('--suppress-sidenote-tags', action='store_true', default=False,
@@ -1095,6 +1091,8 @@ def main():
     parser.add_argument('--css-smcap', type=str, default=None,
                         help="HTML: Transform small caps into uppercase (U), lowercase (L) or"
                              " title case (T)")
+    parser.add_argument('--css-bold', type=str, default='=',
+                        help="HTML: Surround bold strings with this string")
     parser.add_argument('--css', type=str, default=[], action='append',
                         help="HTML: Insert transformation CSS")
     parser.add_argument('--css-no-default', action='store_true', default=False,
