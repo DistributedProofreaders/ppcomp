@@ -24,6 +24,7 @@ import cssselect
 import tinycss
 from lxml import etree
 from lxml.html import html5parser
+from lxml.html import html_parser
 
 PG_EBOOK_START = "*** START OF"
 PG_EBOOK_END = "*** END OF"
@@ -380,24 +381,36 @@ class PgdpFileHtml(PgdpFile):
         self.tree = None
         self.mycss = ''
 
+    def parse_html5(self):
+        """Parse an HTML5 doc"""
+        # ignore warning caused by "xml:lang"
+        warnings.filterwarnings("ignore", message='Coercing non-XML name: xml:lang')
+        # don't include namespace in elements
+        myparser = html5parser.HTMLParser(namespaceHTMLElements=False)
+        tree = html5parser.document_fromstring(self.text, parser=myparser)
+        return tree.getroottree(), myparser.errors
+
+    def parse_html(self):
+        """Parse a non-HTML5 doc"""
+        myparser = etree.HTMLParser()
+        tree = etree.fromstring(self.text, parser=myparser)
+        return tree.getroottree(), myparser.error_log
+
     def load(self, filename):
         """Load the file. If parsing succeeded, then self.tree is set, and parser.errors is []"""
         if not filename.lower().endswith(('.html', '.htm')):
             raise SyntaxError("Not an html file: " + filename)
         super().load(filename)
-        # ignore warning caused by "xml:lang"
-        warnings.filterwarnings("ignore", message='Coercing non-XML name: xml:lang')
-        # don't include namespace in elements
-        myparser = html5parser.HTMLParser(namespaceHTMLElements=False)
         try:
-            tree = html5parser.document_fromstring(self.text, parser=myparser)
+            if 0 <= self.text.find('<!DOCTYPE html>', 0, 100):  # limit search
+                self.tree, errors = self.parse_html5()
+            else:
+                self.tree, errors = self.parse_html()
         except Exception as ex:
             raise SyntaxError("File cannot be parsed: " + filename) from ex
-
-        if myparser.errors:
+        if errors:
             raise SyntaxError("Parsing errors in document: " + filename)
 
-        self.tree = tree.getroottree()
         # save line number of <body> tag - actual text start
         for lineno, line in enumerate(self.text.splitlines(), start=1):
             if '<body' in line:

@@ -13,16 +13,16 @@ def test_load_text_file():
     text_file = PgdpFileText(load_args(myargs))
     text_file.load('fossilplants1.txt')
     length = len(text_file.text.splitlines())
-    assert length == 19649
-    assert text_file.start_line == 1
+    assert length == 19647
+    assert text_file.start_line == 0
 
 
 def test_strip_pg_boilerplate():
     text_file = PgdpFileText(load_args(myargs))
-    text_file.load('fossilplants1pg.txt')
+    text_file.load('biercepg.txt')
     text_file.strip_pg_boilerplate()
     length = len(text_file.text.splitlines())
-    assert length == 19647
+    assert length == 7237
     assert text_file.start_line == 27
 
 
@@ -50,7 +50,7 @@ def test_text_extract_footnotes_pp():
     length = len(text_file.footnotes.splitlines())
     with open('tmpoutfile.txt', 'w', encoding='utf-8') as f:
         f.write(text_file.footnotes)
-    assert length == 2093
+    assert length == 19646
 
 
 ########## Text file from rounds ##########
@@ -60,7 +60,7 @@ def test_load_pgdp_file():
     text_file.load('projectID5c76226c51b6d.txt')
     length = len(text_file.text.splitlines())
     assert length == 6972
-    assert text_file.start_line == 1
+    assert text_file.start_line == 0
 
 
 def test_remove_block_markup():
@@ -183,12 +183,12 @@ def test_load_html_file():
     length = len(html_file.text.splitlines())
     assert length == 24192
     assert html_file.tree
-    assert html_file.body_line == 611
+    assert html_file.start_line == 611
 
 
 def test_strip_pg_boilerplate_html():
     html_file = PgdpFileHtml(load_args(myargs))
-    html_file.load('Americans.htm')
+    html_file.load('bierce.html')
     html_file.strip_pg_boilerplate()
     length = len(html_file.text.splitlines())
     dumptree(html_file.tree)
@@ -196,6 +196,7 @@ def test_strip_pg_boilerplate_html():
     #assert html_file.start_line == 27
 
 
+@pytest.mark.skip
 def test_remove_nbspaces():
     args = myargs + ['--suppress-nbsp-num']
     html_file = PgdpFileHtml(load_args(args))
