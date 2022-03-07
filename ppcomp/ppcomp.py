@@ -24,11 +24,9 @@ import cssselect
 import tinycss
 from lxml import etree
 from lxml.html import html5parser
-from lxml.html import html_parser
 
 PG_EBOOK_START = "*** START OF"
 PG_EBOOK_END = "*** END OF"
-PG_EBOOK_START_REGEX = r".*?\*\*\* START OF THE PROJECT GUTENBERG EBOOK.*?\*\*\*(.*)"
 DEFAULT_TRANSFORM_CSS = '''
     /* Italics */
     i:before, cite:before, em:before,
@@ -56,6 +54,50 @@ DEFAULT_TRANSFORM_CSS = '''
     sup:before              { content: "^{"; }
     sub:before              { content: "_{"; }
     sup:after, sub:after    { content: "}"; }
+'''
+# CSS used to display the diffs
+DIFF_CSS = '''
+body {
+    margin-left: 5%;
+    margin-right: 5%;
+}
+del {
+    text-decoration: none;
+    border: 1px solid black;
+    color: #700000 ;
+    background-color: #f4f4f4;
+    font-size: larger;
+}
+ins {
+    text-decoration: none;
+    border: 1px solid black;
+    color: green;
+    font-weight: bold;
+    background-color: #f4f4f4;
+    font-size: larger;
+}
+.lineno { margin-right: 3em; }
+.sep4 { margin-top: 4em; }
+.bbox { margin-left: auto;
+    margin-right: auto;
+    border: 1px dashed;
+    padding: 0em 1em 0em 1em;
+    background-color: #F0FFFF;
+    width: 90%;
+    max-width: 50em;
+}
+.center { text-align:center; }
+
+/* Use a CSS counter to number each diff. */
+body {
+  counter-reset: diff;  /* set diff counter to 0 */
+}
+hr:before {
+  counter-increment: diff; /* inc the diff counter ... */
+  content: "Diff " counter(diff) ": "; /* ... and display it */
+}
+
+.error-border { border-style:double; border-color:red; border-width:15px; }
 '''
 
 
@@ -140,7 +182,7 @@ class PgdpFileText(PgdpFile):
             self.text = self.text.replace('\n' + markup + '\n', '\n\n')
 
     def remove_formatting(self):
-        """Ignore or replace italics and bold html in file from rounds"""
+        """Ignore or replace italics and bold tags in file from rounds"""
         if self.args.ignore_format:
             for tag in ['<i>', '</i>', '<b>', '</b>']:
                 self.text = self.text.replace(tag, '')
@@ -148,7 +190,7 @@ class PgdpFileText(PgdpFile):
             for tag in ['<i>', '</i>']:
                 self.text = self.text.replace(tag, '_')
             for tag in ['<b>', '</b>']:
-                self.text = self.text.replace(tag, '=')
+                self.text = self.text.replace(tag, self.args.css_bold)
         # remove other markup
         self.text = re.sub('<.*?>', '', self.text)
 
@@ -174,6 +216,7 @@ class PgdpFileText(PgdpFile):
     def remove_thought_breaks(self):
         """Remove thought breaks (5 spaced asterisks)"""
         self.text = re.sub(r"\*\s+\*\s+\*\s+\*\s+\*", '', self.text)
+        self.text = re.sub(r"•\s+•\s+•\s+•\s+•", '', self.text)
 
     def suppress_footnote_tags(self):
         """Remove footnote tags"""
@@ -236,15 +279,15 @@ class PgdpFileText(PgdpFile):
 
         for line in self.text.splitlines():
             # New footnote?
-            if "[Footnote" in line:
+            if '[Footnote' in line:
                 in_footnote = True
-                if "*[Footnote" in line:
+                if '*[Footnote' in line:
                     # Join to previous - Remove the last from the existing footnotes.
-                    line = line.replace("*[Footnote: ", "")
+                    line = line.replace('*[Footnote: ', '')
                     current_fnote, footnotes = footnotes[-1], footnotes[:-1]
                 else:
-                    line = re.sub(r"\[Footnote \d+: ", "", line)
-                    current_fnote = [-1, ""]
+                    line = re.sub(r'\[Footnote \d+: ', '', line)
+                    current_fnote = [-1, '']
             # Inside a footnote?
             if in_footnote:
                 current_fnote[1] = "\n".join([current_fnote[1], line])
@@ -253,7 +296,7 @@ class PgdpFileText(PgdpFile):
                     current_fnote[1] = current_fnote[1][:-1]
                     footnotes.append(current_fnote)
                     in_footnote = False
-                elif line.endswith("]*"):  # Footnote continuation
+                elif line.endswith(']*'):  # Footnote continuation
                     current_fnote[1] = current_fnote[1][:-2]
                     footnotes.append(current_fnote)
                     in_footnote = False
@@ -262,7 +305,7 @@ class PgdpFileText(PgdpFile):
 
         # Rebuild text, now without footnotes
         self.text = '\n'.join(text)
-        self.footnotes = "\n".join([x[1] for x in footnotes])
+        self.footnotes = '\n'.join([x[1] for x in footnotes])
 
     def extract_footnotes_pp(self):
         """Extract footnotes from a PP text file. Text is iterable. Returns the text as an iterable,
@@ -384,9 +427,11 @@ class PgdpFileHtml(PgdpFile):
     def parse_html5(self):
         """Parse an HTML5 doc"""
         # ignore warning caused by "xml:lang"
-        warnings.filterwarnings("ignore", message='Coercing non-XML name: xml:lang')
+        warnings.filterwarnings('ignore', message='Coercing non-XML name: xml:lang')
         # don't include namespace in elements
         myparser = html5parser.HTMLParser(namespaceHTMLElements=False)
+        # without parser this works for all html, but we have to remove namespace
+        # & don't get the errors list
         tree = html5parser.document_fromstring(self.text, parser=myparser)
         return tree.getroottree(), myparser.errors
 
@@ -399,7 +444,7 @@ class PgdpFileHtml(PgdpFile):
     def load(self, filename):
         """Load the file. If parsing succeeded, then self.tree is set, and parser.errors is []"""
         if not filename.lower().endswith(('.html', '.htm')):
-            raise SyntaxError("Not an html file: " + filename)
+            raise SyntaxError('Not an html file: ' + filename)
         super().load(filename)
         try:
             if 0 <= self.text.find('<!DOCTYPE html>', 0, 100):  # limit search
@@ -407,9 +452,11 @@ class PgdpFileHtml(PgdpFile):
             else:
                 self.tree, errors = self.parse_html()
         except Exception as ex:
-            raise SyntaxError("File cannot be parsed: " + filename) from ex
+            raise SyntaxError('File cannot be parsed: ' + filename) from ex
         if errors:
-            raise SyntaxError("Parsing errors in document: " + filename)
+            for error in errors:
+                print(error)
+            raise SyntaxError('Parsing errors in document: ' + filename)
 
         # save line number of <body> tag - actual text start
         for lineno, line in enumerate(self.text.splitlines(), start=1):
@@ -431,7 +478,7 @@ class PgdpFileHtml(PgdpFile):
         start_found = False
         end_found = False
         for node in self.tree.find('body').iter():
-            if node.tag == "div" and node.text and node.text.startswith(PG_EBOOK_START):
+            if node.tag == 'div' and node.text and node.text.startswith(PG_EBOOK_START):
                 start_found = True
                 node.text = ''
                 node.tail = ''
@@ -477,18 +524,18 @@ class PgdpFileHtml(PgdpFile):
         for css in self.args.css:
             self.mycss += css
 
-    # def remove_nbspaces(self):
-    #     """Remove non-breakable spaces between numbers. For instance, a
-    #     text file could have 250000, and the html could have 250 000.
-    #     """
-    #     # Todo: &nbsp;, &#160;, &#x00A0;?
-    #     if self.args.suppress_nbsp_num:
-    #         self.text = re.sub(r"(\d)\u00A0(\d)", r"\1\2", self.text)
+    def remove_nbspaces(self):
+        """Remove non-breakable spaces between numbers. For instance, a
+        text file could have 250000, and the html could have 250 000.
+        """
+        # Todo: &nbsp;, &#160;, &#x00A0;?
+        if self.args.suppress_nbsp_num:
+            self.text = re.sub(r"(\d)\u00A0(\d)", r"\1\2", self.text)
 
-    def remove_soft_hyphen(self):
-        """Suppress shy (soft hyphen)"""
-        # Todo: &#173;, &#x00AD;
-        self.text = re.sub(r"\u00AD", r"", self.text)
+    # def remove_soft_hyphen(self):
+    #     """Suppress shy (soft hyphen)"""
+    #     # Todo: &#173;, &#x00AD;
+    #     self.text = re.sub(r"\u00AD", r"", self.text)
 
     def cleanup(self):
         """Perform cleanup for this type of file - build up a list of CSS transform rules,
@@ -512,9 +559,9 @@ class PgdpFileHtml(PgdpFile):
         # removes line breaks
         # self.char_text = etree.XPath("normalize-space(/)")(self.tree)
 
-        # text fixups
+        # text fixups - restore if requested
         self.remove_nbspaces()
-        self.remove_soft_hyphen()
+        #self.remove_soft_hyphen()
 
     @staticmethod
     def text_transform(val, errors: list):
@@ -956,54 +1003,6 @@ class PPComp:
                 files[1].text.replace(char_best, char_other)
 
 
-def diff_css():
-    """CSS used to display the diffs"""
-    return """
-body {
-    margin-left: 5%;
-    margin-right: 5%;
-}
-
-del {
-    text-decoration: none;
-    border: 1px solid black;
-    color: #700000 ;
-    background-color: #f4f4f4;
-    font-size: larger;
-}
-ins {
-    text-decoration: none;
-    border: 1px solid black;
-    color: green;
-    font-weight: bold;
-    background-color: #f4f4f4;
-    font-size: larger;
-}
-.lineno { margin-right: 3em; }
-.sep4 { margin-top: 4em; }
-.bbox { margin-left: auto;
-    margin-right: auto;
-    border: 1px dashed;
-    padding: 0em 1em 0em 1em;
-    background-color: #F0FFFF;
-    width: 90%;
-    max-width: 50em;
-}
-.center { text-align:center; }
-
-/* Use a CSS counter to number each diff. */
-body {
-  counter-reset: diff;  /* set diff counter to 0 */
-}
-hr:before {
-  counter-increment: diff; /* inc the diff counter ... */
-  content: "Diff " counter(diff) ": "; /* ... and display it */
-}
-
-.error-border { border-style:double; border-color:red; border-width:15px; }
-"""
-
-
 # noinspection PyPep8
 def html_usage(filename1, filename2):
     """Describe how to use the diffs"""
@@ -1029,7 +1028,7 @@ def html_usage(filename1, filename2):
 def output_html(html_content, filename1, filename2):
     """Outputs a complete HTML file"""
     print("""
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -1040,15 +1039,13 @@ def output_html(html_content, filename1, filename2):
     </title>
     <style type="text/css">
 """)
-
-    print(diff_css())
-
+    print(DIFF_CSS)
     print("""
     </style>
   </head>
 <body>
 """)
-    print("<h1>" + filename1 + " and " + filename2 + "</h1>")
+    print(f"<h1>{filename1} and {filename2}</h1>")
     print(html_usage(filename1, filename2))
     # print('<p>Custom CSS added on command line: ' + " ".join(args.css) + '</p>')
     print(html_content)
@@ -1096,8 +1093,8 @@ def main():
                         help="HTML: Insert transformation CSS")
     parser.add_argument('--css-no-default', action='store_true', default=False,
                         help="HTML: do not use default transformation CSS")
-    #parser.add_argument('--suppress-nbsp-num', action='store_true', default=False,
-    #                    help="HTML: Suppress non-breakable spaces between numbers")
+    parser.add_argument('--suppress-nbsp-num', action='store_true', default=False,
+                        help="HTML: Suppress non-breakable spaces between numbers")
     #parser.add_argument('--ignore-0-space', action='store_true', default=False,
     #                    help='HTML: suppress zero width space (U+200b)')
     #parser.add_argument('--css-greek-title-plus', action='store_true', default=False,
