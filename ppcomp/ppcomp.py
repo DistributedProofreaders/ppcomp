@@ -228,7 +228,7 @@ class PgdpFileText(PgdpFile):
     def suppress_illustration_tags(self):
         """Remove illustration tags"""
         if self.args.ignore_format or self.args.suppress_illustration_tags:
-            self.text = re.sub(r"\[Illustration?: ([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
+            self.text = re.sub(r"\[Illustration?:([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
             self.text = self.text.replace("[Illustration]", '')
 
     def suppress_sidenote_tags(self):

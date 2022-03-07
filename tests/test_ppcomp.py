@@ -4,7 +4,8 @@ import pytest
 from ppcomp.ppcomp import *
 
 myargs = ['fossilplants1.html',
-          'fossilplants1.txt']
+          'fossilplants1.txt',
+          '--css-bold', '=']
 
 
 ########## Text file ##########
@@ -19,11 +20,11 @@ def test_load_text_file():
 
 def test_strip_pg_boilerplate():
     text_file = PgdpFileText(load_args(myargs))
-    text_file.load('biercepg.txt')
+    text_file.load('tower.txt')
     text_file.strip_pg_boilerplate()
     length = len(text_file.text.splitlines())
-    assert length == 7237
-    assert text_file.start_line == 27
+    assert length == 7898
+    assert text_file.start_line == 29
 
 
 def test_remove_thought_breaks():
@@ -57,9 +58,9 @@ def test_text_extract_footnotes_pp():
 
 def test_load_pgdp_file():
     text_file = PgdpFileText(load_args(myargs))
-    text_file.load('projectID5c76226c51b6d.txt')
+    text_file.load('projectID5c90be4f730d5.txt')
     length = len(text_file.text.splitlines())
-    assert length == 6972
+    assert length == 9878
     assert text_file.start_line == 0
 
 
@@ -70,18 +71,18 @@ def test_remove_block_markup():
               '/F\n', 'F/\n',
               '/X\n', 'X/\n']
     text_file = PgdpFileText(load_args(myargs))
-    text_file.load('projectID5c76226c51b6d.txt')
+    text_file.load('projectID5c90be4f730d5.txt')
     text_file.remove_block_markup()
     for txt in markup:
         assert -1 == text_file.text.find(txt)
 #    with open('outfile.txt', 'w', encoding='utf-8') as f:
-#        f.write(text_file.text)
+#        f.write(text_file.txt)
 
 
 def test_remove_paging():
     markup = ["-----File:", "[Blank Page]"]
     text_file = PgdpFileText(load_args(myargs))
-    text_file.load('projectID5c76226c51b6d.txt')
+    text_file.load('projectID5c90be4f730d5.txt')
     text_file.remove_paging()
     for txt in markup:
         assert -1 == text_file.text.find(txt)
@@ -90,7 +91,7 @@ def test_remove_paging():
 def test_remove_formatting():
     markup = ['<i>', '</i>', '<b>', '</b>']
     text_file = PgdpFileText(load_args(myargs))
-    text_file.load('projectID5c76226c51b6d.txt')
+    text_file.load('projectID5c90be4f730d5.txt')
     text_file.remove_formatting()
     for txt in markup:
         assert -1 == text_file.text.find(txt)
@@ -100,7 +101,7 @@ def test_remove_formatting_ignore():
     markup = ['<i>', '</i>', '<b>', '</b>']
     args = myargs + ['--ignore-format']
     text_file = PgdpFileText(load_args(args))
-    text_file.load('projectID5c76226c51b6d.txt')
+    text_file.load('projectID5c90be4f730d5.txt')
     text_file.remove_formatting()
     for txt in markup:
         assert -1 == text_file.text.find(txt)
@@ -109,7 +110,7 @@ def test_remove_formatting_ignore():
 def test_remove_formatting_no_ignore():
     markup = ['<i>', '</i>', '<b>', '</b>']
     text_file = PgdpFileText(load_args(myargs))
-    text_file.load('projectID5c76226c51b6d.txt')
+    text_file.load('projectID5c90be4f730d5.txt')
     text_file.remove_formatting()
     assert re.search(r"_((.|\n)+?)_", text_file.text)
 
@@ -117,7 +118,7 @@ def test_remove_formatting_no_ignore():
 def test_suppress_proofers_notes():
     args = myargs + ['--suppress-proofers-notes']
     text_file = PgdpFileText(load_args(args))
-    text_file.load('projectID5c76226c51b6d.txt')
+    text_file.load('projectID5c90be4f730d5.txt')
     text_file.suppress_proofers_notes()
     assert -1 == text_file.text.find("[**probably speck,")
 
@@ -125,24 +126,24 @@ def test_suppress_proofers_notes():
 def test_regroup_split_words():
     args = myargs + ['--regroup-split-words']
     text_file = PgdpFileText(load_args(args))
-    text_file.load('projectID5c76226c51b6d.txt')
+    text_file.load('projectID5c90be4f730d5.txt')
     text_file.remove_paging()
     text_file.regroup_split_words()
     # page marker between
-    assert -1 == text_file.text.find("fam-*")
+    assert -1 == text_file.text.find("Con-*")
     # blank line between
     assert -1 == text_file.text.find("break-*")
     # no line between
-    assert -1 == text_file.text.find("three-*")
+    assert -1 == text_file.text.find("south-*")
     # same line
-    assert -1 < text_file.text.find("lightwood")
+    assert -1 < text_file.text.find("storehouses")
 
 
 #@pytest.mark.skip
 def test_suppress_footnote_tags():
     args = myargs + ['--suppress-footnote-tags']
     text_file = PgdpFileText(load_args(args))
-    text_file.load('projectID5c76226c51b6d.txt')
+    text_file.load('projectID5c90be4f730d5.txt')
     text_file.suppress_footnote_tags()
     assert -1 == text_file.text.find("[Footnote:")
 
@@ -150,15 +151,17 @@ def test_suppress_footnote_tags():
 def test_suppress_illustration_tags():
     args = myargs + ['--suppress-illustration-tags']
     text_file = PgdpFileText(load_args(args))
-    text_file.load('projectID5c76226c51b6d.txt')
+    text_file.load('projectID5c90be4f730d5.txt')
     text_file.suppress_illustration_tags()
+    # with open('outfile.txt', 'w', encoding='utf-8') as f:
+    #     f.write(text_file.text)
     assert -1 == text_file.text.find("[Illustration")
 
 
 def test_suppress_sidenote_tags():
     args = myargs + ['--suppress-sidenote-tags']
     text_file = PgdpFileText(load_args(args))
-    text_file.load('projectID5c76226c51b6d.txt')
+    text_file.load('projectID5c90be4f730d5.txt')
     text_file.suppress_sidenote_tags()
     assert -1 == text_file.text.find("[Sidenote:")
 
@@ -167,7 +170,7 @@ def test_suppress_sidenote_tags():
 def test_text_extract_footnotes_pgdp():
     args = myargs + ['--extract-footnotes']
     text_file = PgdpFileText(load_args(args))
-    text_file.load('fossilplants1pg.txt')
+    text_file.load('tower.txt')
     text_file.extract_footnotes_pgdp()
     length = len(text_file.footnotes.splitlines())
     with open('tmpoutfile.txt', 'w', encoding='utf-8') as f:
@@ -179,6 +182,15 @@ def test_text_extract_footnotes_pgdp():
 
 def test_load_html_file():
     html_file = PgdpFileHtml(load_args(myargs))
+    html_file.load('tower.htm')
+    length = len(html_file.text.splitlines())
+    assert length == 8963
+    assert html_file.tree
+    assert html_file.start_line == 278
+
+
+def test_load_html5_file():
+    html_file = PgdpFileHtml(load_args(myargs))
     html_file.load('fossilplants1.html')
     length = len(html_file.text.splitlines())
     assert length == 24192
@@ -188,12 +200,12 @@ def test_load_html_file():
 
 def test_strip_pg_boilerplate_html():
     html_file = PgdpFileHtml(load_args(myargs))
-    html_file.load('bierce.html')
+    html_file.load('tower.htm')
     html_file.strip_pg_boilerplate()
     length = len(html_file.text.splitlines())
-    dumptree(html_file.tree)
-    #assert length == 23581
-    #assert html_file.start_line == 27
+    #dumptree(html_file.tree)
+    assert length == 8963
+    assert html_file.start_line == 308
 
 
 @pytest.mark.skip
@@ -205,11 +217,11 @@ def test_remove_nbspaces():
     assert not re.search(r"(\d)\u00A0(\d)", html_file.text)
 
 
-def test_remove_soft_hyphen():
-    html_file = PgdpFileHtml(load_args(myargs))
-    html_file.load('fossilplants1.html')
-    html_file.remove_soft_hyphen()
-    assert not re.search(r"\u00AD", html_file.text)
+# def test_remove_soft_hyphen():
+#     html_file = PgdpFileHtml(load_args(myargs))
+#     html_file.load('fossilplants1.html')
+#     html_file.remove_soft_hyphen()
+#     assert not re.search(r"\u00AD", html_file.text)
 
 
 def test_text_transform():
