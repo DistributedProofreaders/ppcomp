@@ -13,13 +13,13 @@ THE TOWER OF LONDON
 
 [Illustration: <i>The Duke of Orleans a Prisoner in the Tower</i>
 
-(<i>From a MS. in the British Museum</i>)]
+(<b>From a MS. in the British Museum</b>)]
 -----File: 005.png---------------------------------------------------------
 
 
 
 
-/*
+/X
 THE
 
 TOWER OF LONDON
@@ -41,7 +41,7 @@ VOL. I.
 LONDON
 GEORGE BELL & SONS
 1901
-*/
+X/
 -----File: 006.png---------------------------------------------------------
 [Blank Page]
 -----File: 007.png---------------------------------------------------------
@@ -1696,11 +1696,11 @@ garland of roses, geraniums, honeysuckles, and oak sprigs,
 are a bear and a lion supporting a ragged staff, the Dudley
 crest, with these lines beneath--
 
-/*
+/P
 "You that these beasts do wel behold and se,
   May deme with ease therefore here made they be,
 With borders eke wherein four brothers names who list to serche the ground."
-*/
+P/
 -----File: 077.png---------------------------------------------------------
 
 [Illustration: <i>Prison in the Beauchamp Tower.</i>]
@@ -2119,8 +2119,9 @@ Talbot Edwards, Gent.: late Keeper of his Ma'^{ts} Regalia
 who dyed ye 30 of September 1674, aged 80 years and
 9 moneths." Neither in life nor in death was this brave
 old Keeper of the Crown well treated. Charles the Second
-settled a handsome pension on the scoundrel Blood--hush-*money
-probably, for it is within the bounds of possibility
+settled a handsome pension on the scoundrel Blood--hush-*
+
+*money probably, for it is within the bounds of possibility
 that Charles was a party to Blood's attempt--whilst the
 sole reward of honest old Talbot Edwards, who was
 half-killed in guarding the treasures of which he had
@@ -2144,8 +2145,8 @@ eve of his execution. There is good reason for believing
 that Monmouth and William, Lord Russell used these
 sacred vessels shortly before mounting the scaffold.
 
-At the back of the chapel of St Peter, and at the north-*western
-angle of the Inner Ward, stands the Devereux
+At the back of the chapel of St Peter, and at the north-*
+*western angle of the Inner Ward, stands the Devereux
 Tower, which contains two storeys, the lower one being
 of massive masonry. This tower dates from the reign of
 Richard the First. In the Elizabethan survey of the
@@ -6002,7 +6003,7 @@ who, but a short time before, had been among the best,
 if not the greatest of English Churchmen (Dr Hall's "Life
 -----File: 225.png---------------------------------------------------------
 
-[Illustration: Tho. Moor L^d Chancelour[**F2: include?]
+[Sidenote: Tho. Moor L^d Chancelour
 
 <i>Sir Thomas More</i>
 

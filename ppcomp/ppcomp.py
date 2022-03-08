@@ -221,20 +221,20 @@ class PgdpFileText(PgdpFile):
     def suppress_footnote_tags(self):
         """Remove footnote tags"""
         if self.args.ignore_format or self.args.suppress_footnote_tags:
-            self.text = re.sub(r"\[Footnote (\d+): ([^]]*?)]", r"\1 \2", self.text,
+            self.text = re.sub(r"\[Footnote ([\d\w]+):\s([^\]]*?)\]", r"\1 \2", self.text,
                                flags=re.MULTILINE)
-            self.text = re.sub(r"\*\[Footnote: ([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
+            self.text = re.sub(r"\*\[Footnote:\s([^\]]*?)\]", r'\1', self.text, flags=re.MULTILINE)
 
     def suppress_illustration_tags(self):
         """Remove illustration tags"""
         if self.args.ignore_format or self.args.suppress_illustration_tags:
-            self.text = re.sub(r"\[Illustration?:([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
+            self.text = re.sub(r"\[Illustration?:([^\]]*?)\]", r'\1', self.text, flags=re.MULTILINE)
             self.text = self.text.replace("[Illustration]", '')
 
     def suppress_sidenote_tags(self):
         """Remove sidenote tags"""
         if self.args.ignore_format or self.args.suppress_sidenote_tags:
-            self.text = re.sub(r"\[Sidenote:([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
+            self.text = re.sub(r"\[Sidenote:([^\]]*?)\]", r'\1', self.text, flags=re.MULTILINE)
 
     def cleanup(self):
         """Perform cleanup for this type of file"""
@@ -832,8 +832,8 @@ class PPComp:
         with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8') as temp1, \
                 tempfile.NamedTemporaryFile(mode='w', encoding='utf-8') as temp2:
             temp1.write(text1)
-            temp2.write(text2)
             temp1.flush()
+            temp2.write(text2)
             temp2.flush()
             repo_dir = os.environ.get("OPENSHIFT_DATA_DIR", "")
             if repo_dir:
@@ -858,11 +858,7 @@ class PPComp:
             if self.args.ignore_case:
                 cmd += ["--ignore-case"]
             cmd += [temp1.name, temp2.name]
-
-            # This shouldn't be needed if openshift was utf8 by default.
-            env = os.environ.copy()
-            env["LANG"] = "en_US.UTF-8"
-            with subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env) as process:
+            with subprocess.Popen(cmd, stdout=subprocess.PIPE) as process:
                 return process.stdout.read().decode('utf-8')
 
     def create_html(self, files, text, footnotes):

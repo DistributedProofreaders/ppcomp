@@ -60,7 +60,7 @@ def test_load_pgdp_file():
     text_file = PgdpFileText(load_args(myargs))
     text_file.load('projectID5c90be4f730d5.txt')
     length = len(text_file.text.splitlines())
-    assert length == 9878
+    assert length == 9879
     assert text_file.start_line == 0
 
 
@@ -76,7 +76,7 @@ def test_remove_block_markup():
     for txt in markup:
         assert -1 == text_file.text.find(txt)
 #    with open('outfile.txt', 'w', encoding='utf-8') as f:
-#        f.write(text_file.txt)
+#        f.write(text_file.text)
 
 
 def test_remove_paging():
@@ -84,15 +84,6 @@ def test_remove_paging():
     text_file = PgdpFileText(load_args(myargs))
     text_file.load('projectID5c90be4f730d5.txt')
     text_file.remove_paging()
-    for txt in markup:
-        assert -1 == text_file.text.find(txt)
-
-
-def test_remove_formatting():
-    markup = ['<i>', '</i>', '<b>', '</b>']
-    text_file = PgdpFileText(load_args(myargs))
-    text_file.load('projectID5c90be4f730d5.txt')
-    text_file.remove_formatting()
     for txt in markup:
         assert -1 == text_file.text.find(txt)
 
@@ -113,14 +104,16 @@ def test_remove_formatting_no_ignore():
     text_file.load('projectID5c90be4f730d5.txt')
     text_file.remove_formatting()
     assert re.search(r"_((.|\n)+?)_", text_file.text)
+    assert re.search(r"=((.|\n)+?)=", text_file.text)
 
 
 def test_suppress_proofers_notes():
     args = myargs + ['--suppress-proofers-notes']
     text_file = PgdpFileText(load_args(args))
     text_file.load('projectID5c90be4f730d5.txt')
+    assert -1 < text_file.text.find("[** Did the day number [1?] not print?]")
     text_file.suppress_proofers_notes()
-    assert -1 == text_file.text.find("[**probably speck,")
+    assert -1 == text_file.text.find("[** Did the day number [1?] not print?]")
 
 
 def test_regroup_split_words():
@@ -132,9 +125,9 @@ def test_regroup_split_words():
     # page marker between
     assert -1 == text_file.text.find("Con-*")
     # blank line between
-    assert -1 == text_file.text.find("break-*")
+    assert -1 == text_file.text.find("hush-*")
     # no line between
-    assert -1 == text_file.text.find("south-*")
+    assert -1 == text_file.text.find("north-*")
     # same line
     assert -1 < text_file.text.find("storehouses")
 
@@ -145,7 +138,9 @@ def test_suppress_footnote_tags():
     text_file = PgdpFileText(load_args(args))
     text_file.load('projectID5c90be4f730d5.txt')
     text_file.suppress_footnote_tags()
-    assert -1 == text_file.text.find("[Footnote:")
+    assert -1 == text_file.text.find("[Footnote")
+    # with open('outfile.txt', 'w', encoding='utf-8') as f:
+    #     f.write(text_file.text)
 
 
 def test_suppress_illustration_tags():
