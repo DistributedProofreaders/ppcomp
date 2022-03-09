@@ -19,14 +19,15 @@ import re
 import subprocess
 import tempfile
 import warnings
+from array import array
 
 import cssselect
 import tinycss
 from lxml import etree
 from lxml.html import html5parser
 
-PG_EBOOK_START = "*** START OF"
-PG_EBOOK_END = "*** END OF"
+PG_EBOOK_START = '*** START OF'
+PG_EBOOK_END = '*** END OF'
 DEFAULT_TRANSFORM_CSS = '''
     /* Italics */
     i:before, cite:before, em:before,
@@ -745,11 +746,7 @@ class PgdpFileHtml(PgdpFile):
 
     @staticmethod
     def clear_element(element):
-        """In an XHTML tree, remove all sub-elements of a given element.
-        We can't properly remove an XML element while traversing the tree. But we can clear it.
-        Remove its text and children. However, the tail must be preserved because it points to
-        the next element, so re-attach.
-        """
+        """In an XHTML tree, remove all sub-elements of a given element"""
         tail = element.tail
         element.clear()
         element.tail = tail
@@ -835,11 +832,11 @@ class PPComp:
             temp1.flush()
             temp2.write(text2)
             temp2.flush()
-            repo_dir = os.environ.get("OPENSHIFT_DATA_DIR", "")
+            repo_dir = os.environ.get('OPENSHIFT_DATA_DIR', '')
             if repo_dir:
-                dwdiff_path = os.path.join(repo_dir, "bin", "dwdiff")
+                dwdiff_path = os.path.join(repo_dir, 'bin', 'dwdiff')
             else:
-                dwdiff_path = "dwdiff"
+                dwdiff_path = 'dwdiff'
 
             # -P Use punctuation characters as delimiters.
             # -R Repeat the begin and end markers at the start and end of line if a change crosses
@@ -931,7 +928,7 @@ class PPComp:
     def simple_html(self):
         """Debugging only, transform the html and print the text output"""
         if not self.args.filename[0].lower().endswith(('.html', '.htm')):
-            print("Error: 1st file must be an html file")
+            print('Error: 1st file must be an html file')
             return
         html_file = PgdpFileHtml(self.args)
         html_file.load(self.args.filename[0])
@@ -939,6 +936,49 @@ class PPComp:
         print(html_file.text)
         with open('outhtml.txt', 'w', encoding='utf-8') as file:
             file.write(html_file.text)
+
+    @staticmethod
+    def superscript_to_unicode(text):
+        # <sup>1</sup> to unicode '¹'
+        if text.isdigit():
+            superscripts = array('u', '⁰¹²³⁴⁵⁶⁷⁸⁹')
+            result = ''
+            for c in text:
+                result += superscripts[int(c)]
+            return result
+        elif text == 'o':
+            return 'º'
+        elif text == 'a':
+            return 'ª'
+        # can't convert, just leave it
+        return text
+
+    @staticmethod
+    def superscript_to_text(text):
+        # <sup>1</sup> to ^1 or ^{10}
+        if len(text) == 1:
+            result = '^' + text
+        else:
+            result = '^{' + text + '}'
+        return result
+
+    @staticmethod
+    def subscript_to_unicode(text):
+        # <sub>1</sub> to unicode '₁'
+        subscripts = array('u', '₀₁₂₃₄₅₆₇₈₉')
+        result = ''
+        try:
+            for c in text:
+                result += subscripts[int(c)]
+            return result
+        except ValueError:
+            # can't convert, just leave it
+            return text
+
+    @staticmethod
+    def subscript_to_text(text):
+        # <sup>1</sup> to ^1 or ^{10}
+        return '_{' + text + '}'
 
     @staticmethod
     def check_characters(files):

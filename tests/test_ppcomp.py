@@ -251,6 +251,34 @@ def test_check_characters():
     assert True
 
 
+def test_superscript_to_unicode():
+    x = PPComp.superscript_to_unicode('123')
+    assert x == '¹²³'
+    x = PPComp.superscript_to_unicode('3')
+    assert x == '³'
+
+
+def test_superscript_to_text():
+    x = PPComp.superscript_to_text('123')
+    assert x == '^{123}'
+    x = PPComp.superscript_to_text('3')
+    assert x == '^3'
+
+
+def test_subscript_to_unicode():
+    x = PPComp.subscript_to_unicode('123')
+    assert x == '₁₂₃'
+    x = PPComp.subscript_to_unicode('3')
+    assert x == '₃'
+
+
+def test_subscript_to_text():
+    x = PPComp.subscript_to_text('123')
+    assert x == '_{123}'
+    x = PPComp.subscript_to_text('3')
+    assert x == '_{3}'
+
+
 def load_args(myargs):
     parser = argparse.ArgumentParser(description='Diff text document for PGDP PP.')
     parser.add_argument('filename', metavar='FILENAME', type=str,
