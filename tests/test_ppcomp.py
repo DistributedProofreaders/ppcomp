@@ -260,30 +260,30 @@ def test_check_characters():
 
 
 def test_superscript_to_unicode():
-    x = PgdpFileHtml.superscript_to_unicode('123ab')
+    x = PgdpFileHtml.css_superscript('123ab')
     assert x == '¹²³ᵃᵇ'
-    x = PgdpFileHtml.superscript_to_unicode('3')
+    x = PgdpFileHtml.css_superscript('3')
     assert x == '³'
 
 
 def test_superscript_to_text():
-    x = PgdpFileHtml.superscript_to_text('123')
+    x = PgdpFileHtml.css_superscript('123', True)
     assert x == '^{123}'
-    x = PgdpFileHtml.superscript_to_text('3')
+    x = PgdpFileHtml.css_superscript('3', True)
     assert x == '^3'
 
 
 def test_subscript_to_unicode():
-    x = PgdpFileHtml.subscript_to_unicode('123')
+    x = PgdpFileHtml.css_subscript('123')
     assert x == '₁₂₃'
-    x = PgdpFileHtml.subscript_to_unicode('3')
+    x = PgdpFileHtml.css_subscript('3')
     assert x == '₃'
 
 
 def test_subscript_to_text():
-    x = PgdpFileHtml.subscript_to_text('123')
+    x = PgdpFileHtml.css_subscript('123', True)
     assert x == '_{123}'
-    x = PgdpFileHtml.subscript_to_text('3')
+    x = PgdpFileHtml.css_subscript('3', True)
     assert x == '_{3}'
 
 

@@ -541,9 +541,14 @@ class PgdpFileHtml(PgdpFile):
             self.mycss += '.sidenote:after { content: "]"; }'
 
     @staticmethod
-    def superscript_to_unicode(text):
-        """Convert <sup>1</sup> to unicode '¹'"""
-        result = ''
+    def css_superscript(text, proof=False):
+        """Convert <sup> tagged text"""
+        if proof:  # to ^1 or ^{10}
+            if len(text) == 1:
+                return '^' + text
+            else:
+                return '^{' + text + '}'
+        result = ''  # to unicode superscripts
         for c in text:
             try:
                 result += SUPERSCRIPTS[c]
@@ -552,36 +557,17 @@ class PgdpFileHtml(PgdpFile):
         return result
 
     @staticmethod
-    def superscript_to_text(text):
-        """Convert <sup>1</sup> to ^1 or ^{10}"""
-        if len(text) == 1:
-            return '^' + text
-        else:
-            return '^{' + text + '}'
-
-    @staticmethod
-    def subscript_to_unicode(text):
-        """Convert <sub>1</sub> to unicode '₁'"""
+    def css_subscript(text, proof=False):
+        """Convert <sub> tagged text"""
+        if proof:  # to _{1}
+            return '_{' + text + '}'
         result = ''
-        for c in text:
+        for c in text:  # to unicode subscripts
             try:
                 result += SUBSCRIPTS[c]
             except KeyError:
                 result += c  # can't convert, just leave it
         return result
-
-    @staticmethod
-    def subscript_to_text(text):
-        """Convert <sub> tagged text to _{1}"""
-        return '_{' + text + '}'
-
-    def css_superscript(self):
-        """Convert <sup> tagged text to unicode superscripts"""
-        pass
-
-    def css_subscript(self):
-        """Convert <sub> tagged text to unicode subscripts"""
-        pass
 
     def css_custom_css(self):
         """--css can be present multiple times, so it's a list"""
@@ -641,9 +627,9 @@ class PgdpFileHtml(PgdpFile):
             if value == 'capitalize':
                 return lambda x: x.title()
             if value == 'superscript':
-                return lambda x: PgdpFileHtml.superscript_to_unicode(x)
+                return lambda x: PgdpFileHtml.css_superscript(x)
             if value == 'subscript':
-                return lambda x: PgdpFileHtml.subscript_to_unicode(x)
+                return lambda x: PgdpFileHtml.css_subscript(x)
             errors += [(val.line, val.column,
                         val.name + " accepts only 'uppercase', 'lowercase', 'capitalize',"
                                    " 'superscript', or 'subscript'")]
