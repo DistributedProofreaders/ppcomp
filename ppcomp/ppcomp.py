@@ -51,10 +51,9 @@ DEFAULT_TRANSFORM_CSS = '''
     span[class^="pgnum"],
     div[id^="Page_"] { display: none }
 
-    /* Superscripts, Subscripts */
-    sup:before              { content: "^{"; }
-    sub:before              { content: "_{"; }
-    sup:after, sub:after    { content: "}"; }
+    /* Superscripts, subscripts */
+    sup { text-transform:superscript; }
+    sub { text-transform:subscript; }
 '''
 # CSS used to display the diffs
 DIFF_CSS = '''
@@ -100,6 +99,27 @@ hr:before {
 
 .error-border { border-style:double; border-color:red; border-width:15px; }
 '''
+SUPERSCRIPTS = {
+    '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
+    '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹',
+    'a': 'ᵃ', 'b': 'ᵇ', 'c': 'ᶜ', 'd': 'ᵈ', 'e': 'ᵉ',
+    'f': 'ᶠ', 'g': 'ᵍ', 'h': 'ʰ', 'i': 'ⁱ', 'j': 'ʲ',
+    'k': 'ᵏ', 'l': 'ˡ', 'm': 'ᵐ', 'n': 'ⁿ', 'o': 'ᵒ',
+    'p': 'ᵖ', 'r': 'ʳ', 's': 'ˢ', 't': 'ᵗ','u': 'ᵘ',
+    'v': 'ᵛ', 'w': 'ʷ', 'x': 'ˣ', 'y': 'ʸ', 'z': 'ᶻ',
+    'A': 'ᴬ', 'B': 'ᴮ', 'D': 'ᴰ', 'E': 'ᴱ', 'G': 'ᴳ',
+    'H': 'ᴴ', 'I': 'ᴵ', 'J': 'ᴶ', 'K': 'ᴷ', 'L': 'ᴸ',
+    'M': 'ᴹ', 'N': 'ᴺ', 'O': 'ᴼ', 'P': 'ᴾ', 'R': 'ᴿ',
+    'T': 'ᵀ', 'U': 'ᵁ', 'V': 'ⱽ', 'W': 'ᵂ', 'Æ': 'ᴭ', 'œ': 'ꟹ'
+}
+SUBSCRIPTS = {
+    '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄',
+    '5': '₅', '6': '₆', '7': '₇', '8': '₈', '9': '₉',
+    'a': 'ₐ', 'e': 'ₑ', 'h': 'ₕ', 'i': 'ᵢ', 'j': 'ⱼ',
+    'k': 'ₖ', 'l': 'ₗ', 'm': 'ₘ', 'n': 'ₙ', 'o': 'ₒ',
+    'p': 'ₚ', 'r': 'ᵣ', 's': 'ₛ', 't': 'ₜ', 'u': 'ᵤ',
+    'v': 'ᵥ', 'x': 'ₓ'
+}
 
 
 class PgdpFile:
@@ -520,6 +540,49 @@ class PgdpFileHtml(PgdpFile):
             self.mycss += '.sidenote:before { content: "[Sidenote: "; }'
             self.mycss += '.sidenote:after { content: "]"; }'
 
+    @staticmethod
+    def superscript_to_unicode(text):
+        """Convert <sup>1</sup> to unicode '¹'"""
+        result = ''
+        for c in text:
+            try:
+                result += SUPERSCRIPTS[c]
+            except KeyError:
+                result += c  # can't convert, just leave it
+        return result
+
+    @staticmethod
+    def superscript_to_text(text):
+        """Convert <sup>1</sup> to ^1 or ^{10}"""
+        if len(text) == 1:
+            return '^' + text
+        else:
+            return '^{' + text + '}'
+
+    @staticmethod
+    def subscript_to_unicode(text):
+        """Convert <sub>1</sub> to unicode '₁'"""
+        result = ''
+        for c in text:
+            try:
+                result += SUBSCRIPTS[c]
+            except KeyError:
+                result += c  # can't convert, just leave it
+        return result
+
+    @staticmethod
+    def subscript_to_text(text):
+        """Convert <sub> tagged text to _{1}"""
+        return '_{' + text + '}'
+
+    def css_superscript(self):
+        """Convert <sup> tagged text to unicode superscripts"""
+        pass
+
+    def css_subscript(self):
+        """Convert <sub> tagged text to unicode subscripts"""
+        pass
+
     def css_custom_css(self):
         """--css can be present multiple times, so it's a list"""
         for css in self.args.css:
@@ -571,14 +634,19 @@ class PgdpFileHtml(PgdpFile):
             errors += [(val.line, val.column, val.name + " takes 1 argument")]
         else:
             value = val.value[0].value
-            if value == "uppercase":
+            if value == 'uppercase':
                 return lambda x: x.upper()
-            if value == "lowercase":
+            if value == 'lowercase':
                 return lambda x: x.lower()
-            if value == "capitalize":
+            if value == 'capitalize':
                 return lambda x: x.title()
+            if value == 'superscript':
+                return lambda x: PgdpFileHtml.superscript_to_unicode(x)
+            if value == 'subscript':
+                return lambda x: PgdpFileHtml.subscript_to_unicode(x)
             errors += [(val.line, val.column,
-                        val.name + " accepts only 'uppercase', 'lowercase' or 'capitalize'")]
+                        val.name + " accepts only 'uppercase', 'lowercase', 'capitalize',"
+                                   " 'superscript', or 'subscript'")]
         return None
 
     @staticmethod
@@ -938,49 +1006,6 @@ class PPComp:
             file.write(html_file.text)
 
     @staticmethod
-    def superscript_to_unicode(text):
-        # <sup>1</sup> to unicode '¹'
-        if text.isdigit():
-            superscripts = array('u', '⁰¹²³⁴⁵⁶⁷⁸⁹')
-            result = ''
-            for c in text:
-                result += superscripts[int(c)]
-            return result
-        elif text == 'o':
-            return 'º'
-        elif text == 'a':
-            return 'ª'
-        # can't convert, just leave it
-        return text
-
-    @staticmethod
-    def superscript_to_text(text):
-        # <sup>1</sup> to ^1 or ^{10}
-        if len(text) == 1:
-            result = '^' + text
-        else:
-            result = '^{' + text + '}'
-        return result
-
-    @staticmethod
-    def subscript_to_unicode(text):
-        # <sub>1</sub> to unicode '₁'
-        subscripts = array('u', '₀₁₂₃₄₅₆₇₈₉')
-        result = ''
-        try:
-            for c in text:
-                result += subscripts[int(c)]
-            return result
-        except ValueError:
-            # can't convert, just leave it
-            return text
-
-    @staticmethod
-    def subscript_to_text(text):
-        # <sup>1</sup> to ^1 or ^{10}
-        return '_{' + text + '}'
-
-    @staticmethod
     def check_characters(files):
         """Check whether each file has the 'best' character. If not, add a conversion request.
         This is used for instance if one version uses curly quotes while the other uses straight.
@@ -991,8 +1016,6 @@ class PPComp:
             '‘': "'",  # open curly quote to straight
             '”': '"',  # close curly quotes to straight
             '“': '"',  # open curly quotes to straight
-            'º': 'o',  # ordinal o to letter o
-            'ª': 'a',  # ordinal a to letter a
             '–': '-',  # ndash to regular dash
             '—': '--',  # mdash to regular dashes
             '½': '-1/2',
@@ -1002,26 +1025,6 @@ class PPComp:
             '′': "'",  # prime
             '″': "''",  # double prime
             '‴': "'''",  # triple prime
-            '₀': '0',  # subscript 0
-            '₁': '1',  # subscript 1
-            '₂': '2',  # subscript 2
-            '₃': '3',  # subscript 3
-            '₄': '4',  # subscript 4
-            '₅': '5',  # subscript 5
-            '₆': '6',  # subscript 6
-            '₇': '7',  # subscript 7
-            '₈': '8',  # subscript 8
-            '₉': '9',  # subscript 9
-            '⁰': '0',  # superscript 0
-            '¹': '1',  # superscript 1
-            '²': '2',  # superscript 2
-            '³': '3',  # superscript 3
-            '⁴': '4',  # superscript 4
-            '⁵': '5',  # superscript 5
-            '⁶': '6',  # superscript 6
-            '⁷': '7',  # superscript 7
-            '⁸': '8',  # superscript 8
-            '⁹': '9'  # superscript 9
         }
 
         for char_best, char_other in character_checks.items():

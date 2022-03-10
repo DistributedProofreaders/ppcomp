@@ -203,13 +203,21 @@ def test_strip_pg_boilerplate_html():
     assert html_file.start_line == 308
 
 
-@pytest.mark.skip
+def test_css_bold():
+    args = myargs + ['--css-bold', '~']
+    html_file = PgdpFileHtml(load_args(args))
+    html_file.load('fossilplants1.html')
+    html_file.cleanup()
+    assert 0 <= html_file.text.find('~')
+
+
 def test_remove_nbspaces():
     args = myargs + ['--suppress-nbsp-num']
     html_file = PgdpFileHtml(load_args(args))
     html_file.load('fossilplants1.html')
     html_file.remove_nbspaces()
     assert not re.search(r"(\d)\u00A0(\d)", html_file.text)
+    assert 0 <= html_file.text.find("2885")
 
 
 # def test_remove_soft_hyphen():
@@ -252,30 +260,30 @@ def test_check_characters():
 
 
 def test_superscript_to_unicode():
-    x = PPComp.superscript_to_unicode('123')
-    assert x == '¹²³'
-    x = PPComp.superscript_to_unicode('3')
+    x = PgdpFileHtml.superscript_to_unicode('123ab')
+    assert x == '¹²³ᵃᵇ'
+    x = PgdpFileHtml.superscript_to_unicode('3')
     assert x == '³'
 
 
 def test_superscript_to_text():
-    x = PPComp.superscript_to_text('123')
+    x = PgdpFileHtml.superscript_to_text('123')
     assert x == '^{123}'
-    x = PPComp.superscript_to_text('3')
+    x = PgdpFileHtml.superscript_to_text('3')
     assert x == '^3'
 
 
 def test_subscript_to_unicode():
-    x = PPComp.subscript_to_unicode('123')
+    x = PgdpFileHtml.subscript_to_unicode('123')
     assert x == '₁₂₃'
-    x = PPComp.subscript_to_unicode('3')
+    x = PgdpFileHtml.subscript_to_unicode('3')
     assert x == '₃'
 
 
 def test_subscript_to_text():
-    x = PPComp.subscript_to_text('123')
+    x = PgdpFileHtml.subscript_to_text('123')
     assert x == '_{123}'
-    x = PPComp.subscript_to_text('3')
+    x = PgdpFileHtml.subscript_to_text('3')
     assert x == '_{3}'
 
 
