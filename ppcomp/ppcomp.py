@@ -33,10 +33,6 @@ DEFAULT_TRANSFORM_CSS = '''
     i:before, cite:before, em:before,
     i:after, cite:after, em:after { content: "_"; }
 
-    /* line breaks with <br /> will be ignored by normalize-space().
-     * Add a space in all of them to work around. */
-    br:before { content: " "; }
-
     /* Add spaces around td tags. */
     td:before, td:after { content: " "; }
 
@@ -371,8 +367,7 @@ class PgdpFileText(PgdpFile):
                 for (regex, fn_type) in fn_regexes:
                     matches = re.match(regex, block[0])
                     if matches:
-                        if matches.group(2).startswith(("Illustration", "Décoration",
-                                                        "Bandeau", "Logo", "Ornement")):
+                        if matches.group(2).startswith("Illustration"):
                             # An illustration, possibly inside a footnote. Treat
                             # as part of text or footnote.
                             continue
@@ -606,8 +601,6 @@ class PgdpFileHtml(PgdpFile):
 
         # Transform html into text for character search.
         self.text = etree.XPath("string(/)")(self.tree)
-        # removes line breaks
-        # self.char_text = etree.XPath("normalize-space(/)")(self.tree)
 
         # text fixups - restore if requested
         self.remove_nbspaces()

@@ -242,8 +242,55 @@ def test_html_extract_footnotes():
     html_file.extract_footnotes()
     length = len(html_file.footnotes.splitlines())
     assert length == 2093
-    with open('tmpoutfile.txt', 'w', encoding='utf-8') as f:
-        f.write(html_file.footnotes)
+
+
+def test_add_illustration_tags():
+    args = myargs + ['--css-add-illustration']
+    html_file = PgdpFileHtml(load_args(args))
+    html_file.load('fossilplants1.html')
+    html_file.cleanup()
+    assert -1 < html_file.text.find("[Illustration")
+
+
+def test_add_sidenote_tags():
+    args = myargs + ['--css-add-sidenote']
+    html_file = PgdpFileHtml(load_args(args))
+    html_file.load('fossilplants1.html')
+    html_file.cleanup()
+    assert -1 < html_file.text.find("[Sidenote")
+
+
+def test_convert_smcaps_upper():
+    args = myargs + ['--css-smcap', 'U']
+    html_file = PgdpFileHtml(load_args(args))
+    html_file.load('fossilplants1.html')
+    html_file.cleanup()
+    assert -1 < html_file.text.find("BIOLOGICAL SERIES")
+
+
+def test_convert_smcaps_lower():
+    args = myargs + ['--css-smcap', 'L']
+    html_file = PgdpFileHtml(load_args(args))
+    html_file.load('fossilplants1.html')
+    html_file.cleanup()
+    assert -1 < html_file.text.find("biological series")
+
+
+def test_add_css():
+    args = myargs + ['--css', 'span[class^="antiqua"]:before { content: "~" }',
+                     '--css', 'span[class^="antiqua"]:after { content: "~" }']
+    html_file = PgdpFileHtml(load_args(args))
+    html_file.load('fossilplants1.html')
+    html_file.cleanup()
+    assert -1 < html_file.text.find('~Cambridge Natural Science Manuals.~')
+
+
+def test_no_default_css():
+    args = myargs + ['--css-no-default']
+    html_file = PgdpFileHtml(load_args(args))
+    html_file.load('fossilplants1.html')
+    html_file.cleanup()
+    assert -1 == html_file.text.find('_')
 
 
 ########## Both files ##########
