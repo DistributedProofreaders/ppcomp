@@ -998,19 +998,19 @@ class PPComp:
         In that case, we need to convert one into the other, to get a smaller diff.
         """
         character_checks = {
-            '’': "'",  # close curly quote to straight
-            '‘': "'",  # open curly quote to straight
-            '”': '"',  # close curly quotes to straight
-            '“': '"',  # open curly quotes to straight
-            '–': '-',  # ndash to regular dash
-            '—': '--',  # mdash to regular dashes
-            '½': '-1/2',
-            '¼': '-1/4',
-            '¾': '-3/4',
+            '’': "'",  # close curly single quote to straight
+            '‘': "'",  # open curly single quote to straight
+            '”': '"',  # close curly double quote to straight
+            '“': '"',  # open curly double quote to straight
+            '–': '-',  # en dash to hyphen
+            '—': '--',  # em dash to double hyphen
             '⁄': '/',  # fraction slash
             '′': "'",  # prime
             '″': "''",  # double prime
             '‴': "'''",  # triple prime
+            '½': '-1/2',
+            '¼': '-1/4',
+            '¾': '-3/4'
         }
 
         for char_best, char_other in character_checks.items():
@@ -1023,9 +1023,9 @@ class PPComp:
                 continue
             # Downgrade one version
             if finds_0 >= 0:
-                files[0].text.replace(char_best, char_other)
+                files[0].text = files[0].text.replace(char_best, char_other)
             else:
-                files[1].text.replace(char_best, char_other)
+                files[1].text = files[1].text.replace(char_best, char_other)
 
 
 # noinspection PyPep8

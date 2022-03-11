@@ -249,14 +249,13 @@ def test_html_extract_footnotes():
 ########## Both files ##########
 
 def test_check_characters():
-    markup = ['<i>', '</i>', '<b>', '</b>']
     files = [None, None]
     files[0] = PgdpFileText(load_args(myargs))
     files[0].load('fossilplants1.txt')
-    files[1] = PgdpFileHtml(load_args(myargs))
-    files[1].load('fossilplants1.html')
+    files[1] = PgdpFileText(load_args(myargs))
+    files[1].load('fossilplants1chr.txt')
     PPComp.check_characters(files)
-    assert True
+    assert files[0].text == files[1].text
 
 
 def test_superscript_to_unicode():
