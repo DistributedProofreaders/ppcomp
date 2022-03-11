@@ -993,7 +993,7 @@ class PPComp:
 
     @staticmethod
     def check_characters(files):
-        """Check whether each file has the 'best' character. If not, add a conversion request.
+        """Check whether each file has the 'best' character. If not, convert.
         This is used for instance if one version uses curly quotes while the other uses straight.
         In that case, we need to convert one into the other, to get a smaller diff.
         """
@@ -1012,11 +1012,9 @@ class PPComp:
             '¼': '-1/4',
             '¾': '-3/4'
         }
-
         for char_best, char_other in character_checks.items():
             finds_0 = files[0].text.find(char_best)
             finds_1 = files[1].text.find(char_best)
-            # Todo: should apply to footnotes too
             if finds_0 >= 0 and finds_1 >= 0:  # Both have it
                 continue
             if finds_0 == -1 and finds_1 == -1:  # Neither has it
@@ -1026,6 +1024,18 @@ class PPComp:
                 files[0].text = files[0].text.replace(char_best, char_other)
             else:
                 files[1].text = files[1].text.replace(char_best, char_other)
+        if files[0].footnotes and files[1].footnotes:
+            for char_best, char_other in character_checks.items():
+                finds_0 = files[0].footnotes.find(char_best)
+                finds_1 = files[1].footnotes.find(char_best)
+                if finds_0 >= 0 and finds_1 >= 0:  # Both have it
+                    continue
+                if finds_0 == -1 and finds_1 == -1:  # Neither has it
+                    continue
+                if finds_0 >= 0:
+                    files[0].footnotes = files[0].footnotes.replace(char_best, char_other)
+                else:
+                    files[1].footnotes = files[1].footnotes.replace(char_best, char_other)
 
 
 # noinspection PyPep8
