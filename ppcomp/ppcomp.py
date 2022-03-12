@@ -545,14 +545,13 @@ class PgdpFileHtml(PgdpFile):
         if proof:  # to ^1 or ^{10}
             if len(text) == 1:
                 return '^' + text
-            else:
-                return '^{' + text + '}'
+            return '^{' + text + '}'
         result = ''  # to unicode superscripts
-        for c in text:
+        for char in text:
             try:
-                result += SUPERSCRIPTS[c]
+                result += SUPERSCRIPTS[char]
             except KeyError:
-                result += c  # can't convert, just leave it
+                result += char  # can't convert, just leave it
         return result
 
     @staticmethod
@@ -561,11 +560,11 @@ class PgdpFileHtml(PgdpFile):
         if proof:  # to _{1}
             return '_{' + text + '}'
         result = ''
-        for c in text:  # to unicode subscripts
+        for char in text:  # to unicode subscripts
             try:
-                result += SUBSCRIPTS[c]
+                result += SUBSCRIPTS[char]
             except KeyError:
-                result += c  # can't convert, just leave it
+                result += char  # can't convert, just leave it
         return result
 
     def css_custom_css(self):
@@ -666,7 +665,6 @@ class PgdpFileHtml(PgdpFile):
         stylesheet = tinycss.make_parser().parse_stylesheet(self.mycss)
         property_errors = []
 
-        @staticmethod
         def _move_element(elem, move_list):
             """Move elem in tree"""
             parent = elem.getparent()
@@ -685,24 +683,24 @@ class PgdpFileHtml(PgdpFile):
             parent.remove(elem)
             new.append(elem)
 
-        def _process_element():
+        def _process_element(elem, val):
             # replace text with content of an attribute.
-            if value.name == 'content':
-                v_content = self.new_content(element, value)
+            if val.name == 'content':
+                v_content = self.new_content(elem, val)
                 if selector.pseudo_element == 'before':
-                    element.text = v_content + (element.text or '')  # opening tag
+                    elem.text = v_content + (elem.text or '')  # opening tag
                 elif selector.pseudo_element == 'after':
-                    element.tail = v_content + (element.tail or '')  # closing tag
+                    elem.tail = v_content + (elem.tail or '')  # closing tag
                 else:  # replace all content
-                    element.text = self.new_content(element, value)
+                    elem.text = self.new_content(elem, val)
             elif f_replace_with_attr:
-                element.text = f_replace_with_attr(element)
+                elem.text = f_replace_with_attr(elem)
             elif f_transform:
-                self.text_apply(element, f_transform)
+                self.text_apply(elem, f_transform)
             elif f_element_func:
-                f_element_func(element)
+                f_element_func(elem)
             elif f_move:
-                _move_element(element, f_move)
+                _move_element(elem, f_move)
 
         for rule in stylesheet.rules:
             # extract values we care about
@@ -719,8 +717,8 @@ class PgdpFileHtml(PgdpFile):
                 elif value.name == 'text-replace':
                     f_transform = self._text_replace(value, property_errors)
                 elif value.name == '_replace_with_attr':
-                    def f_replace_with_attr(el):
-                        return el.attrib[value.value[0].value]
+                    def f_replace_with_attr(elem):
+                        return elem.attrib[value.value[0].value]
                 elif value.name == 'display':
                     # support display none only. So ignore "none" argument
                     f_element_func = PgdpFileHtml.clear_element
@@ -737,7 +735,7 @@ class PgdpFileHtml(PgdpFile):
                     find = etree.XPath(xpath)
                     # find each matching elem in the HTML document
                     for element in find(self.tree):
-                        _process_element()
+                        _process_element(element, value)
 
         return self.css_errors(stylesheet.errors, property_errors)
 
@@ -927,8 +925,8 @@ class PPComp:
                 newtext = "<hr /><pre>\n" + newtext
             newtext = newtext.replace("\n--\n", "\n</pre><hr /><pre>\n")
             newtext = re.sub(r"^\s*(\d+):(\d+)",
-                             lambda m: "<span class='lineno'>{0} : {1}</span>".format(
-                                 int(m.group(1)) + start0, int(m.group(2)) + start1),
+                             lambda m: f"<span class='lineno'>{int(m.group(1)) + start0}"
+                                       f" : {int(m.group(2)) + start1}</span>",
                              newtext, flags=re.MULTILINE)
             if newtext:
                 newtext += "</pre>\n"
