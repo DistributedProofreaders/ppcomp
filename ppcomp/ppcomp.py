@@ -20,7 +20,6 @@ import subprocess
 import sys
 import tempfile
 import warnings
-from array import array
 
 import cssselect
 import tinycss
@@ -101,7 +100,7 @@ SUPERSCRIPTS = {
     'a': 'ᵃ', 'b': 'ᵇ', 'c': 'ᶜ', 'd': 'ᵈ', 'e': 'ᵉ',
     'f': 'ᶠ', 'g': 'ᵍ', 'h': 'ʰ', 'i': 'ⁱ', 'j': 'ʲ',
     'k': 'ᵏ', 'l': 'ˡ', 'm': 'ᵐ', 'n': 'ⁿ', 'o': 'ᵒ',
-    'p': 'ᵖ', 'r': 'ʳ', 's': 'ˢ', 't': 'ᵗ','u': 'ᵘ',
+    'p': 'ᵖ', 'r': 'ʳ', 's': 'ˢ', 't': 'ᵗ', 'u': 'ᵘ',
     'v': 'ᵛ', 'w': 'ʷ', 'x': 'ˣ', 'y': 'ʸ', 'z': 'ᶻ',
     'A': 'ᴬ', 'B': 'ᴮ', 'D': 'ᴰ', 'E': 'ᴱ', 'G': 'ᴳ',
     'H': 'ᴴ', 'I': 'ᴵ', 'J': 'ᴶ', 'K': 'ᴷ', 'L': 'ᴸ',
@@ -238,20 +237,20 @@ class PgdpFileText(PgdpFile):
     def suppress_footnote_tags(self):
         """Remove footnote tags"""
         if self.args.ignore_format or self.args.suppress_footnote_tags:
-            self.text = re.sub(r"\[Footnote ([\d\w]+):\s([^\]]*?)\]", r"\1 \2", self.text,
+            self.text = re.sub(r"\[Footnote ([\d\w]+):\s([^]]*?)]", r"\1 \2", self.text,
                                flags=re.MULTILINE)
-            self.text = re.sub(r"\*\[Footnote:\s([^\]]*?)\]", r'\1', self.text, flags=re.MULTILINE)
+            self.text = re.sub(r"\*\[Footnote:\s([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
 
     def suppress_illustration_tags(self):
         """Remove illustration tags"""
         if self.args.ignore_format or self.args.suppress_illustration_tags:
-            self.text = re.sub(r"\[Illustration?:([^\]]*?)\]", r'\1', self.text, flags=re.MULTILINE)
+            self.text = re.sub(r"\[Illustration?:([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
             self.text = self.text.replace("[Illustration]", '')
 
     def suppress_sidenote_tags(self):
         """Remove sidenote tags"""
         if self.args.ignore_format or self.args.suppress_sidenote_tags:
-            self.text = re.sub(r"\[Sidenote:([^\]]*?)\]", r'\1', self.text, flags=re.MULTILINE)
+            self.text = re.sub(r"\[Sidenote:([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
 
     def cleanup(self):
         """Perform cleanup for this type of file"""
@@ -535,6 +534,11 @@ class PgdpFileHtml(PgdpFile):
             self.mycss += '.sidenote:before { content: "[Sidenote: "; }'
             self.mycss += '.sidenote:after { content: "]"; }'
 
+    def css_greek_title_plus(self):
+        """Greek: if there is a title, use it to replace the (grc=ancient) Greek."""
+        if self.args.css_greek_title_plus:
+            self.mycss += '*[lang=grc] { content: "+" attr(title) "+"; }'
+
     @staticmethod
     def css_superscript(text, proof=False):
         """Convert <sup> tagged text"""
@@ -577,10 +581,10 @@ class PgdpFileHtml(PgdpFile):
         if self.args.suppress_nbsp_num:
             self.text = re.sub(r"(\d)\u00A0(\d)", r"\1\2", self.text)
 
-    # def remove_soft_hyphen(self):
-    #     """Suppress shy (soft hyphen)"""
-    #     # Todo: &#173;, &#x00AD;
-    #     self.text = re.sub(r"\u00AD", r"", self.text)
+    def remove_soft_hyphen(self):
+        """Suppress shy (soft hyphen)"""
+        # Todo: &#173;, &#x00AD;?
+        self.text = re.sub(r"\u00AD", r"", self.text)
 
     def cleanup(self):
         """Perform cleanup for this type of file - build up a list of CSS transform rules,
@@ -602,12 +606,11 @@ class PgdpFileHtml(PgdpFile):
         # Transform html into text for character search.
         self.text = etree.XPath("string(/)")(self.tree)
 
-        # text fixups - restore if requested
         self.remove_nbspaces()
-        #self.remove_soft_hyphen()
+        self.remove_soft_hyphen()
 
     @staticmethod
-    def text_transform(val, errors: list):
+    def _text_transform(val, errors: list):
         """Transform smcaps"""
         if len(val.value) != 1:
             errors += [(val.line, val.column, val.name + " takes 1 argument")]
@@ -629,7 +632,7 @@ class PgdpFileHtml(PgdpFile):
         return None
 
     @staticmethod
-    def text_replace(val, errors: list):
+    def _text_replace(val, errors: list):
         """Skip S (spaces) tokens"""
         values = [v for v in val.value if v.type != "S"]
         if len(values) != 2:
@@ -638,7 +641,7 @@ class PgdpFileHtml(PgdpFile):
         return lambda x: x.replace(values[0].value, values[1].value)
 
     @staticmethod
-    def text_move(val, errors: list):
+    def _text_move(val, errors: list):
         """Move a node"""
         values = [v for v in val.value if v.type != "S"]
         if len(values) < 1:
@@ -663,7 +666,26 @@ class PgdpFileHtml(PgdpFile):
         stylesheet = tinycss.make_parser().parse_stylesheet(self.mycss)
         property_errors = []
 
-        def process_element():
+        @staticmethod
+        def _move_element(elem, move_list):
+            """Move elem in tree"""
+            parent = elem.getparent()
+            new = elem
+            for item in move_list:
+                new = item(new)
+            # move the tail to the sibling or the parent
+            if elem.tail:
+                sibling = elem.getprevious()
+                if sibling:
+                    sibling.tail = (sibling.tail or '') + elem.tail
+                else:
+                    parent.text = (parent.text or '') + elem.tail
+                elem.tail = None
+            # prune and graft
+            parent.remove(elem)
+            new.append(elem)
+
+        def _process_element():
             # replace text with content of an attribute.
             if value.name == 'content':
                 v_content = self.new_content(element, value)
@@ -680,7 +702,7 @@ class PgdpFileHtml(PgdpFile):
             elif f_element_func:
                 f_element_func(element)
             elif f_move:
-                self.move_element(element, f_move)
+                _move_element(element, f_move)
 
         for rule in stylesheet.rules:
             # extract values we care about
@@ -691,11 +713,11 @@ class PgdpFileHtml(PgdpFile):
 
             for value in rule.declarations:
                 if value.name == 'content':
-                    pass  # result depends on element and pseudo elements
+                    pass  # result depends on elem and pseudo elements
                 elif value.name == 'text-transform':
-                    f_transform = self.text_transform(value, property_errors)
+                    f_transform = self._text_transform(value, property_errors)
                 elif value.name == 'text-replace':
-                    f_transform = self.text_replace(value, property_errors)
+                    f_transform = self._text_replace(value, property_errors)
                 elif value.name == '_replace_with_attr':
                     def f_replace_with_attr(el):
                         return el.attrib[value.value[0].value]
@@ -703,7 +725,7 @@ class PgdpFileHtml(PgdpFile):
                     # support display none only. So ignore "none" argument
                     f_element_func = PgdpFileHtml.clear_element
                 elif value.name == '_graft':
-                    f_move = self.text_move(value, property_errors)
+                    f_move = self._text_move(value, property_errors)
                 else:
                     property_errors += [(value.line, value.column, "Unsupported property "
                                          + value.name)]
@@ -713,9 +735,9 @@ class PgdpFileHtml(PgdpFile):
                 for selector in cssselect.parse(rule.selector.as_css()):
                     xpath = cssselect.HTMLTranslator().selector_to_xpath(selector)
                     find = etree.XPath(xpath)
-                    # find each matching element in the HTML document
+                    # find each matching elem in the HTML document
                     for element in find(self.tree):
-                        process_element()
+                        _process_element()
 
         return self.css_errors(stylesheet.errors, property_errors)
 
@@ -735,25 +757,6 @@ class PgdpFileHtml(PgdpFile):
                 css_errors += f"<li>{err[0] - i},{err[1]}: {err[2]}</li>"
             css_errors += "</ul>"
         return css_errors
-
-    @staticmethod
-    def move_element(element, f_move):
-        """Move element in tree"""
-        parent = element.getparent()
-        new = element
-        for item in f_move:
-            new = item(new)
-        # move the tail to the sibling or the parent
-        if element.tail:
-            sibling = element.getprevious()
-            if sibling:
-                sibling.tail = (sibling.tail or '') + element.tail
-            else:
-                parent.text = (parent.text or '') + element.tail
-            element.tail = None
-        # prune and graft
-        parent.remove(element)
-        new.append(element)
 
     @staticmethod
     def new_content(elem, val):
@@ -932,36 +935,36 @@ class PPComp:
             return newtext
 
         # Find the number of diff sections
-        nb_diffs_text = 0
+        diffs_text = 0
         if text:
-            nb_diffs_text = len(re.findall("\n--\n", text)) + 1
+            diffs_text = len(re.findall("\n--\n", text)) + 1
             # Text, with correct (?) line numbers
             text = massage_input(text, files[0].start_line, files[1].start_line)
         html_content = "<div>"
-        if nb_diffs_text == 0:
+        if diffs_text == 0:
             html_content += "<p>There is no diff section in the main text.</p>"
-        elif nb_diffs_text == 1:
+        elif diffs_text == 1:
             html_content += "<p>There is 1 diff section in the main text.</p>"
         else:
-            html_content += f"<p>There are <b>{nb_diffs_text}</b> diff sections in the main text.</p>"
+            html_content += f"<p>There are <b>{diffs_text}</b> diff sections in the main text.</p>"
 
         if footnotes:
-            nb_diffs_footnotes = len(re.findall("\n--\n", footnotes or "")) + 1
+            diffs_footnotes = len(re.findall("\n--\n", footnotes or "")) + 1
             # Footnotes - line numbers are meaningless right now. We could fix that.
             footnotes = massage_input(footnotes, 0, 0)
             html_content += "<p>Footnotes are diff'ed separately <a href='#footnotes'>here</a></p>"
-            if nb_diffs_footnotes == 0:
+            if diffs_footnotes == 0:
                 html_content += "<p>There is no diff section in the footnotes.</p>"
-            elif nb_diffs_footnotes == 1:
+            elif diffs_footnotes == 1:
                 html_content += "<p>There is 1 diff section in the footnotes.</p>"
             else:
-                html_content += f"<p>There are {nb_diffs_footnotes}" \
+                html_content += f"<p>There are {diffs_footnotes}" \
                                 " diff sections in the footnotes.</p>"
         else:
             if self.args.extract_footnotes:
                 html_content += "<p>There is no diff section in the footnotes.</p>"
 
-        if nb_diffs_text:
+        if diffs_text:
             html_content += "<h2>Main text</h2>"
             html_content += text
         if footnotes:
@@ -1115,10 +1118,10 @@ def main():
                         help="HTML: do not use default transformation CSS")
     parser.add_argument('--suppress-nbsp-num', action='store_true', default=False,
                         help="HTML: Suppress non-breakable spaces between numbers")
-    #parser.add_argument('--ignore-0-space', action='store_true', default=False,
-    #                    help='HTML: suppress zero width space (U+200b)')
-    #parser.add_argument('--css-greek-title-plus', action='store_true', default=False,
-    #                    help="HTML: use greek transliteration in title attribute")
+    parser.add_argument('--ignore-0-space', action='store_true', default=False,
+                        help='HTML: suppress zero width space (U+200b)')
+    parser.add_argument('--css-greek-title-plus', action='store_true', default=False,
+                        help="HTML: use greek transliteration in title attribute")
     parser.add_argument('--simple-html', action='store_true', default=False,
                         help="HTML: Process just the html file and print the output (debug)")
     args = parser.parse_args()

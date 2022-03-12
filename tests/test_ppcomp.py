@@ -181,7 +181,7 @@ def test_load_html_file():
     length = len(html_file.text.splitlines())
     assert length == 8963
     assert html_file.tree
-    assert html_file.start_line == 278
+    assert html_file.start_line == 276
 
 
 def test_load_html5_file():
@@ -190,7 +190,7 @@ def test_load_html5_file():
     length = len(html_file.text.splitlines())
     assert length == 24192
     assert html_file.tree
-    assert html_file.start_line == 611
+    assert html_file.start_line == 609
 
 
 def test_strip_pg_boilerplate_html():
@@ -220,11 +220,11 @@ def test_remove_nbspaces():
     assert 0 <= html_file.text.find("2885")
 
 
-# def test_remove_soft_hyphen():
-#     html_file = PgdpFileHtml(load_args(myargs))
-#     html_file.load('fossilplants1.html')
-#     html_file.remove_soft_hyphen()
-#     assert not re.search(r"\u00AD", html_file.text)
+def test_remove_soft_hyphen():
+    html_file = PgdpFileHtml(load_args(myargs))
+    html_file.load('fossilplants1.html')
+    html_file.remove_soft_hyphen()
+    assert not re.search(r"\u00AD", html_file.text)
 
 
 def test_text_transform():
