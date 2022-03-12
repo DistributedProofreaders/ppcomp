@@ -1,32 +1,32 @@
 .. highlight:: css
 
 ==============================
-comp_pp — comparing files easy
+ppcomp — comparing files easy
 ==============================
 
 
 Introduction
 ------------
 
-Comparing file is useful to ensure the various version of a document
-(latin1, utf-8 and html) are consistent, and have not deviated during
+Comparing files is useful to ensure the various versions of a document
+(text and HTML) are consistent, and have not deviated during
 the PP phase.
 
-This diff tool (comp_pp) is based on dwdiff. At the base, it compares
+This diff tool (ppcomp) is based on dwdiff. At the base, it compares
 2 different text files while ignoring all the spacing differences.
 
-To be able to compare an HTML file some another file (either text
-itself or HTML), that file has to be transformed into a regular text
-file, without all the HTML tags.
+To be able to compare an HTML file to another file (either text
+or HTML), it file has to be transformed into a regular text
+file without all the HTML tags.
 
-Internally, comp_pp will transform both files to make them closer to
+Internally, ppcomp will transform both files to make them closer to
 each other. This transformation is driven by a CSS like language,
 using selectors, classes,... This CSS only affects the HTML file(s)
 given as input.
 
-comp_pp includes a default set of CSS to perform sane transformations
-that follow DP usual PPing. For instance, **<i>...</i>** in the html
-version will be transformed to **_..._** so that will not generate a
+ppcomp includes a default set of CSS to perform sane transformations
+that follow DP usual PPing practices. For instance, **<i>...</i>** in the HTML
+version will be transformed to **_..._** so that it will not generate a
 diff with another file. That should be enough for a normal project,
 without having to define some specialized CSS rules.
 
@@ -37,12 +37,13 @@ Handling of files
 Depending on certain criteria, the internal handling of files will be
 different.
 
-Files which name ends with *.html* or *.htm* are recognized as HTML
+Files with names ending in *.HTML* or *.htm* are recognized as HTML
 files. Files starting with *ProjectID* and ending with *.txt* will be
-considered as P1/2/3 or F1/2, and files ending with *.txt* are
-regular text files. Files not matching these criteria will be rejected.
+considered as files coming from the rounds (P1/2/3 or F1/2), and
+other files ending with *.txt* are PPed text files. Files not
+matching these criteria will be rejected.
 
-The encoding (either ASCII/latin1 or UTF-8) is autodetected.
+The encoding is expected to be UTF-8.
 
 
 Options
@@ -53,10 +54,10 @@ Extract and process footnotes separately
 
 If the two versions have footnotes, but they are not placed in the
 same spot (i.e. after each paragraph for the text, and at the end of
-the book for the html), they can be extracted and compared separately
+the book for the HTML), they can be extracted and compared separately
 with this option.
 
-There is a best effort done with the files coming from th
+There is a best effort done with the files coming from the
 rounds. However they are usually broken, thus finding all the
 footnotes will fail, and the diff for the footnotes will not be done
 at all.
@@ -65,33 +66,33 @@ at all.
 Transform small caps
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Usually small caps in the text version are transformed in
-uppercase. This transformation has to be done in the html too, so
-these section will not generate a diff.
+Usually small caps in the text version are transformed to uppercase.
+This transformation has to be done in the HTML too, so these sections
+will not generate a diff.
 
-The default is to do nothing. The options are *"uppercase"*, *"lowercase"*
-and *"title"*. *"title"* means capitalizing the first letter of each word
+The default is to do nothing. The options are *"Uppercase"*, *"Lowercase"*
+and *"Title"*. *"Title"* means capitalizing the first letter of each word
 *"Like This"*.
 
 
-HTML: add [Sidenote: ...]
+HTML: add [Sidenote: ...] tag
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To use when the text version has "[Sidenote: ...]", and not the
-html. This will add a "[Sidenote: ...]" in the HTML version, thus
+To use when the text version has "[Sidenote: ...]", and not the HTML.
+This will add a "[Sidenote: ...]" in the HTML version, thus 
 suppressing the diff.
 
 
 HTML: add [Illustration: ...] tag
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-See above.
+Similar to add [Sidenote: ...] tag.
 
 
 Ignore case when comparing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If there is too many unfixable case differences, use this option to
+If there are too many unfixable case differences, use this option to
 ignore them.
 
 
@@ -105,23 +106,21 @@ Some numbers can be written with an unbreakable space between them
 HTML: use greek transliteration in title attribute
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If the greek text in the html also includes the transliteration in the
-title attribute, the diff will use it to compare with a latin1
-version.
+**OBSOLETE**. Current DP policy is to use Unicode Greek.
 
 
 HTML: suppress zero width space
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Some HTML contain zero-width spaces. Select this to remove them.
+Some HTML contains zero-width spaces. Select this to remove them.
 
 
 HTML: do not use default transformation CSS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-comp_pp include a set of relatively sane defaults, but they can create
+ppcomp include a set of relatively sane defaults, but they can create
 issues with some documents. For instance **<i>** might be **+** instead of
-the regular **_**. This option tells comp_pp to ignore that predefined
+the regular **_**. This option tells ppcomp to ignore that predefined
 CSS. The downside is that more diffs may appear until a new
 transformational CSS is in place.
 
@@ -132,17 +131,17 @@ can be cut and pasted in the transformation CSS box, and adapted.
 Transformational CSS
 --------------------
 
-This is what drives the transformation of the html in a usable text
-version ressembling the real text version produced by the PP.
+This is what drives the transformation of the HTML to a usable text
+version resembling the real text version produced by the PP.
 
 For instance, here's how **<i>...</i>** is tranformed into **_..._**.
 ::
 
   i:before, i:after   { content: "_"; }
 
-This tells comp_pp to insert an underscore before and after the string
-delimited by the <i> tag. On the left side is regular CSS selector. On
-the right side is more or less standard CSS 3 property/value, although
+This tells ppcomp to insert an underscore before and after the string
+delimited by the <i> tag. On the left side is the regular CSS selector. On
+the right side is a more or less standard CSS 3 property/value, although
 only a few are implemented.
 
 The removal of page numbers is done with this::
@@ -163,7 +162,7 @@ http://www.w3schools.com/cssref/css_selectors.asp
 Properties/Values
 ~~~~~~~~~~~~~~~~~
 
-Only a limited set of properties make sense for comp_pp. Some are from
+Only a limited set of properties make sense for ppcomp. Some are from
 CSS, some are new.
 
 
@@ -171,16 +170,16 @@ content
 .......
 
 Insert some content in a tag. Used on the element, or in conjonction
-with the **:before** and **:after** pseudo selector. If no
+with the **:before** and **:after** pseudo selectors. If no
 pseudo-element is used, then the existing content is replaced.
 
 Supports multiple parameters, such as a string, the *attr()* function
 (insert the content of the attribute), *content* (the identity,
 ie. the original content).
 
-The original content is only the first string in the html until either
+The original content is only the first string in the HTML until either
 the closing of the matched element or the opening of a sub
-element. For instance, if the matched html is
+element. For instance, if the matched HTML is
 *"<span>abc<i>def</i></span>", then the content is only *abc*.
 
 For instance::
@@ -263,7 +262,7 @@ previous sibling of the parent::
 
   span.sidenote { _graft: parent prev-sib prev-sib; }
 
-For every element, comp_pp will find the parent, then its previous
+For every element, ppcomp will find the parent, then its previous
 sibling, then its previous sibling. It will detach the element and
 attach it to this new element.
 
@@ -278,11 +277,11 @@ Expectations in default transformational CSS
 Footnotes
 .........
 
-In many document, the semantic of a footnote in html is lost because
+In many documents, the semantic of a footnote in HTML is lost because
 they are put at the end of the file and look like any other
 paragraph. Ideally, a document should include each footnote in a tag,
 for instance a div with a footnote class. If this is not present,
-comp_pp cannot find the end of the footnote, and sometimes not even
+ppcomp cannot find the end of the footnote, and sometimes not even
 the start.
 
 
@@ -302,7 +301,7 @@ The default CSS includes several selectors to strip the page numbers::
 Italics
 .......
 
-Italics are surrounded by underscores. Same for cite, abbr, ...
+Italics are surrounded by underscores. Same for em, cite, abbr, ...
 
 
 Some CSS examples
@@ -313,7 +312,7 @@ Anchors
 .......
 
 By default anchors are expected to be surrounded by brackets. If it is
-not the case in the html, this can be easily fixed with the following::
+not the case in the HTML, this can be easily fixed with the following::
 
   .fnanchor:before { content: "["; } .fnanchor:after { content: "]"; }
 
