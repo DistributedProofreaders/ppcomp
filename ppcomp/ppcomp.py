@@ -30,11 +30,17 @@ PG_EBOOK_START = '*** START OF'
 PG_EBOOK_END = '*** END OF'
 DEFAULT_TRANSFORM_CSS = '''
     /* Italics */
-    i:before, cite:before, em:before,
-    i:after, cite:after, em:after { content: "_"; }
+    i:before, cite:before, em:before, abbr:before, dfn:before,
+    i:after, cite:after, em:after, abbr:after, dfn:after { content: "_"; }
 
     /* Add spaces around td tags. */
     td:before, td:after { content: " "; }
+    
+    /* Remove thought breaks. */
+    .tb { display: none; }
+ 
+    /* Add space before br tags. */
+    br:before { content: " "; }
 
     /* Remove page numbers. It seems every PP has a different way. */
     span[class^="pagenum"],
