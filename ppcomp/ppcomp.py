@@ -17,6 +17,7 @@ import argparse
 import os
 import re
 import subprocess
+import sys
 import tempfile
 import warnings
 from array import array
@@ -29,77 +30,70 @@ from lxml.html import html5parser
 PG_EBOOK_START = '*** START OF'
 PG_EBOOK_END = '*** END OF'
 DEFAULT_TRANSFORM_CSS = '''
-    /* Italics */
-    i:before, cite:before, em:before, abbr:before, dfn:before,
-    i:after, cite:after, em:after, abbr:after, dfn:after { content: "_"; }
+  /* Italics */
+  i:before, cite:before, em:before, abbr:before, dfn:before,
+  i:after, cite:after, em:after, abbr:after, dfn:after { content: "_"; }
 
-    /* Add spaces around td tags. */
-    td:before, td:after { content: " "; }
-    
-    /* Remove thought breaks. */
-    .tb { display: none; }
- 
-    /* Add space before br tags. */
-    br:before { content: " "; }
+  /* Add spaces around td tags */
+  td:before, td:after { content: " "; }
+  
+  /* Remove thought breaks */
+  .tb { display: none; }
 
-    /* Remove page numbers. It seems every PP has a different way. */
-    span[class^="pagenum"],
-    p[class^="pagenum"],
-    div[class^="pagenum"],
-    span[class^="pageno"],
-    p[class^="pageno"],
-    div[class^="pageno"],
-    p[class^="page"],
-    span[class^="pgnum"],
-    div[id^="Page_"] { display: none }
+  /* Add space before br tags */
+  br:before { content: " "; }
 
-    /* Superscripts, subscripts */
-    sup { text-transform:superscript; }
-    sub { text-transform:subscript; }
+  /* Remove page numbers. It seems every PP has a different way. */
+  span[class^="pagenum"],
+  p[class^="pagenum"],
+  div[class^="pagenum"],
+  span[class^="pageno"],
+  p[class^="pageno"],
+  div[class^="pageno"],
+  p[class^="page"],
+  span[class^="pgnum"],
+  div[id^="Page_"] { display: none }
+
+  /* Superscripts, subscripts */
+  sup { text-transform:superscript; }
+  sub { text-transform:subscript; }
 '''
 # CSS used to display the diffs
 DIFF_CSS = '''
 body {
-    margin-left: 5%;
-    margin-right: 5%;
+  margin-left: 5%;
+  margin-right: 5%;
 }
-del {
-    text-decoration: none;
-    border: 1px solid black;
-    color: #700000 ;
-    background-color: #f4f4f4;
-    font-size: larger;
+ins, del {
+  text-decoration: none;
+  border: 1px solid black;
+  background-color: whitesmoke;
+  font-size: larger;
 }
-ins {
-    text-decoration: none;
-    border: 1px solid black;
-    color: green;
-    font-weight: bold;
-    background-color: #f4f4f4;
-    font-size: larger;
+ins, .second { color: green; }
+del, .first { color: purple; }
+.lineno { margin-right: 1em; }
+.bbox {
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px dashed;
+  padding: 0 1em;
+  background-color: lightcyan;
+  width: 90%;
+  max-width: 50em;
 }
-.lineno { margin-right: 3em; }
-.sep4 { margin-top: 4em; }
-.bbox { margin-left: auto;
-    margin-right: auto;
-    border: 1px dashed;
-    padding: 0em 1em 0em 1em;
-    background-color: #F0FFFF;
-    width: 90%;
-    max-width: 50em;
-}
-.center { text-align:center; }
-
+h1, .center { text-align: center; }
 /* Use a CSS counter to number each diff. */
-body {
-  counter-reset: diff;  /* set diff counter to 0 */
-}
+body { counter-reset: diff; } /* set diff counter to 0 */
 hr:before {
   counter-increment: diff; /* inc the diff counter ... */
   content: "Diff " counter(diff) ": "; /* ... and display it */
 }
-
-.error-border { border-style:double; border-color:red; border-width:15px; }
+.error-border {
+  border-style: double;
+  border-color: red;
+  border-width: 15px;
+}
 '''
 SUPERSCRIPTS = {
     '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
@@ -477,11 +471,11 @@ class PgdpFileHtml(PgdpFile):
             raise SyntaxError('File cannot be parsed: ' + filename) from ex
         if errors:
             for error in errors:
-                print(error)
+                print(error, file=sys.stderr)
             raise SyntaxError('Parsing errors in document: ' + filename)
 
         # save line number of <body> tag - actual text start
-        for lineno, line in enumerate(self.text.splitlines(), start=1):
+        for lineno, line in enumerate(self.text.splitlines(), start=-1):
             if '<body' in line:
                 self.start_line = lineno
                 break
@@ -949,7 +943,7 @@ class PPComp:
         elif nb_diffs_text == 1:
             html_content += "<p>There is 1 diff section in the main text.</p>"
         else:
-            html_content += f"<p>There are {nb_diffs_text} diff sections in the main text.</p>"
+            html_content += f"<p>There are <b>{nb_diffs_text}</b> diff sections in the main text.</p>"
 
         if footnotes:
             nb_diffs_footnotes = len(re.findall("\n--\n", footnotes or "")) + 1
@@ -968,13 +962,11 @@ class PPComp:
                 html_content += "<p>There is no diff section in the footnotes.</p>"
 
         if nb_diffs_text:
-            html_content += "<h2 class='sep4'>Main text</h2>"
+            html_content += "<h2>Main text</h2>"
             html_content += text
         if footnotes:
-            html_content += "<h2 id='footnotes' class='sep4'>Footnotes</h2>"
-            html_content += "<pre class='sep4'>"
-            html_content += footnotes
-            html_content += "</pre>"
+            html_content += "<h2 id='footnotes'>Footnotes</h2>"
+            html_content += "<pre>" + footnotes + "</pre>"
         html_content += "</div>"
         return html_content
 
@@ -1041,50 +1033,44 @@ class PPComp:
 def html_usage(filename1, filename2):
     """Describe how to use the diffs"""
     # noinspection PyPep8
-    return """
+    return f"""
     <div class="bbox">
       <p class="center">— Note —</p>
-      <p>
-        The first number is the line number in the first file (""" + filename1 + """)<br />
-        The second number is the line number in the second file (""" + filename2 + """)<br />
-        Line numbers can sometimes be very approximate.
-      </p>
-      <p>
-        Deleted words that were in the first file but not in the second will appear <del>like
+      <p>The first number is the line number in the first file (<b>{filename1}</b>)<br />
+        The second number is the line number in the second file (<b>{filename2}</b>)<br />
+        Line numbers can sometimes be very approximate.</p>
+      <p>Deleted words that were in the first file but not in the second will appear <del>like
          this</del>.<br />
         Inserted words that were in the second file but not in the first will appear <ins>like
-         this</ins>.
-      </p>
+         this</ins>.</p>
     </div>
     """
 
 
-def output_html(html_content, filename1, filename2):
+def output_html(html_content, filename1, filename2, css):
     """Outputs a complete HTML file"""
     print("""
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-    <meta http-equiv="Content-Style-Type" content="text/css" />
-    <title>
-      Compare """ + filename1 + " and " + filename2 + """
-    </title>
-    <style type="text/css">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Compare""" + filename1 + " and " + filename2 + """</title>
+  <style type="text/css">
 """)
     print(DIFF_CSS)
     print("""
-    </style>
-  </head>
+  </style>
+</head>
 <body>
 """)
-    print(f"<h1>{filename1} and {filename2}</h1>")
+    print(f'<h1>Diff of <span class="first">{filename1}</span> and'
+          f' <span class="second">{filename2}</span></h1>')
     print(html_usage(filename1, filename2))
-    # print('<p>Custom CSS added on command line: ' + " ".join(args.css) + '</p>')
+    if css:
+        print('<p>Custom CSS added on command line: ' + " ".join(css) + '</p>')
     print(html_content)
     print("""
-  </body>
+</body>
 </html>
 """)
 
@@ -1145,7 +1131,7 @@ def main():
         compare.simple_html()
     else:
         html_content, file1, file2 = compare.do_process()
-        output_html(html_content, file1, file2)
+        output_html(html_content, file1, file2, args.css)
 
 
 def dumptree(tree):
