@@ -293,6 +293,38 @@ def test_no_default_css():
     assert -1 == html_file.text.find('_')
 
 
+def test_superscript_to_unicode():
+    PgdpFile.pgdp_file = False
+    x = PgdpFileHtml.css_superscript('123ab')
+    assert x == '¹²³ᵃᵇ'
+    x = PgdpFileHtml.css_superscript('3')
+    assert x == '³'
+
+
+def test_superscript_to_text():
+    PgdpFile.pgdp_file = True
+    x = PgdpFileHtml.css_superscript('123')
+    assert x == '^{123}'
+    x = PgdpFileHtml.css_superscript('3')
+    assert x == '^3'
+
+
+def test_subscript_to_unicode():
+    PgdpFile.pgdp_file = False
+    x = PgdpFileHtml.css_subscript('123')
+    assert x == '₁₂₃'
+    x = PgdpFileHtml.css_subscript('3')
+    assert x == '₃'
+
+
+def test_subscript_to_text():
+    PgdpFile.pgdp_file = True
+    x = PgdpFileHtml.css_subscript('123')
+    assert x == '_{123}'
+    x = PgdpFileHtml.css_subscript('3')
+    assert x == '_{3}'
+
+
 ########## Both files ##########
 
 def test_check_characters():
@@ -303,34 +335,6 @@ def test_check_characters():
     files[1].load('fossilplants1chr.txt')
     PPComp.check_characters(files)
     assert files[0].text == files[1].text
-
-
-def test_superscript_to_unicode():
-    x = PgdpFileHtml.css_superscript('123ab')
-    assert x == '¹²³ᵃᵇ'
-    x = PgdpFileHtml.css_superscript('3')
-    assert x == '³'
-
-
-def test_superscript_to_text():
-    x = PgdpFileHtml.css_superscript('123', True)
-    assert x == '^{123}'
-    x = PgdpFileHtml.css_superscript('3', True)
-    assert x == '^3'
-
-
-def test_subscript_to_unicode():
-    x = PgdpFileHtml.css_subscript('123')
-    assert x == '₁₂₃'
-    x = PgdpFileHtml.css_subscript('3')
-    assert x == '₃'
-
-
-def test_subscript_to_text():
-    x = PgdpFileHtml.css_subscript('123', True)
-    assert x == '_{123}'
-    x = PgdpFileHtml.css_subscript('3', True)
-    assert x == '_{3}'
 
 
 def load_args(myargs):

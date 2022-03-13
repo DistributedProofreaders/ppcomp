@@ -119,6 +119,7 @@ SUBSCRIPTS = {
 
 class PgdpFile:
     """Base class: Store and process a DP text or html file"""
+    pgdp_file = False  # flag that one file is from proofing rounds
 
     def __init__(self, args):
         self.args = args
@@ -161,6 +162,9 @@ class PgdpFile:
 
 class PgdpFileText(PgdpFile):
     """Store and process a DP text file"""
+    def __init__(self, args):
+        super().__init__(args)
+        self.from_pgdp_rounds = False  # THIS file is from proofing rounds
 
     def load(self, filename):
         """Load the file
@@ -169,6 +173,9 @@ class PgdpFileText(PgdpFile):
         if not filename.lower().endswith('.txt'):
             raise SyntaxError("Not a text file: " + filename)
         super().load(filename)
+        from_pgdp_rounds = self.basename.startswith('projectID')
+        if from_pgdp_rounds:
+            PgdpFile.pgdp_file = True
 
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from the text if present."""
@@ -254,8 +261,7 @@ class PgdpFileText(PgdpFile):
 
     def cleanup(self):
         """Perform cleanup for this type of file"""
-        from_pgdp_rounds = self.basename.startswith('projectID')
-        if from_pgdp_rounds:
+        if self.from_pgdp_rounds:
             if self.args.txt_cleanup_type == 'n':  # none
                 return
             # remove page markers & blank pages
@@ -274,7 +280,7 @@ class PgdpFileText(PgdpFile):
 
         # all text files
         if self.args.extract_footnotes:
-            if from_pgdp_rounds:  # always [Footnote 1: text]
+            if self.from_pgdp_rounds:  # always [Footnote 1: text]
                 self.extract_footnotes_pgdp()
             else:  # probably [1] text
                 self.extract_footnotes_pp()
@@ -540,9 +546,9 @@ class PgdpFileHtml(PgdpFile):
             self.mycss += '*[lang=grc] { content: "+" attr(title) "+"; }'
 
     @staticmethod
-    def css_superscript(text, proof=False):
+    def css_superscript(text):
         """Convert <sup> tagged text"""
-        if proof:  # to ^1 or ^{10}
+        if PgdpFile.pgdp_file:  # to ^1 or ^{10} - comparing to proof file
             if len(text) == 1:
                 return '^' + text
             return '^{' + text + '}'
@@ -555,9 +561,9 @@ class PgdpFileHtml(PgdpFile):
         return result
 
     @staticmethod
-    def css_subscript(text, proof=False):
+    def css_subscript(text):
         """Convert <sub> tagged text"""
-        if proof:  # to _{1}
+        if PgdpFile.pgdp_file:  # to _{1}
             return '_{' + text + '}'
         result = ''
         for char in text:  # to unicode subscripts
@@ -911,7 +917,7 @@ class PPComp:
 
         def massage_input(txt, start0, start1):
             # Massage the input
-            replacements = {"&": "&amp;",
+            REPLACEMENTS = {"&": "&amp;",
                             "<": "&lt;",
                             ">": "&gt;",
                             "]COMPPP_START_DEL[": "<del>",
@@ -919,7 +925,7 @@ class PPComp:
                             "]COMPPP_START_INS[": "<ins>",
                             "]COMPPP_STOP_INS[": "</ins>"}
             newtext = txt
-            for key, value in replacements.items():
+            for key, value in REPLACEMENTS.items():
                 newtext = newtext.replace(key, value)
             if newtext:
                 newtext = "<hr /><pre>\n" + newtext
