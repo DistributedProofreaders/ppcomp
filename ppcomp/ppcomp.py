@@ -167,9 +167,7 @@ class PgdpFileText(PgdpFile):
         self.from_pgdp_rounds = False  # THIS file is from proofing rounds
 
     def load(self, filename):
-        """Load the file
-        filename: filename to load
-        """
+        """Load the file"""
         if not filename.lower().endswith('.txt'):
             raise SyntaxError("Not a text file: " + filename)
         super().load(filename)
@@ -238,8 +236,8 @@ class PgdpFileText(PgdpFile):
 
     def remove_thought_breaks(self):
         """Remove thought breaks (5 spaced asterisks)"""
-        self.text = re.sub(r"\*\s+\*\s+\*\s+\*\s+\*", '', self.text)
-        self.text = re.sub(r"•\s+•\s+•\s+•\s+•", '', self.text)
+        self.text = re.sub(r"\n\s+\*\s+\*\s+\*\s+\*\s+\*\s+\n", '\n\n', self.text)
+        self.text = re.sub(r"\n\s+•\s+•\s+•\s+•\s+•\s+", '\n\n', self.text)
 
     def suppress_footnote_tags(self):
         """Remove footnote tags"""
