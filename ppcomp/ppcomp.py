@@ -30,17 +30,17 @@ PG_EBOOK_START = '*** START OF'
 PG_EBOOK_END = '*** END OF'
 DEFAULT_TRANSFORM_CSS = '''
   /* Italics */
-  i:before, cite:before, em:before, abbr:before, dfn:before,
-  i:after, cite:after, em:after, abbr:after, dfn:after { content: "_"; }
+  i::before, cite::before, em::before, abbr::before, dfn::before,
+  i::after, cite::after, em::after, abbr::after, dfn::after { content: "_"; }
 
   /* Add spaces around td tags */
-  td:before, td:after { content: " "; }
+  td::before, td::after { content: " "; }
   
   /* Remove thought breaks */
   .tb { display: none; }
 
   /* Add space before br tags */
-  br:before { content: " "; }
+  br::before { content: " "; }
 
   /* Remove page numbers. It seems every PP has a different way. */
   span[class^="pagenum"],
@@ -84,7 +84,7 @@ del, .first { color: purple; }
 h1, .center { text-align: center; }
 /* Use a CSS counter to number each diff. */
 body { counter-reset: diff; } /* set diff counter to 0 */
-hr:before {
+hr::before {
   counter-increment: diff; /* inc the diff counter ... */
   content: "Diff " counter(diff) ": "; /* ... and display it */
 }
@@ -94,6 +94,7 @@ hr:before {
   border-width: 15px;
 }
 '''
+"""Note that 'º' and 'ª' are ordinals, assume they would be entered as-is, not superscript"""
 SUPERSCRIPTS = {
     '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
     '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹',
@@ -186,6 +187,7 @@ class PgdpFileText(PgdpFile):
             if start_found and line.endswith("***"):  # may take multiple lines
                 new_text = []  # PG found, remove previous lines
                 self.start_line = lineno + 1
+                start_found = False
             elif line.startswith(PG_EBOOK_END):
                 break  # ignore following lines
             else:
@@ -523,20 +525,20 @@ class PgdpFileHtml(PgdpFile):
 
     def css_bold(self):
         """Surround bold strings with this string"""
-        self.mycss += 'b:before, b:after { content: "' + self.args.css_bold + '"; }'
+        self.mycss += 'b::before, b::after { content: "' + self.args.css_bold + '"; }'
 
     def css_illustration(self):
         """Add [Illustration: ...] markup"""
         if self.args.css_add_illustration:
             for figclass in ['figcenter', 'figleft', 'figright']:
-                self.mycss += '.' + figclass + ':before { content: "[Illustration: "; }'
-                self.mycss += '.' + figclass + ':after { content: "]"; }'
+                self.mycss += '.' + figclass + '::before { content: "[Illustration: "; }'
+                self.mycss += '.' + figclass + '::after { content: "]"; }'
 
     def css_sidenote(self):
         """Add [Sidenote: ...] markup"""
         if self.args.css_add_sidenote:
-            self.mycss += '.sidenote:before { content: "[Sidenote: "; }'
-            self.mycss += '.sidenote:after { content: "]"; }'
+            self.mycss += '.sidenote::before { content: "[Sidenote: "; }'
+            self.mycss += '.sidenote::after { content: "]"; }'
 
     def css_greek_title_plus(self):
         """Greek: if there is a title, use it to replace the (grc=ancient) Greek."""
@@ -715,7 +717,7 @@ class PgdpFileHtml(PgdpFile):
 
             for value in rule.declarations:
                 if value.name == 'content':
-                    pass  # result depends on elem and pseudo elements
+                    pass  # result depends on element and pseudo elements
                 elif value.name == 'text-transform':
                     f_transform = self._text_transform(value, property_errors)
                 elif value.name == 'text-replace':
@@ -730,7 +732,7 @@ class PgdpFileHtml(PgdpFile):
                     f_move = self._text_move(value, property_errors)
                 else:
                     property_errors += [(value.line, value.column, "Unsupported property "
-                                         + value.name)]
+                                        + value.name)]
                     continue
 
                 # iterate through each selector in the rule
