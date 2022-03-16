@@ -17591,72 +17591,72 @@ encounter.
 
 
 +----------------------------------------------------------------------+
-|                             FOOTNOTES:                               |
-|                                                                      |
-| [1] Ward (84).                                                       |
-|                                                                      |
-| [2] Göppert (36).                                                    |
-|                                                                      |
-| [3] Parkinson (11), vol. I.                                          |
-|                                                                      |
-| [4] For an account of the early views on fossils, _v._ Lyell (67),   |
-| Vol. I. _Vide_ also Leonardo da Vinci (83).                          |
-|                                                                      |
-| [5] Woodward, J. (1695), Preface.                                    |
-|                                                                      |
-| [6] Woodward, J. (1728), p. 59.                                      |
-|                                                                      |
-| [7] Mendes da Costa (1758), p. 232.                                  |
-|                                                                      |
-| [8] Scheuchzer (1723), p. 7, Pl. I. fig. 1.                          |
-|                                                                      |
-| [9] Parsons (1757), p. 402.                                          |
-|                                                                      |
-| [10] Plot (1705), p. 125, Pl. VI. fig. 2.                            |
-|                                                                      |
-| [11] _Ibid._ Pl. VI. fig. 2.                                         |
-|                                                                      |
-| [12] Lhwyd (1760).                                                   |
-|                                                                      |
-| [13] Artis (25).                                                     |
-|                                                                      |
-| [14] Steinhauer (18).                                                |
-|                                                                      |
-| [15] Schlotheim (04).                                                |
-|                                                                      |
-| [16] Sternberg (20).                                                 |
-|                                                                      |
-| [17] Brongniart (28) (28²) (49).                                     |
-|                                                                      |
-| [18] Brongniart (39).                                                |
-|                                                                      |
-| [19] Heer (55) (68) (76).                                            |
-|                                                                      |
-| [20] Lesquereux (66) (70) (80) etc.                                  |
-|                                                                      |
-| [21] Zigno (56).                                                     |
-|                                                                      |
-| [22] Massalongo (51).                                                |
-|                                                                      |
-| [23] Saporta (72) (73).                                              |
-|                                                                      |
-| [24] Ettingshausen (79). Also numerous papers on fossil plants from  |
-| Austria and other countries.                                         |
-|                                                                      |
-| [25] Sprengel (28).                                                  |
-|                                                                      |
-| [26] Witham (33).                                                    |
-|                                                                      |
-| [27] _ibid._, p. 3.                                                  |
-|                                                                      |
-| [28] Witham (33), p. 5.                                              |
-|                                                                      |
-| [29] Nicol (34). See note by Prof. Jameson on p. 157 of the paper    |
-| quoted, to the effect that he has long known of this method of       |
-| preparing sections.                                                  |
-|                                                                      |
-| [30] Limpricht (90) in Rabenhorst, vol. IV. p. 73.                   |
-|                                                                      |
+                              FOOTNOTES:                                
+                                                                        
+  [1] Ward (84).                                                        
+                                                                        
+  [2] Göppert (36).                                                     
+                                                                        
+  [3] Parkinson (11), vol. I.                                           
+                                                                        
+  [4] For an account of the early views on fossils, _v._ Lyell (67),    
+  Vol. I. _Vide_ also Leonardo da Vinci (83).                           
+                                                                        
+  [5] Woodward, J. (1695), Preface.                                     
+                                                                        
+  [6] Woodward, J. (1728), p. 59.                                       
+                                                                        
+  [7] Mendes da Costa (1758), p. 232.                                   
+                                                                        
+  [8] Scheuchzer (1723), p. 7, Pl. I. fig. 1.                           
+                                                                        
+  [9] Parsons (1757), p. 402.                                           
+                                                                        
+  [10] Plot (1705), p. 125, Pl. VI. fig. 2.                             
+                                                                        
+  [11] _Ibid._ Pl. VI. fig. 2.                                          
+                                                                        
+  [12] Lhwyd (1760).                                                    
+                                                                        
+  [13] Artis (25).                                                      
+                                                                        
+  [14] Steinhauer (18).                                                 
+                                                                        
+  [15] Schlotheim (04).                                                 
+                                                                        
+  [16] Sternberg (20).                                                  
+                                                                        
+  [17] Brongniart (28) (28²) (49).                                      
+                                                                        
+  [18] Brongniart (39).                                                 
+                                                                        
+  [19] Heer (55) (68) (76).                                             
+                                                                        
+  [20] Lesquereux (66) (70) (80) etc.                                   
+                                                                        
+  [21] Zigno (56).                                                      
+                                                                        
+  [22] Massalongo (51).                                                 
+                                                                        
+  [23] Saporta (72) (73).                                               
+                                                                        
+  [24] Ettingshausen (79). Also numerous papers on fossil plants from   
+  Austria and other countries.                                          
+                                                                        
+  [25] Sprengel (28).                                                   
+                                                                        
+  [26] Witham (33).                                                     
+                                                                        
+  [27] _ibid._, p. 3.                                                   
+                                                                        
+  [28] Witham (33), p. 5.                                               
+                                                                        
+  [29] Nicol (34). See note by Prof. Jameson on p. 157 of the paper     
+  quoted, to the effect that he has long known of this method of        
+  preparing sections.                                                   
+                                                                        
+  [30] Limpricht (90) in Rabenhorst, vol. IV. p. 73.                    
+                                                                        
 | [31] Knowlton (89).                                                  |
 |                                                                      |
 | [32] Corda (45).                                                     |

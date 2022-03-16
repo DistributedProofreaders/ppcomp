@@ -241,6 +241,8 @@ def test_html_extract_footnotes():
     html_file.load('fossilplants1.html')
     html_file.extract_footnotes()
     length = len(html_file.footnotes.splitlines())
+    # with open('tmpoutfoot.txt', 'w', encoding='utf-8') as f:
+    #     f.write(html_file.footnotes)
     assert length == 2093
 
 

@@ -163,6 +163,7 @@ class PgdpFile:
 
 class PgdpFileText(PgdpFile):
     """Store and process a DP text file"""
+
     def __init__(self, args):
         super().__init__(args)
         self.from_pgdp_rounds = False  # THIS file is from proofing rounds
@@ -244,7 +245,7 @@ class PgdpFileText(PgdpFile):
     def suppress_footnote_tags(self):
         """Remove footnote tags"""
         if self.args.ignore_format or self.args.suppress_footnote_tags:
-            self.text = re.sub(r"\[Footnote ([\d\w]+):\s([^]]*?)]", r"\1 \2", self.text,
+            self.text = re.sub(r"[\[]*Footnote ([\d\w]+):\s([^]]*?)[\]]*", r"\1 \2", self.text,
                                flags=re.MULTILINE)
             self.text = re.sub(r"\*\[Footnote:\s([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
 
@@ -336,28 +337,21 @@ class PgdpFileText(PgdpFile):
         (regex, fn_type) that identify the beginning and end of a footnote. The fn_type is 1 when
         a ] terminates it, or 2 when a new block terminates it.
         """
-        # RT: Why is this different from extract_footnotes_pgdp, except
-        # tidied would be "[1] text" instead of [Footnote 1: text]? 1st regex?
-
-        # If the caller didn't give a list of regex to identify the
-        # footnotes, build one, taking only the most common.
-        all_regexes = [(r"(\s*)\[([\w-]+)\](.*)", 1),
-                       (r"(\s*)\[Note (\d+):( .*|$)", 2),
-                       (r"(      )Note (\d+):( .*|$)", 1)]
-        regex_count = [0] * len(all_regexes)  # i.e. [0, 0, 0]
-
+        fn_regexes = [(r"\s*\[([\w-]+)\]\s*(.*)", 1),
+                      (r"(\s*)\[Note (\d+):( .*|$)", 2),
+                      (r"(      )Note (\d+):( .*|$)", 1)]
+        regex_count = [0] * len(fn_regexes)  # i.e. [0, 0, 0]
         text_lines = self.text.splitlines()
-
         for block, empty_lines in self.get_block(text_lines):
             if not block:
                 continue
-            for i, (regex, fn_type) in enumerate(all_regexes):
+            for i, (regex, fn_type) in enumerate(fn_regexes):
                 matches = re.match(regex, block[0])
                 if matches:
                     regex_count[i] += 1
                     break
         # Pick the regex with the most matches
-        fn_regexes = [all_regexes[regex_count.index(max(regex_count))]]
+        fn_regexes = [fn_regexes[regex_count.index(max(regex_count))]]
 
         # Different types of footnote. 0 means not in footnote.
         cur_fn_type, cur_fn_indent = 0, 0
@@ -372,7 +366,7 @@ class PgdpFileText(PgdpFile):
                 for (regex, fn_type) in fn_regexes:
                     matches = re.match(regex, block[0])
                     if matches:
-                        if matches.group(2).startswith("Illustration"):
+                        if matches.group(2).startswith('Illustration'):
                             # An illustration, possibly inside a footnote. Treat
                             # as part of text or footnote.
                             continue
@@ -386,16 +380,16 @@ class PgdpFileText(PgdpFile):
             if cur_fn_type:
                 if next_fn_type:
                     # New block is footnote, so it ends the previous footnote
-                    footnotes += prev_block + [""]
-                    text += [""] * (len(prev_block) + 1)
+                    footnotes += prev_block + ['']
+                    text += [''] * (len(prev_block) + 1)
                     cur_fn_type, cur_fn_indent = next_fn_type, next_fn_indent
                 elif block[0].startswith(cur_fn_indent):
                     # Same indent or more. This is a continuation. Merge with one empty line.
-                    block = prev_block + [""] + block
+                    block = prev_block + [''] + block
                 else:
                     # End of footnote - current block is not a footnote
-                    footnotes += prev_block + [""]
-                    text += [""] * (len(prev_block) + 1)
+                    footnotes += prev_block + ['']
+                    text += [''] * (len(prev_block) + 1)
                     cur_fn_type = 0
             if not cur_fn_type and next_fn_type:
                 # Account for new footnote
@@ -407,13 +401,13 @@ class PgdpFileText(PgdpFile):
                     # Remove terminal bracket
                     block[-1] = block[-1][:-1]
                 footnotes += block
-                text += [""] * (len(block))
+                text += [''] * (len(block))
                 cur_fn_type = 0
                 block = None
             if not cur_fn_type:
                 # Add to text, with white lines
-                text += (block or []) + [""] * empty_lines
-                footnotes += [""] * (len(block or []) + empty_lines)
+                text += (block or []) + [''] * empty_lines
+                footnotes += [''] * (len(block or []) + empty_lines)
 
             prev_block = block
         # Rebuild text, now without footnotes
@@ -557,7 +551,7 @@ class PgdpFileHtml(PgdpFile):
             try:
                 result += SUPERSCRIPTS[char]
             except KeyError:
-                result += char  # can't convert, just leave it
+                return text  # can't convert, just leave it, may be footnote tag '[1]'
         return result
 
     @staticmethod
@@ -690,7 +684,7 @@ class PgdpFileHtml(PgdpFile):
             new.append(elem)
 
         def _process_element(elem, val):
-            # replace text with content of an attribute.
+            """replace text with content of an attribute."""
             if val.name == 'content':
                 v_content = self.new_content(elem, val)
                 if selector.pseudo_element == 'before':
@@ -732,7 +726,7 @@ class PgdpFileHtml(PgdpFile):
                     f_move = self._text_move(value, property_errors)
                 else:
                     property_errors += [(value.line, value.column, "Unsupported property "
-                                        + value.name)]
+                                         + value.name)]
                     continue
 
                 # iterate through each selector in the rule
@@ -766,7 +760,7 @@ class PgdpFileHtml(PgdpFile):
     def new_content(elem, val):
         """Process the "content:" property"""
 
-        def escaped_unicode(element):
+        def _escaped_unicode(element):
             try:
                 return bytes(element.group(0), 'utf8').decode('unicode-escape')
             except UnicodeDecodeError:
@@ -776,7 +770,7 @@ class PgdpFileHtml(PgdpFile):
         result = ""
         for token in val.value:
             if token.type == "STRING":  # e.g. { content: "xyz" }
-                result += escaped_unicode_re.sub(escaped_unicode, token.value)
+                result += escaped_unicode_re.sub(_escaped_unicode, token.value)
             elif token.type == "FUNCTION":
                 if token.function_name == 'attr':  # e.g. { content: attr(title) }
                     result += elem.attrib.get(token.content[0].value, "")
@@ -826,12 +820,9 @@ class PgdpFileHtml(PgdpFile):
         # the whole footnote. They only mark the first paragraph.
         elements = etree.XPath("//div[@class='footnote']")(self.tree)
         if len(elements) == 1:
-            element = elements[0]
-            # Clean footnote number
-            for node in element:
-                footnotes += [strip_note_tag(node.xpath("string()"))]
-            # Remove the footnote from the main document
-            element.getparent().remove(element)
+            # remove footnote number & remove footnote from main document
+            footnotes += [strip_note_tag(elements[0].xpath("string()"))]
+            elements[0].getparent().remove(elements[0])
         else:
             for find in ["//div[@class='footnote']",
                          "//div[@id[starts-with(.,'FN_')]]",
@@ -839,14 +830,12 @@ class PgdpFileHtml(PgdpFile):
                          "//div/p[span/a[@id[starts-with(.,'Footnote_')]]]",
                          "//p[@class='footnote']"]:
                 for element in etree.XPath(find)(self.tree):
-                    # Grab the text and remove the footnote number
+                    # remove footnote number & remove footnote from main document
                     footnotes += [strip_note_tag(element.xpath("string()"))]
-                    # Remove the footnote from the main document
                     element.getparent().remove(element)
                 if footnotes:  # found them, stop now
                     break
-        # save as text string
-        self.footnotes = "\n".join(footnotes)
+        self.footnotes = "\n".join(footnotes)  # save as text string
 
 
 class PPComp:
@@ -917,7 +906,7 @@ class PPComp:
 
         def massage_input(txt, start0, start1):
             # Massage the input
-            REPLACEMENTS = {"&": "&amp;",
+            replacements = {"&": "&amp;",
                             "<": "&lt;",
                             ">": "&gt;",
                             "]COMPPP_START_DEL[": "<del>",
@@ -925,7 +914,7 @@ class PPComp:
                             "]COMPPP_START_INS[": "<ins>",
                             "]COMPPP_STOP_INS[": "</ins>"}
             newtext = txt
-            for key, value in REPLACEMENTS.items():
+            for key, value in replacements.items():
                 newtext = newtext.replace(key, value)
             if newtext:
                 newtext = "<hr /><pre>\n" + newtext
