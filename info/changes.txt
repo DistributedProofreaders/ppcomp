@@ -1,14 +1,15 @@
+https://github.com/rtonsing/ppcomp/ppcomp/ppcomp.py
+
 [b]Changes:[/b]
 [list]
+[*]use html5parser to handle new tags.
 [*]eliminate oe ligature transforms, treat same as ae.
 [*]character "downgrades" such as curly quotes to straight is only done if one file is from rounds (projectID########.txt).
 [*]--css-bold option has default of '=',
 [*]changed boilerplate removal to latest format
 [*]added super/subscript conversions (<sup>1</sup> to '¹' or ^1.
 [/list]
-	
-:
 
+I did a LOT of rewriting, mainly to make each functionality accessible for unit testing, partly code cleanup or just adapting to my style.
 
-
-
+--extract-footnotes needs work, but it shouldn't be any worse.
