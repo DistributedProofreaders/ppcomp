@@ -7,10 +7,24 @@ program dwdiff.
 
 Copyright (C) 2012-2013, 2021 bibimbop at pgdp
 
+Updated 2022 by Robert Tonsing
+
 Originally written as the standalone program comp_pp.py by bibimbop at PGDP as part of his PPTOOLS
 program. It is used as part of the PP Workbench with permission.
 
-Distributable under the GNU General Public License Version 3 or newer.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 """
 
 import argparse
@@ -984,6 +998,9 @@ class PPComp:
         This is used for instance if one version uses curly quotes while the other uses straight.
         In that case, we need to convert one into the other, to get a smaller diff.
         """
+        if not PgdpFile.pgdp_file:
+            return
+
         character_checks = {
             '’': "'",  # close curly single quote to straight
             '‘': "'",  # open curly single quote to straight
@@ -992,7 +1009,6 @@ class PPComp:
             '–': '-',  # en dash to hyphen
             '—': '--',  # em dash to double hyphen
             '⁄': '/',  # fraction slash
-            '′': "'",  # prime
             '″': "''",  # double prime
             '‴': "'''",  # triple prime
             '½': '-1/2',

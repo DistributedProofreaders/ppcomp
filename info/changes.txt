@@ -1,0 +1,14 @@
+[b]Changes:[/b]
+[list]
+[*]eliminate oe ligature transforms, treat same as ae.
+[*]character "downgrades" such as curly quotes to straight is only done if one file is from rounds (projectID########.txt).
+[*]--css-bold option has default of '=',
+[*]changed boilerplate removal to latest format
+[*]added super/subscript conversions (<sup>1</sup> to '¹' or ^1.
+[/list]
+	
+:
+
+
+
+
