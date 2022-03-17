@@ -14,7 +14,7 @@ def test_load_text_file():
     text_file = PgdpFileText(load_args(myargs))
     text_file.load('fossilplants1.txt')
     length = len(text_file.text.splitlines())
-    assert length == 19647
+    assert length == 19645
     assert text_file.start_line == 0
 
 
@@ -42,7 +42,7 @@ def test_ignore_format():
     assert -1 < text_file.text.find("His Einleitung")
 
 
-#@pytest.mark.skip
+@pytest.mark.skip
 def test_text_extract_footnotes_pp():
     args = myargs + ['--extract-footnotes']
     text_file = PgdpFileText(load_args(args))
@@ -334,7 +334,7 @@ def test_check_characters():
     files[0] = PgdpFileText(load_args(myargs))
     files[0].load('fossilplants1.txt')
     files[1] = PgdpFileText(load_args(myargs))
-    files[1].load('fossilplants1chr.txt')
+    files[1].load('projectIDfossilplants1.txt')
     PPComp.check_characters(files)
     assert files[0].text == files[1].text
 

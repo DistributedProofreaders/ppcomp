@@ -488,6 +488,7 @@ class PgdpFileHtml(PgdpFile):
             raise SyntaxError('Parsing errors in document: ' + filename)
 
         # save line number of <body> tag - actual text start
+        # html5parser does not fill in the source line number
         for lineno, line in enumerate(self.text.splitlines(), start=-1):
             if '<body' in line:
                 self.start_line = lineno
@@ -1009,6 +1010,7 @@ class PPComp:
             '–': '-',  # en dash to hyphen
             '—': '--',  # em dash to double hyphen
             '⁄': '/',  # fraction slash
+            "′": "'",  # prime
             '″': "''",  # double prime
             '‴': "'''",  # triple prime
             '½': '-1/2',

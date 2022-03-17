@@ -17590,2046 +17590,2044 @@ encounter.
 
 
 
-+----------------------------------------------------------------------+
-                              FOOTNOTES:                                
-                                                                        
-  [1] Ward (84).                                                        
-                                                                        
-  [2] Göppert (36).                                                     
-                                                                        
-  [3] Parkinson (11), vol. I.                                           
-                                                                        
-  [4] For an account of the early views on fossils, _v._ Lyell (67),    
-  Vol. I. _Vide_ also Leonardo da Vinci (83).                           
-                                                                        
-  [5] Woodward, J. (1695), Preface.                                     
-                                                                        
-  [6] Woodward, J. (1728), p. 59.                                       
-                                                                        
-  [7] Mendes da Costa (1758), p. 232.                                   
-                                                                        
-  [8] Scheuchzer (1723), p. 7, Pl. I. fig. 1.                           
-                                                                        
-  [9] Parsons (1757), p. 402.                                           
-                                                                        
-  [10] Plot (1705), p. 125, Pl. VI. fig. 2.                             
-                                                                        
-  [11] _Ibid._ Pl. VI. fig. 2.                                          
-                                                                        
-  [12] Lhwyd (1760).                                                    
-                                                                        
-  [13] Artis (25).                                                      
-                                                                        
-  [14] Steinhauer (18).                                                 
-                                                                        
-  [15] Schlotheim (04).                                                 
-                                                                        
-  [16] Sternberg (20).                                                  
-                                                                        
-  [17] Brongniart (28) (28²) (49).                                      
-                                                                        
-  [18] Brongniart (39).                                                 
-                                                                        
-  [19] Heer (55) (68) (76).                                             
-                                                                        
-  [20] Lesquereux (66) (70) (80) etc.                                   
-                                                                        
-  [21] Zigno (56).                                                      
-                                                                        
-  [22] Massalongo (51).                                                 
-                                                                        
-  [23] Saporta (72) (73).                                               
-                                                                        
-  [24] Ettingshausen (79). Also numerous papers on fossil plants from   
-  Austria and other countries.                                          
-                                                                        
-  [25] Sprengel (28).                                                   
-                                                                        
-  [26] Witham (33).                                                     
-                                                                        
-  [27] _ibid._, p. 3.                                                   
-                                                                        
-  [28] Witham (33), p. 5.                                               
-                                                                        
-  [29] Nicol (34). See note by Prof. Jameson on p. 157 of the paper     
-  quoted, to the effect that he has long known of this method of        
-  preparing sections.                                                   
-                                                                        
-  [30] Limpricht (90) in Rabenhorst, vol. IV. p. 73.                    
-                                                                        
-| [31] Knowlton (89).                                                  |
-|                                                                      |
-| [32] Corda (45).                                                     |
-|                                                                      |
-| [33] Binney (68), Introductory remarks.                              |
-|                                                                      |
-| [34] Williamson (71), etc.                                           |
-|                                                                      |
-| [35] Solms-Laubach (95), p. 442.                                     |
-|                                                                      |
-| [36] Lindley and Hutton (31).                                        |
-|                                                                      |
-| [37] Woodward (1729), Pt. ii. p. 106.                                |
-|                                                                      |
-| [38] Humboldt (48), vol. I. p. 274.                                  |
-|                                                                      |
-| [39] _Vide_ Hooker, J. D. (81), for references to other writers on   |
-| this subject; also Darwin (82), ch. XII.                             |
-|                                                                      |
-| [40] Darwin (87), vol. III. p. 247.                                  |
-|                                                                      |
-| [41] Brongniart (49), p. 94.                                         |
-|                                                                      |
-| [42] Grand’Eury (77), Potonié (96), Kidston (94), &c.                |
-|                                                                      |
-| [43] Ward (92), Knowlton (94), Grand’Eury (90), p. 155.              |
-|                                                                      |
-| [44] Old Persian writer, quoted by E. G. Browne in _A Year among     |
-| the Persians_, p. 220, London, 1893.                                 |
-|                                                                      |
-| [45] W. R. W. Stephens, _Life of Freeman_, p. 132, London, 1895.     |
-|                                                                      |
-| [46] Rothpletz (94).                                                 |
-|                                                                      |
-| [47] Heim (78).                                                      |
-|                                                                      |
-| [48] Geikie (93), p. 706.                                            |
-|                                                                      |
-| [49] Hughes (79), p. 248.                                            |
-|                                                                      |
-| [50] Whitney and Wadsworth (84).                                     |
-|                                                                      |
-| [51] Murchison (72), p. 5.                                           |
-|                                                                      |
-| [52] Kayser and Lake (95), p. 88.                                    |
-|                                                                      |
-| [53] Kidston (94).                                                   |
-|                                                                      |
-| [54] Geikie (93), p. 825.                                            |
-|                                                                      |
-| [55] Woodward, H. B. (87), p. 197.                                   |
-|                                                                      |
-| [56] Hinde and Fox (95), p. 662.                                     |
-|                                                                      |
-| [57] Kidston (94).                                                   |
-|                                                                      |
-| [58] _Vide_ Zeiller (92) for a list of species of Coal-Measure       |
-| plants found in the pieces of shale included in the core brought up  |
-| by the borer.                                                        |
-|                                                                      |
-| [59] Jukes-Browne (86), p. 252.                                      |
-|                                                                      |
-| [60] Kayser and Lake (95), p. 196.                                   |
-|                                                                      |
-| [61] Neumayr (83).                                                   |
-|                                                                      |
-| [62] Woodward, H. B. (87), p. 255.                                   |
-|                                                                      |
-| [63] Kayser and Lake (95), p. 326.                                   |
-|                                                                      |
-| [64] Huxley (93), p. 27.                                             |
-|                                                                      |
-| [65] Discussed at greater length in vol. II.                         |
-|                                                                      |
-| [66] Woodward, H. B. (95), Figs. 124 and 133 from photographs by Mr  |
-| Strahan.                                                             |
-|                                                                      |
-| [67] Buckland (37) Pl. LVII.                                         |
-|                                                                      |
-| [68] Young, Glen, and Kidston (88).                                  |
-|                                                                      |
-| [69] Gardner (87), p. 279.                                           |
-|                                                                      |
-| [70] Treub (88).                                                     |
-|                                                                      |
-| [71] Morton (91), p. 228.                                            |
-|                                                                      |
-| [72] Lyell (45), vol. I. p. 180.                                     |
-|                                                                      |
-| [73] Mantell (44), vol. I. p. 168.                                   |
-|                                                                      |
-| [74] Forbes, H. O. (85), p. 254.                                     |
-|                                                                      |
-| [75] Hooker, J. D. (91), p. 477.                                     |
-|                                                                      |
-| [76] Hooker, J. D. (91), p. 1. There are several good specimens of   |
-| the black pyritised nipadite fruits in the British Museum and other  |
-| collections.                                                         |
-|                                                                      |
-| [77] Rodway (95), p. 106.                                            |
-|                                                                      |
-| [78] Bates (63), p. 139.                                             |
-|                                                                      |
-| [79] Bates (63), p. 239.                                             |
-|                                                                      |
-| [80] Lyell (67) vol. II. p. 361.                                     |
-|                                                                      |
-| [81] Lyell (67) vol. I. p. 445.                                      |
-|                                                                      |
-| [82] Darwin (90) p. 443.                                             |
-|                                                                      |
-| [83] Challenger (85), Narrative, vol. I. Pt. ii. p. 679.             |
-|                                                                      |
-| [84] Bates (63) p. 389.                                              |
-|                                                                      |
-| [85] Challenger (85), Narrative, vol. I. p. 459.                     |
-|                                                                      |
-| [86] Zeiller (82) and Renault (95).                                  |
-|                                                                      |
-| [87] Heer (76).                                                      |
-|                                                                      |
-| [88] Schimper and Mougeot (44).                                      |
-|                                                                      |
-| [89] Sharpe, S. (68) p. 563.                                         |
-|                                                                      |
-| [90] There are still more perfect casts from Sézanne in Prof.        |
-| Munier-Chalmas’ Geological collection in the Sorbonne. The best      |
-| examples have not yet been figured.                                  |
-|                                                                      |
-| [91] Saporta (68).                                                   |
-|                                                                      |
-| [92] Darwin (90) p. 432.                                             |
-|                                                                      |
-| [93] For figures of fossil plants in amber, _vide_ Göppert and       |
-| Berendt (45), Conwentz (90), Conwentz (96) &c.                       |
-|                                                                      |
-| [94] Thomas (48).                                                    |
-|                                                                      |
-| [95] Adamson (88).                                                   |
-|                                                                      |
-| [96] Williamson (87) Pl. XV. p. 45. A very fine specimen, similar    |
-| to that in the Manchester Museum, has recently been added to the     |
-| School of Mines Museum in Berlin; Potonié (90).                      |
-|                                                                      |
-| [97] The British Museum collection contains a specimen of            |
-| _Stigmaria_ preserved in the same manner as the example shown in     |
-| fig. 12.                                                             |
-|                                                                      |
-| [98] Lyell (45) vol. I. p. 60.                                       |
-|                                                                      |
-| [99] Lyell (45) vol. I. p. 147.                                      |
-|                                                                      |
-| [100] Warming (96) p. 170.                                           |
-|                                                                      |
-| [101] Bornemann (56), Schenk (67), Zeiller (82).                     |
-|                                                                      |
-| [102] Solms-Laubach (95²).                                           |
-|                                                                      |
-| [103] Nathorst (86) p. 9. See also Delgado (86).                     |
-|                                                                      |
-| [104] Parkinson (11) vol. I. p. 431.                                 |
-|                                                                      |
-| [105] The British Museum collection contains many good examples of   |
-| the Solenhofen plants.                                               |
-|                                                                      |
-| [106] There is a splendid silicified tree stem from Tasmania of      |
-| Tertiary age several feet in height in the National Museum.          |
-|                                                                      |
-| [107] Darwin (90) p. 317.                                            |
-|                                                                      |
-| [108] Holmes (80) p. 126, fig. 1.                                    |
-|                                                                      |
-| [109] Marsh (71).                                                    |
-|                                                                      |
-| [110] Conwentz (78).                                                 |
-|                                                                      |
-| [111] A large piece from one of these South African trees is in the  |
-| Fossil-plant Gallery of the British Museum.                          |
-|                                                                      |
-| [112] Barton (1751) p. 58.                                           |
-|                                                                      |
-| [113] Gardner (84) p. 314.                                           |
-|                                                                      |
-| [114] Stokes (40) p. 207.                                            |
-|                                                                      |
-| [115] Witham (81), Christison (76).                                  |
-|                                                                      |
-| [116] Cole (94), figs. 1 and 3.                                      |
-|                                                                      |
-| [117] Harker (95) p. 233, fig. 56.                                   |
-|                                                                      |
-| [118] I am indebted to Dr Renault of Paris for showing to me         |
-| several preparations illustrating this method of petrifaction.       |
-|                                                                      |
-| [119] Cash and Hick (78).                                            |
-|                                                                      |
-| [120] Stur (85).                                                     |
-|                                                                      |
-| [121] Thiselton-Dyer (72) Pl. VI.                                    |
-|                                                                      |
-| [122] Carruthers (70).                                               |
-|                                                                      |
-| [123] Schultze (55).                                                 |
-|                                                                      |
-| [124] I am indebted to Prof. Lebour of the Durham College of         |
-| Science for the loan of this letter.                                 |
-|                                                                      |
-| [125] Seward (97).                                                   |
-|                                                                      |
-| [126] Williamson and Scott (96) Pl. XXIV. fig. 16.                   |
-|                                                                      |
-| [127] Bryce (72) p. 126, fig. 23.                                    |
-|                                                                      |
-| [128] An erroneous interpretation of the Arran stems is given in     |
-| Lyell’s _Elements of Geology_: Lyell (78) p. 547.                    |
-|                                                                      |
-| [129] Guillemard (86) p. 322.                                        |
-|                                                                      |
-| [130] Heer (55).                                                     |
-|                                                                      |
-| [131] Göppert (36), etc.                                             |
-|                                                                      |
-| [132] Hirschwald (73).                                               |
-|                                                                      |
-| [133] Kuntze (80) p. 8.                                              |
-|                                                                      |
-| [134] Schweinfurth (82).                                             |
-|                                                                      |
-| [135] Solms-Laubach (91), p. 29.                                     |
-|                                                                      |
-| [136] Göppert (57). Some of the large silicified trees mentioned by  |
-| Göppert may be seen in the Breslau Botanic gardens.                  |
-|                                                                      |
-| [137] An example referred to by Carruthers (71) p. 444.              |
-|                                                                      |
-| [138] Williamson (71) p. 507.                                        |
-|                                                                      |
-| [139] Dealt with more fully in vol. II.                              |
-|                                                                      |
-| [140] Bentham (70).                                                  |
-|                                                                      |
-| [141] See also Bunbury (83) p. 309.                                  |
-|                                                                      |
-| [142] Seward (96) p. 208.                                            |
-|                                                                      |
-| [143] Darwin (90) p. 416.                                            |
-|                                                                      |
-| [144] Solms-Laubach (91) p. 9.                                       |
-|                                                                      |
-| [145] Balfour (72) p. 5.                                             |
-|                                                                      |
-| [146] Grand’Eury (77) Pt. i., p. 3.                                  |
-|                                                                      |
-| [147] 1 Renault and Zeiller (88) Pl. LX. fig. 1.                     |
-|                                                                      |
-| [148] Williamson (73) p. 393, Pl. XXVII. Described in detail in      |
-| vol. II. See also Solms-Laubach (91) p. 7, fig. 1.                   |
-|                                                                      |
-| [149] A good example is figured by Newberry (88) Pl. XXV. as a       |
-| decorticated coniferous stem of Triassic age.                        |
-|                                                                      |
-| [150] Potonié (87).                                                  |
-|                                                                      |
-| [151] Lindley and Hutton (31) vol. III. p. 4. See also Schenk (88)   |
-| p. 202.                                                              |
-|                                                                      |
-| [152] Saporta (79) (77). _Eopteris_ is included among the ferns      |
-| in Schimper and Schenk’s volume of Zittel’s _Handbuch der            |
-| Palaeontologie_ (p. 115), and in some other modern works.            |
-|                                                                      |
-| [153] Reinsch (81).                                                  |
-|                                                                      |
-| [154] Williamson has drawn attention to the occurrence of such       |
-| borings and coprolites in Coal-Measure plant tissues. _E.g._         |
-| Williamson (80) Pl. 20, figs. 65 and 66.                             |
-|                                                                      |
-| [155] Renault (96) p. 437.                                           |
-|                                                                      |
-| [156] Slide No. 1923 in the Williamson collection.                   |
-|                                                                      |
-| [157] Crépin (81).                                                   |
-|                                                                      |
-| [158] Rules for Zoological Nomenclature, drawn up by the late H. E.  |
-| Strickland, M.A., F.R.S., London, 1878.                              |
-|                                                                      |
-| [159] Lhwyd (1699).                                                  |
-|                                                                      |
-| [160] Knowlton (96) p. 82.                                           |
-|                                                                      |
-| [161] Thiselton-Dyer (95) p. 846.                                    |
-|                                                                      |
-| [162] Saporta (75) p. 193.                                           |
-|                                                                      |
-| [163] Seward (95) p. 173.                                            |
-|                                                                      |
-| [164] Ward (96) p. 874.                                              |
-|                                                                      |
-| [165] Challenger (85) p. 934.                                        |
-|                                                                      |
-| [166] Ehrenberg (36) p. 117, Pl. I. figs. 1 and 4, and Ehrenberg     |
-| (54) Pl. XXXVII. fig. vii.                                           |
-|                                                                      |
-| [167] Schütt (96) p. 22.                                             |
-|                                                                      |
-| [168] Bütschli (83–87) p. 1028.                                      |
-|                                                                      |
-| [169] Challenger Reports (85) p. 939.                                |
-|                                                                      |
-| [170] Challenger Reports (91) p. 257.                                |
-|                                                                      |
-| [171] Hensen (92), Schütt (93) p. 44.                                |
-|                                                                      |
-| [172] Murray, G., and Blackman, V. H. (97).                          |
-|                                                                      |
-| [173] Dixon and Joly (97).                                           |
-|                                                                      |
-| [174] Sorby (79) p. 78.                                              |
-|                                                                      |
-| [175] Rothpletz (96), p. 909, Pl. XXIII. fig. 4.                     |
-|                                                                      |
-| [176] Challenger (85) _passim_. Schütt (93).                         |
-|                                                                      |
-| [177] Phillips W. (93).                                              |
-|                                                                      |
-| [178] Kippis (78) p. 115.                                            |
-|                                                                      |
-| [179] Darwin (90) p. 13.                                             |
-|                                                                      |
-| [180] Rothpletz (92).                                                |
-|                                                                      |
-| [181] Walther (88).                                                  |
-|                                                                      |
-| [182] Cohn (62).                                                     |
-|                                                                      |
-| [183] Murray, G. (95²).                                              |
-|                                                                      |
-| [184] Thiselton-Dyer (91) p. 226.                                    |
-|                                                                      |
-| [185] Nicholson and Etheridge (80) p. 28, Pl. IX. fig. 24.           |
-|                                                                      |
-| [186] Wethered (93) p. 237.                                          |
-|                                                                      |
-| [187] For figures of the sheaths of Cyanophyceous algae, see Murray  |
-| (95²), Pl. XIX. fig. 5. Gomont (88) and (92); _etc._                 |
-|                                                                      |
-| [188] Brown (94) p. 203.                                             |
-|                                                                      |
-| [189] For references to the papers of Wethered and others, see       |
-| Seward (94), p. 24.                                                  |
-|                                                                      |
-| [190] E. G. Bornemann (87), Pl. II.                                  |
-|                                                                      |
-| [191] Moseley, H. N. (75), p. 321.                                   |
-|                                                                      |
-| [192] Weed (87–88), _vide_ also Tilden (97).                         |
-|                                                                      |
-| [193] Bornet and Flahault (89²) Pl. XI.                              |
-|                                                                      |
-| [194] Batters (92).                                                  |
-|                                                                      |
-| [195] Quekett (54), fig. 78.                                         |
-|                                                                      |
-| [196] Kölliker (59) and (59²); good figures in the latter paper.     |
-|                                                                      |
-| [197] Rose (55), Pl. I.                                              |
-|                                                                      |
-| [198] For other references _vide_ Bornet and Flahault (89²).         |
-|                                                                      |
-| [199] Duncan (76) and (76²).                                         |
-|                                                                      |
-| [200] Similar borings are figured by Kölliker (59²), Pl. XVI. 14,    |
-| in a scale of _Beryx ornatus_ from the Chalk.                        |
-|                                                                      |
-| [201] Bornet and Flahault (89²).                                     |
-|                                                                      |
-| [202] E. G. Wedl (59). Good figures are given in this paper.         |
-|                                                                      |
-| [203] Bornemann (86), p. 126, Pls. V. and VI.                        |
-|                                                                      |
-| [204] Renault (96¹) p. 446.                                          |
-|                                                                      |
-| [205] Treub (88).                                                    |
-|                                                                      |
-| [206] Williamson (88).                                               |
-|                                                                      |
-| [207] Heer (55) vol. I. p. 21, Pl. IV. fig. 2.                       |
-|                                                                      |
-| [208] de Bary (87) p. 9. A good account of the Schizomycetes         |
-| has lately been written by Migula in Engler and Prantl’s             |
-| _Pflanzenfamilien_, Leipzig, 1896.                                   |
-|                                                                      |
-| [209] 1 µ = 0·001 millimetres.                                       |
-|                                                                      |
-| [210] James (98²), translation of a paper by M. Ferry in the _Revue  |
-| Mycologique_, 1893.                                                  |
-|                                                                      |
-| [211] Zeiller (82).                                                  |
-|                                                                      |
-| [212] Renault (95¹), (96¹) p. 478, (96²) p. 106. (Several figures    |
-| of the cuticles are given in these publications.)                    |
-|                                                                      |
-| [213] Renault (96¹) p. 492.                                          |
-|                                                                      |
-| [214] Renault (95²), (96¹), (96²).                                   |
-|                                                                      |
-| [215] Renault and Bertrand (94). See also Renault (95²) p. 3, (96¹)  |
-| p. 449, Pl. LXXXIX. (96²) p. 94, and (96³) p. 280, fig. 3.           |
-|                                                                      |
-| [216] Renault (95²) p. 17, fig. 9, (96¹) p. 460, fig. 102, and       |
-| (96³) p. 292, fig. 10.                                               |
-|                                                                      |
-| [217] Renault (96³) p. 297, fig. 14.                                 |
-|                                                                      |
-| [218] Van Tieghem (77).                                              |
-|                                                                      |
-| [219] Van Tieghem (79).                                              |
-|                                                                      |
-| [220] Vogelsang (74). _Vide_ also Rutley (92).                       |
-|                                                                      |
-| [221] I am indebted to Prof. Kanthack for calling my attention       |
-| to an interesting account of Bacilli in small stones found in        |
-| gall-bladders; a manner of occurrence comparable to that of the      |
-| fossil forms in petrified tissues. _Vide_ Naunyn (96) p. 51.         |
-|                                                                      |
-| [222] Renault (96³) p. 277.                                          |
-|                                                                      |
-| [223] Hooker, J. D. (44) p. 457. Pls. CLXVII. CLXVIII. and CLXXI. D. |
-|                                                                      |
-| [224] An American writer has recently discussed the literature and   |
-| history of _Fucoides_; he gives a list of 85 species. It is very     |
-| doubtful if such work as this is worth the labour. (James [93].)     |
-|                                                                      |
-| [225] Wille (97) p. 136, also Murray, G. (95) p. 121.                |
-|                                                                      |
-| [226] Linnarsson (69) Pl. XI. fig. 3. There are many good specimens  |
-| of this fossil in the Geological Survey Museum, Stockholm.           |
-|                                                                      |
-| [227] Nathorst (81²), and (96).                                      |
-|                                                                      |
-| [228] Nathorst (81) p. 14.                                           |
-|                                                                      |
-| [229] Mantell (33) p. 166. _Vide_ also Morris (54) p. 6.             |
-|                                                                      |
-| [230] Bateson (88).                                                  |
-|                                                                      |
-| [231] Nathorst (81), (86) &c. Dawson (88) p. 26 _et seq._ Dawson     |
-| (90) Delgado (86) Williamson (85) Hughes (84) Zeiller (84) Saporta   |
-| (81) (82) (84) (86) Fuchs (95) Rothpletz (96).                       |
-|                                                                      |
-| [232] Kinahan (58).                                                  |
-|                                                                      |
-| [233] Sollas (86).                                                   |
-|                                                                      |
-| [234] Barrois (88). References to other records of this genus may    |
-| be found in Barrois’ paper.                                          |
-|                                                                      |
-| [235] Zeiller (84). _Phymatoderma_ is probably a horny sponge        |
-| (_vide_ p. 154).                                                     |
-|                                                                      |
-| [236] Newberry (88) p. 82, Pl. XXI. There are some large specimens   |
-| of this supposed alga in the National Museum, Washington; they are   |
-| undoubtedly of the nature of rill-marks.                             |
-|                                                                      |
-| [237] _Vide_ Williamson (85).                                        |
-|                                                                      |
-| [238] Dawson (90) p. 615.                                            |
-|                                                                      |
-| [239] Salter (78) p. 99.                                             |
-|                                                                      |
-| [240] Lapworth (81) p. 176, Pl. VII. fig. 7.                         |
-|                                                                      |
-| [241] Rothpletz (96).                                                |
-|                                                                      |
-| [242] A term applied to a certain facies of Eocene and Oligocene     |
-| rocks in Central Europe.                                             |
-|                                                                      |
-| [243] Hall (47) Pl. LXVIII. 1 and 2, p. 261.                         |
-|                                                                      |
-| [244] Nathorst (83) p. 453.                                          |
-|                                                                      |
-| [245] Seward (94²) p. 4.                                             |
-|                                                                      |
-| [246] Kidston (83) Pl. XXXII. fig. 2. Specimens of this form may be  |
-| seen in the British Museum collection.                               |
-|                                                                      |
-| [247] _Cf._ Matthew, G. F. (89). Hall called attention in 1852 to    |
-| the prevalent habit of describing ‘algae’ from the older strata,     |
-| without any evidence for a vegetable origin. (Hall [52] p. 18.)      |
-|                                                                      |
-| [248] Credner (87) p. 431.                                           |
-|                                                                      |
-| [249] Saporta (84) p. 45, Pl. VII.                                   |
-|                                                                      |
-| [250] Solms-Laubach (91) p. 51.                                      |
-|                                                                      |
-| [251] A monograph on the Diatomaceae has recently been written by    |
-| Schütt for Engler and Prantl’s systematic work. See also Murray, G.  |
-| (97) and Pfitzer (71).                                               |
-|                                                                      |
-| [252] Darwin (90) p. 5.                                              |
-|                                                                      |
-| [253] Weed (87).                                                     |
-|                                                                      |
-| [254] Wilson (87).                                                   |
-|                                                                      |
-| [255] Ehrenberg (54).                                                |
-|                                                                      |
-| [256] Noll (95) p. 248.                                              |
-|                                                                      |
-| [257] Hooker, J. D. (44) vol. I. p. 503.                             |
-|                                                                      |
-| [258] Murray, J. and Renard (91) p. 208.                             |
-|                                                                      |
-| [259] Nansen, Daily Chronicle, Nov. 2, 1896.                         |
-|                                                                      |
-| [260] Schütt (93) p. 10.                                             |
-|                                                                      |
-| [261] Ehrenberg (36) p. 77.                                          |
-|                                                                      |
-| [262] Cayeux (92), (97).                                             |
-|                                                                      |
-| [263] Shrubsole and Kitton (81).                                     |
-|                                                                      |
-| [264] I am indebted to Mr Murton Holmes for specimens of these       |
-| London Clay Diatoms.                                                 |
-|                                                                      |
-| [265] Rothpletz (96) p. 910, fig. 3, Pl. XXIII. fig. 203.            |
-|                                                                      |
-| [266] Schütt (96) p. 62.                                             |
-|                                                                      |
-| [267] Castracane (76).                                               |
-|                                                                      |
-| [268] Heer (76) p. 66, Pl. XXIII. and (53) p. 117, Pl. VI.           |
-|                                                                      |
-| [269] Stefani (82) p. 103.                                           |
-|                                                                      |
-| [270] The Chlorophyceae have recently been exhaustively dealt with   |
-| by Wille (97) in Engler and Prantl’s _Pflanzenfamilien_.             |
-|                                                                      |
-| [271] _Vide_ p. 142.                                                 |
-|                                                                      |
-| [272] Murray G. (95) p. 123.                                         |
-|                                                                      |
-| [273] Göppert (60) p. 439. Pl. XXXIV. fig. 8.                        |
-|                                                                      |
-| [274] Zeiller (84).                                                  |
-|                                                                      |
-| [275] Murray G. (92) p. 11; also (95) p. 127.                        |
-|                                                                      |
-| [276] Damon (88) Pl. XIX. fig. 12.                                   |
-|                                                                      |
-| [277] _Vide_ also Rothpletz (96) p. 894.                             |
-|                                                                      |
-| [278] Ellis (1755) Pl. XXXIII. α p. 86.                              |
-|                                                                      |
-| [279] Fuchs (96) Pl. VIII. fig. 3.                                   |
-|                                                                      |
-| [280] Murray G. (95) Pl. III. figs. 1 and 2.                         |
-|                                                                      |
-| [281] Rothpletz (90), and (91) Pls. XV. and XVI.                     |
-|                                                                      |
-| [282] Bornemann (87) p. 17, Pl. II. pp. 1–4.                         |
-|                                                                      |
-| [283] Lamouroux (21) Pl. XXV. fig. 5, p. 23.                         |
-|                                                                      |
-| [284] Munier-Chalmas (79).                                           |
-|                                                                      |
-| [285] For references to genera of calcareous algae previously        |
-| referred to Foraminifera, _vide_ Sherborn (93).                      |
-|                                                                      |
-| [286] Lamarck (16) p. 193.                                           |
-|                                                                      |
-| [287] Defrance (26) Pl. XLVIII. fig. 2, and Pl. L. fig. 6.           |
-|                                                                      |
-| [288] Carpenter (62) p. 179, Pl. XII. figs. 9 and 10.                |
-|                                                                      |
-| [289] Michelin (40–47) Pl. XLVI. fig. 24.                            |
-|                                                                      |
-| [290] Munier-Chalmas (79).                                           |
-|                                                                      |
-| [291] Lamouroux (21) Pl. XXV. fig. 6, p. 23.                         |
-|                                                                      |
-| [292] Harvey (58) Vol. I. Pl. XXII. fig. 3.                          |
-|                                                                      |
-| [293] Fuchs (94).                                                    |
-|                                                                      |
-| [294] Lamouroux gives a figure of _Acetabularia_, and includes this  |
-| genus with several other algae in the animal kingdom (Lamouroux      |
-| [21] p. 19), Pl. LXIX.).                                             |
-|                                                                      |
-| [295] Solms-Laubach (95³).                                           |
-|                                                                      |
-| [296] D’Archiac (43) p. 386, Pl. XXV. fig. 8.                        |
-|                                                                      |
-| [297] Solms-Laubach _loc. cit._ p. 33, Pl. III.                      |
-|                                                                      |
-| [298] D’Archiac (43) p. 386, Pl. XXV. fig. 8.                        |
-|                                                                      |
-| [299] Michelin (40) p. 176, Pl. XLVI. fig. 14.                       |
-|                                                                      |
-| [300] Carpenter (62) p. 137, Pl. XI. figs. 27–82.                    |
-|                                                                      |
-| [301] Solms-Laubach _loc. cit._ p. 32.                               |
-|                                                                      |
-| [302] _Ibid._ p. 34, Pl. III. fig. 13.                               |
-|                                                                      |
-| [303] Andrussow (87).                                                |
-|                                                                      |
-| [304] Solms-Laubach (95³) p. 11.                                     |
-|                                                                      |
-| [305] Carpenter (62) Pl. XI. fig. 32.                                |
-|                                                                      |
-| [306] Reuss (61) p. 8, figs. 5–8.                                    |
-|                                                                      |
-| [307] Ellis (1755) Pl. XXV. C.                                       |
-|                                                                      |
-| [308] Solms-Laubach (91) p. 38 gives a detailed description with     |
-| two figures of a recent species of _Cymopolia_.                      |
-|                                                                      |
-| [309] Murray G. (95).                                                |
-|                                                                      |
-| [310] Wille (97).                                                    |
-|                                                                      |
-| [311] Munier-Chalmas (77).                                           |
-|                                                                      |
-| [312] Cramer (87) (90).                                              |
-|                                                                      |
-| [313] Solms-Laubach (91) (93) (95³).                                 |
-|                                                                      |
-| [314] Church (95).                                                   |
-|                                                                      |
-| [315] Gümbel (71).                                                   |
-|                                                                      |
-| [316] Benecke (76).                                                  |
-|                                                                      |
-| [317] Defrance (26) p. 453.                                          |
-|                                                                      |
-| [318] Munier-Chalmas (77) p. 815.                                    |
-|                                                                      |
-| [319] Munier-Chalmas _ibid._                                         |
-|                                                                      |
-| [320] Defrance (26) Pl. XLVIII. fig. 1.                              |
-|                                                                      |
-| [321] Stolley (93).                                                  |
-|                                                                      |
-| [322] Deecke (83).                                                   |
-|                                                                      |
-| [323] Benecke (76) Pl. XXIII.                                        |
-|                                                                      |
-| [324] Solms-Laubach (91) p. 42.                                      |
-|                                                                      |
-| [325] Rothpletz (94) p. 24.                                          |
-|                                                                      |
-| [326] Lamarck (16) p. 188.                                           |
-|                                                                      |
-| [327] Carpenter (62) Pl. X.                                          |
-|                                                                      |
-| [328] Gümbel (71). _Vide_ also Solms-Laubach (91) p. 39.             |
-|                                                                      |
-| [329] Stolley (93).                                                  |
-|                                                                      |
-| [330] Schlüter (79).                                                 |
-|                                                                      |
-| [331] Saporta (91) Pl. XXXII. &c.                                    |
-|                                                                      |
-| [332] Solms-Laubach (93), Pl. IX. figs. 1, 8.                        |
-|                                                                      |
-| [333] Cramer (90).                                                   |
-|                                                                      |
-| [334] Rothpletz (92²) p. 235.                                        |
-|                                                                      |
-| [335] Steinmann (80).                                                |
-|                                                                      |
-| [336] Solms-Laubach (91), p. 40. fig. 3. _Vide_ also Deecke (83)     |
-| Pl. I. fig. 12.                                                      |
-|                                                                      |
-| [337] Brongniart (28) p. 211.                                        |
-|                                                                      |
-| [338] Bornemann (91) p. 485. Pls. 42 and 43.                         |
-|                                                                      |
-| [339] Seward (95²) p. 367.                                           |
-|                                                                      |
-| [340] Report of the Trial (62).                                      |
-|                                                                      |
-| [341] Bertrand and Renault (92) p. 29.                               |
-|                                                                      |
-| [342] Bertrand (93), Bertrand and Renault (92) (94), Bertrand (96),  |
-| Renault (96). Additional references may be found in these memoirs.   |
-|                                                                      |
-| [343] Batters (92). _Vide_ also Schmitz (97) p. 315.                 |
-|                                                                      |
-| [344] Hauck (85) in Rabenhorst’s _Kryptogamen Flora_, vol. II.       |
-|                                                                      |
-| [345] Kent (93) p. 140.                                              |
-|                                                                      |
-| [346] Agassiz (88) vol. I. p. 82.                                    |
-|                                                                      |
-| [347] Walther (85).                                                  |
-|                                                                      |
-| [348] _Ibid._ (88) p. 478.                                           |
-|                                                                      |
-| [349] Philippi (37) p. 387.                                          |
-|                                                                      |
-| [350] Rosanoff(66) Pl. VI. fig. 10.                                  |
-|                                                                      |
-| [351] Rothpletz (91) Pl. XVII. fig. 4.                               |
-|                                                                      |
-| [352] Früh (90) fig. 12.                                             |
-|                                                                      |
-| [353] Kjellman (83).                                                 |
-|                                                                      |
-| [354] Holmes and Batters (90) p. 102.                                |
-|                                                                      |
-| [355] Hauck (85). Rosanoff (66). Rosenvinge (93) p. 779. Kjellman    |
-| (83) p. 88. Solms-Laubach (81).                                      |
-|                                                                      |
-| [356] Unger (58).                                                    |
-|                                                                      |
-| [357] A microscopic section of the Vienna Leithakalk is figured in   |
-| Nicholson and Lydekker’s _Manual of Palæontology_ (89) vol. II. p.   |
-| 1497.                                                                |
-|                                                                      |
-| [358] Gümbel (71) Pl. II. fig. 7, p. 41.                             |
-|                                                                      |
-| [359] Hauck (85) p. 272.                                             |
-|                                                                      |
-| [360] Rothpletz (91) Pl. XVII. fig. 4.                               |
-|                                                                      |
-| [361] _Vide_ Walther (88) p. 499; also Jukes-Browne and Harrison     |
-| (91) _passim_. I am indebted to Mr G. F. Franks, who has studied     |
-| the Barbadian reefs, for the opportunity of examining sections of    |
-| West-Indian coral-rock.                                              |
-|                                                                      |
-| [362] Brown A. (94).                                                 |
-|                                                                      |
-| [363] Brown A. (94) p. 147.                                          |
-|                                                                      |
-| [364] _ibid._ p. 200.                                                |
-|                                                                      |
-| [365] _e.g._ Saporta (82) p. 12.                                     |
-|                                                                      |
-| [366] Turner (11) vol. II. p. 51.                                    |
-|                                                                      |
-| [367] Rothpletz (96).                                                |
-|                                                                      |
-| [368] Penhallow (96) p. 45.                                          |
-|                                                                      |
-| [369] Dawson (59).                                                   |
-|                                                                      |
-| [370] _Vide_ ‘Academy’ 1870, p. 16.                                  |
-|                                                                      |
-| [371] Carruthers (72).                                               |
-|                                                                      |
-| [372] Penhallow (89).                                                |
-|                                                                      |
-| [373] Barber (92).                                                   |
-|                                                                      |
-| [374] Solms-Laubach (95²).                                           |
-|                                                                      |
-| [375] Penhallow (96).                                                |
-|                                                                      |
-| [376] _loc. cit._ p. 83.                                             |
-|                                                                      |
-| [377] Dawson (59), also (71) p. 17.                                  |
-|                                                                      |
-| [378] Penhallow (89) and (96) p. 46.                                 |
-|                                                                      |
-| [379] Barber (92) p. 336.                                            |
-|                                                                      |
-| [380] Penhallow (89) and (93).                                       |
-|                                                                      |
-| [381] Dawson (81) p. 302.                                            |
-|                                                                      |
-| [382] Barber (92).                                                   |
-|                                                                      |
-| [383] Hicks (81) p. 490.                                             |
-|                                                                      |
-| [384] Lake (95) p. 22.                                               |
-|                                                                      |
-| [385] Solms-Laubach (95²).                                           |
-|                                                                      |
-| [386] A similar method of fossilisation has been noted by Rothpletz  |
-| in the case of the Lower Devonian alga _Hostinella_. [Rothpletz      |
-| (96) p. 896.]                                                        |
-|                                                                      |
-| [387] Penhallow (96) p. 47.                                          |
-|                                                                      |
-| [388] Carruthers (72) p. 162 regards this species as identical with  |
-| _N. Logani_.                                                         |
-|                                                                      |
-| [389] Seward (95³).                                                  |
-|                                                                      |
-| [390] Strickland and Hooker (53).                                    |
-|                                                                      |
-| [391] Hicks (81) p. 484.                                             |
-|                                                                      |
-| [392] Dawson (82) p. 104.                                            |
-|                                                                      |
-| [393] Barber (89) and (90).                                          |
-|                                                                      |
-| [394] Murray G. (95³).                                               |
-|                                                                      |
-| [395] Hooker J. D. (89).                                             |
-|                                                                      |
-| [396] _loc. cit._                                                    |
-|                                                                      |
-| [397] Solms-Laubach (95²) p. 81.                                     |
-|                                                                      |
-| [398] Seward (94²) p. 4.                                             |
-|                                                                      |
-| [399] An excellent monograph on the Mycetozoa has lately been        |
-| issued by the Trustees of the British Museum under the authorship    |
-| of Mr A. Lister (94). _Vide_ also Schröter (89) in Engler and        |
-| Prantl’s _Natürlichen Pflanzenfamilien_.                             |
-|                                                                      |
-| [400] Renault (96) p. 422, figs. 75 and 76.                          |
-|                                                                      |
-| [401] Schröter (89) p. 32, fig. 18 B.                                |
-|                                                                      |
-| [402] Cash and Hick (78²) Pl. VI. fig. 3.                            |
-|                                                                      |
-| [403] Göppert and Menge (83) Pl. XIII. fig. 106.                     |
-|                                                                      |
-| [404] Harper (95).                                                   |
-|                                                                      |
-| [405] _e.g._ Ludwig (57) Pl. XVI. fig. 1.                            |
-|                                                                      |
-| [406] Potonié (93) p. 27, Pl. I. fig. 8.                             |
-|                                                                      |
-| [407] References are given by Potonié to illustrations by Zeiller    |
-| (92²) Pl. XV. fig. 6, Grand’ Eury (77) Pl. XXXIII. fig. 7, and       |
-| others in which possible fungi are represented.                      |
-|                                                                      |
-| [408] Engelhardt (87).                                               |
-|                                                                      |
-| [409] For figures of the Coccineae, see Comstock (88), Maskell       |
-| (87), Judeich and Nitsche (95) &c.                                   |
-|                                                                      |
-| [410] Massalongo (59) Pl. I. fig. 1, p. 87.                          |
-|                                                                      |
-| [411] Meschinelli (92).                                              |
-|                                                                      |
-| [412] James, J. F. (93²).                                            |
-|                                                                      |
-| [413] Lesquereux (87).                                               |
-|                                                                      |
-| [414] Herzer (93).                                                   |
-|                                                                      |
-| [415] Conwentz (90) Pl. XII. fig. 5.                                 |
-|                                                                      |
-| [416] Feilden, H. W. (96); Seward (96²) p. 62, appendix to           |
-| Feilden’s paper. I am indebted to Dr Bonney for an opportunity of    |
-| examining the plant remains from the Feilden collection.             |
-|                                                                      |
-| [417] Hartig (78).                                                   |
-|                                                                      |
-| [418] Conwentz (80) Pl. V. fig. 17.                                  |
-|                                                                      |
-| [419] Carruthers (70) Pl. XXV. fig. 3.                               |
-|                                                                      |
-| [420] Renault (96) p. 427, fig. 80, _d_.                             |
-|                                                                      |
-| [421] _ibid._ p. 427, fig. 80, _a–c_.                                |
-|                                                                      |
-| [422] p. 127.                                                        |
-|                                                                      |
-| [423] Etheridge (92) Pl. VII.                                        |
-|                                                                      |
-| [424] Hartig (78) and (94), Göppert and Menge (83).                  |
-|                                                                      |
-| [425] Renault (96) p. 425, fig. 78.                                  |
-|                                                                      |
-| [426] Fischer in Rabenhorst, vol. i. (92) p. 144.                    |
-|                                                                      |
-| [427] Carruthers (76) p. 22, fig. 1.                                 |
-|                                                                      |
-| [428] Smith, W. O. (77) p. 499.                                      |
-|                                                                      |
-| [429] Williamson (81) Pl. XLVIII. p. 301.                            |
-|                                                                      |
-| [430] Renault (96) p. 439, figs. 88 and 89.                          |
-|                                                                      |
-| [431] Cash and Hick (78²).                                           |
-|                                                                      |
-| [432] Cash and Hick, Pl. VI. fig. 3.                                 |
-|                                                                      |
-| [433] Felix (94) p. 276, Pl. XIX. fig. 1.                            |
-|                                                                      |
-| [434] _ibid._ p. 274, Pl. XIX. figs. 5 and 6.                        |
-|                                                                      |
-| [435] Williamson (78) and (80).                                      |
-|                                                                      |
-| [436] Conwentz (90) p. 119, Pl. XI. pp. 2, 3, Pl. XV. fig. 8.        |
-|                                                                      |
-| [437] Migula (90) in Rabenhorst’s _Kryptogamen Flora_, vol. V.       |
-|                                                                      |
-| [438] Vaillant (1719) p. 17.                                         |
-|                                                                      |
-| [439] Migula (90) p. 53.                                             |
-|                                                                      |
-| [440] Knowlton (89²).                                                |
-|                                                                      |
-| [441] Meek (73) p. 219.                                              |
-|                                                                      |
-| [442] Saporta (73) p. 214, Pl. IX. figs. 8–11.                       |
-|                                                                      |
-| [443] Seward (94²) p. 13, fig. 1.                                    |
-|                                                                      |
-| [444] Woodward, H. B. (95) pp, 234, 261, _etc._                      |
-|                                                                      |
-| [445] Forbes, E. (56) p. 160, Pl. VII.                               |
-|                                                                      |
-| [446] _Vide_ p. 69, fig. 10.                                         |
-|                                                                      |
-| [447] Lyell (29).                                                    |
-|                                                                      |
-| [448] Skertchly (77) p. 60.                                          |
-|                                                                      |
-| [449] Schiffner and Müller in Engler and Prantl (95), Campbell       |
-| (95), Dixon and Jameson (96) are among the best of modern writers    |
-| on the Bryophyta.                                                    |
-|                                                                      |
-| [450] Hooker, J. D. (91) p. 513.                                     |
-|                                                                      |
-| [451] Schiffner (95) p. 140.                                         |
-|                                                                      |
-| [452] Hooker, W. J. (20) Pl. CLXIII.                                 |
-|                                                                      |
-| [453] Bennett and Brown (38), Pl. V.                                 |
-|                                                                      |
-| [454] Bennett and Brown (38) p. 35.                                  |
-|                                                                      |
-| [455] Nathorst (90) Pl. II. fig. 3.                                  |
-|                                                                      |
-| [456] Lindenberg (39) Pl. IX. fig. 1.                                |
-|                                                                      |
-| [457] Zeiller (92²) Pl. I. figs. 7 and 8.                            |
-|                                                                      |
-| [458] Fliche and Bleicher (81).                                      |
-|                                                                      |
-| [459] Brongniart (49) p. 12.                                         |
-|                                                                      |
-| [460] Seward (94²) p. 17.                                            |
-|                                                                      |
-| [461] Leckenby (64) Pl. XI. fig. 3.                                  |
-|                                                                      |
-| [462] Seward _loc. cit._ p. 18, Pl. I. fig. 3.                       |
-|                                                                      |
-| [463] Raciborski (94) p. 10, Pl. VII. figs. 1–3.                     |
-|                                                                      |
-| [464] Brongniart (49) p. 12.                                         |
-|                                                                      |
-| [465] Saporta (68) p. 308, Pl. I. figs. 1–8. _Vide_ also Watelet     |
-| (66) p. 40, Pl. XI. fig. 6.                                          |
-|                                                                      |
-| [466] Göppert and Berendt (45) Pl. VI. and (53).                     |
-|                                                                      |
-| [467] Gottsche (86).                                                 |
-|                                                                      |
-| [468] Schimper (65) Pl. III.                                         |
-|                                                                      |
-| [469] Greville (47) Pl. XII.                                         |
-|                                                                      |
-| [470] Brown, R. (11) Pl. XXIII.                                      |
-|                                                                      |
-| [471] Hooker, W. J. (20) Pl. CLXII.                                  |
-|                                                                      |
-| [472] Limpricht (90) p. 67.                                          |
-|                                                                      |
-| [473] Brongniart (28²) p. 93.                                        |
-|                                                                      |
-| [474] Renault and Zeiller (88) p. 84, Pl. XLI. figs. 2–4.            |
-|                                                                      |
-| [475] Solms-Laubach (91) p. 186.                                     |
-|                                                                      |
-| [476] Lesquereux (79) Pl. LXII. fig. 1.                              |
-|                                                                      |
-| [477] Heer (65) p. 89.                                               |
-|                                                                      |
-| [478] Buckman (50) 1.                                                |
-|                                                                      |
-| [479] Gardner (86) p. 203.                                           |
-|                                                                      |
-| [480] Ludwig (59) p. 165, Pl. LXIII. fig. 9.                         |
-|                                                                      |
-| [481] Schimper and Schenk (90) p. 75.                                |
-|                                                                      |
-| [482] _e.g._ the Fern _Trichomanes Goebelianum_ Gies. Giesenhagen    |
-| (92) p. 157.                                                         |
-|                                                                      |
-| [483] Scott (96) a text-book for elementary students; a full         |
-| account is given of _Equisetum_ and other genera of primary          |
-| importance. Vines (95) Part iii. Campbell (95), Luerssen (89) in     |
-| Rabenhorst’s _Kryptogamen-Flora_, vol. III., Van Tieghem (91), de    |
-| Bary (84), Baker (87).                                               |
-|                                                                      |
-| [484] Wallace (86) p. 117.                                           |
-|                                                                      |
-| [485] Baker (87) p. 4. Hooker, W. J. (61) Pl. LXXIV. _Vide_ also     |
-| Milde (67) for figures of _Equisetum_.                               |
-|                                                                      |
-| [486] Seeman (65).                                                   |
-|                                                                      |
-| [487] Duval-Jouve (64) Pl. I. fig. 5.                                |
-|                                                                      |
-| [488] Milde (67) Pl. XIX. fig. 8.                                    |
-|                                                                      |
-| [489] _ibid._ Pl. XXXI. fig. 3.                                      |
-|                                                                      |
-| [490] Cormack (93) p. 71.                                            |
-|                                                                      |
-| [491] Williamson and Scott (94) p. 877. These authors, in referring  |
-| to Cormack’s description of the secondary nodal wood of _E.          |
-| maximum_, express doubts as to the existence of such secondary       |
-| growth in _all_ species of the genus.                                |
-|                                                                      |
-| [492] Pfitzer (67).                                                  |
-|                                                                      |
-| [493] Strasburger (91) p. 443.                                       |
-|                                                                      |
-| [494] Strasburger (91) p. 435.                                       |
-|                                                                      |
-| [495] Bower (94) p. 495.                                             |
-|                                                                      |
-| [496] Sternberg (38) p. 43.                                          |
-|                                                                      |
-| [497] Scott (97). This genus will be described in Volume II.         |
-|                                                                      |
-| [498] Potonié (93) Pl. XXV. fig. 1_a_.                               |
-|                                                                      |
-| [499] _ibid._ p. 179. _Vide_ also Potonié (92).                      |
-|                                                                      |
-| [500] Zeiller (92²) p. 56, Pl. XII. Other similar leaf-sheaths have  |
-| been figured by Germar (44) Pl. X., Schimper (74) Pl. XVII. and      |
-| others.                                                              |
-|                                                                      |
-| [501] Grand’Eury (90) p. 223, Pl. XV. fig. 16.                       |
-|                                                                      |
-| [502] Renault (93) Pl. XLII. figs. 6 and 7.                          |
-|                                                                      |
-| [503] Kidston (92).                                                  |
-|                                                                      |
-| [504] Zeiller (95).                                                  |
-|                                                                      |
-| [505] Potonié (93) p. 179, Pl. XXV. figs. 2–4.                       |
-|                                                                      |
-| [506] Renault and Zeiller (88) p. 396, Pl. LVII. fig. 7.             |
-|                                                                      |
-| [507] Lindley and Hutton (31) Pl. CXIV.                              |
-|                                                                      |
-| [508] Schoenlein and Schenk (65) Pl. V. fig. 1.                      |
-|                                                                      |
-| [509] Schimper and Mougeot (44) p. 58, Pl. XXIX.                     |
-|                                                                      |
-| [510] Jäger (27).                                                    |
-|                                                                      |
-| [511] Schimper (74) Pls. IX–XI.                                      |
-|                                                                      |
-| [512] Schimper and Koechlin-Schlumberger (62).                       |
-|                                                                      |
-| [513] Schoenlein and Schenk (65) Pls. I–IV.                          |
-|                                                                      |
-| [514] Brongniart (28) p. 115, Pl. XIII.                              |
-|                                                                      |
-| [515] Young and Bird (22) p. 185, Pl. III. fig. 3.                   |
-|                                                                      |
-| [516] König, in Murchison (29) p. 293, Pl. XXXII.                    |
-|                                                                      |
-| [517] Murchison (29) p. 368.                                         |
-|                                                                      |
-| [518] Bunbury (51) p. 189.                                           |
-|                                                                      |
-| [519] Schimper (69) p. 267.                                          |
-|                                                                      |
-| [520] Zigno (56) Pl. III. fig. 1, p. 45.                             |
-|                                                                      |
-| [521] Gardner (86) Pl. IX. fig. 3.                                   |
-|                                                                      |
-| [522] Williamson (83) p. 4.                                          |
-|                                                                      |
-| [523] Williamson and Scott (94) p. 889, Pl. LXXIX. fig. 19.          |
-|                                                                      |
-| [524] Phillips J. (29) Pl. X. fig. 13.                               |
-|                                                                      |
-| [525] Lindley and Hutton (31) Pl. CLXXXVI.                           |
-|                                                                      |
-| [526] Bunbury (51) p. 189.                                           |
-|                                                                      |
-| [527] Zigno (56) Pl. III. fig. 3, p. 46.                             |
-|                                                                      |
-| [528] Heer (77) p. 43, Pl. IV.                                       |
-|                                                                      |
-| [529] Schimper (69) p. 284. _Vide_ also Nathorst (80) p. 54.         |
-|                                                                      |
-| [530] Andrae (53) Pl. VI. figs. 1–5.                                 |
-|                                                                      |
-| [531] Solms-Laubach (91) p. 180.                                     |
-|                                                                      |
-| [532] _cf._ p. 283.                                                  |
-|                                                                      |
-| [533] There is a similar specimen in the Oxford Museum.              |
-|                                                                      |
-| [534] Since this was written I have found a specimen of              |
-| _Equisetites lateralis_ in the Woodwardian Museum, in which a        |
-| diaphragm like that in fig. 64, C, occurs in the centre of a         |
-| flattened leaf-sheath similar to that of fig. 64, B.                 |
-|                                                                      |
-| [535] Buckman (50) p. 414.                                           |
-|                                                                      |
-| [536] Schenk (67).                                                   |
-|                                                                      |
-| [537] Tenison-Woods (83), Pl. VI. figs. 5 and 6. Specimen no. V.     |
-| 3358 in the British Museum.                                          |
-|                                                                      |
-| [538] Dunker (46) p. 2, Pl. V. fig. 7.                               |
-|                                                                      |
-| [539] Seward (94²) p. 30.                                            |
-|                                                                      |
-| [540] Seward (94²) p. 33.                                            |
-|                                                                      |
-| [541] Heer (55) vol. III. p. 158, Pl. CXLV.                          |
-|                                                                      |
-| [542] Heer (77) p. 99, Pl. XXII.                                     |
-|                                                                      |
-| [543] _Vide_ Saporta (73) p. 227.                                    |
-|                                                                      |
-| [544] The distribution will be dealt with in Volume II.              |
-|                                                                      |
-| [545] Brongniart (28) p. 151.                                        |
-|                                                                      |
-| [546] Schmalhausen (79) p. 12, Pl. I. figs. 1–3.                     |
-|                                                                      |
-| [547] Solms-Laubach (91) p. 181.                                     |
-|                                                                      |
-| [548] Zeiller (96).                                                  |
-|                                                                      |
-| [549] Zeiller (96²).                                                 |
-|                                                                      |
-| [550] _ibid._ (96).                                                  |
-|                                                                      |
-| [551] Letter, July 30, 1897.                                         |
-|                                                                      |
-| [552] On this character of Annularian leaves, _vide_ p. 337.         |
-|                                                                      |
-| [553] Göppert (45) p. 379, Pl. XXV. figs. 1, 2.                      |
-|                                                                      |
-| [554] Schmalhausen (79) p. 12.                                       |
-|                                                                      |
-| [555] McCoy (47) Pl. XI. fig. 7.                                     |
-|                                                                      |
-| [556] Bunbury (61) Pl. XI. fig. 1.                                   |
-|                                                                      |
-| [557] Seward (97²) p. 324, Pl. XXIV. fig. 1.                         |
-|                                                                      |
-| [558] Feistmantel (81) Pl. IX. A. fig. 7, &c.                        |
-|                                                                      |
-| [559] _ibid._ (90) Pl. XIV. fig. 5.                                  |
-|                                                                      |
-| [560] Bunbury (61) Pl. XI. fig. 1.                                   |
-|                                                                      |
-| [561] Solms-Laubach (91) p. 181, fig. 17.                            |
-|                                                                      |
-| [562] Heer (82) p. 9.                                                |
-|                                                                      |
-| [563] Potonié (96²) p. 115, fig. 3.                                  |
-|                                                                      |
-| [564] Zigno (56) Pl. VII. p. 59.                                     |
-|                                                                      |
-| [565] Bunbury (61).                                                  |
-|                                                                      |
-| [566] Feistmantel (81), Pl. XII. A.                                  |
-|                                                                      |
-| [567] Brongniart (28) p. 152.                                        |
-|                                                                      |
-| [568] Bunbury (61).                                                  |
-|                                                                      |
-| [569] Grand’Eury (90) p. 221.                                        |
-|                                                                      |
-| [570] Etheridge (95).                                                |
-|                                                                      |
-| [571] Weiss (76) p. 88.                                              |
-|                                                                      |
-| [572] Heer (77) p. 43, Pl. IV. (78) p. 4, Pl. I.                     |
-|                                                                      |
-| [573] Tenison-Woods (83) Pl. IX. fig. 2.                             |
-|                                                                      |
-| [574] Brongniart (28) p. 128.                                        |
-|                                                                      |
-| [575] Schimper and Mougeot (44) p. 48, Pls. XXIV–XXVI.               |
-|                                                                      |
-| [576] Feistmantel (81) p. 59, Pls. I. A–X. A.                        |
-|                                                                      |
-| [577] _ante_, p. 284.                                                |
-|                                                                      |
-| [578] Schimper and Mougeot (44) p. 50, Pls. XXIV–XXVI.               |
-|                                                                      |
-| [579] Seward (97²).                                                  |
-|                                                                      |
-| [580] Scheuchzer (1723), p. 19, Pl. IV. fig. 1.                      |
-|                                                                      |
-| [581] Volkmann (1720), p. 110, Pl. XIII. fig. 7.                     |
-|                                                                      |
-| [582] Woodward, J. (1728), Pt. II. p. 10.                            |
-|                                                                      |
-| [583] Schulze, C. F. (1755), Pl. II. fig. 1.                         |
-|                                                                      |
-| [584] Suckow (1784), p. 363.                                         |
-|                                                                      |
-| [585] Steinhauer (18), Pls. V. and VI.                               |
-|                                                                      |
-| [586] Martin (09), Pls. VIII. XXV. and XXVI.                         |
-|                                                                      |
-| [587] Artie (25).                                                    |
-|                                                                      |
-| [588] Brongniart (22), p. 218.                                       |
-|                                                                      |
-| [589] Brongniart (28), p. 34.                                        |
-|                                                                      |
-| [590] Lindley and Hutton (31).                                       |
-|                                                                      |
-| [591] Cotta (50). I am indebted to Prof. Stenzel of Breslau for      |
-| calling my attention to the fact that Cotta’s work appeared in       |
-| 1832, but in 1850 the same work was sold with a new title-page       |
-| bearing this date.                                                   |
-|                                                                      |
-| [592] Unger (40).                                                    |
-|                                                                      |
-| [593] Petzholdt (41).                                                |
-|                                                                      |
-| [594] Unger (44).                                                    |
-|                                                                      |
-| [595] Brongniart (49), p. 49.                                        |
-|                                                                      |
-| [596] E.g. _Isoetes_, _Botrychium_, &c.                              |
-|                                                                      |
-| [597] Mougeot (52).                                                  |
-|                                                                      |
-| [598] Göppert (64), p. 183.                                          |
-|                                                                      |
-| [599] ἄρθρον, joint; πίτυς, Pine-tree.                               |
-|                                                                      |
-| [600] The original specimens described by Göppert are in the rich    |
-| palaeobotanical Collection of the Breslau Museum.                    |
-|                                                                      |
-| [601] Williamson (71³), p. 174.                                      |
-|                                                                      |
-| [602] _vide_ Solms-Laubach (96).                                     |
-|                                                                      |
-| [603] Letter, November 1897.                                         |
-|                                                                      |
-| [604] _Vide_ p. 310.                                                 |
-|                                                                      |
-| [605] Hick (94), Pl. IX. fig. 1.                                     |
-|                                                                      |
-| [606] On this point _vide_ Williamson and Scott (94), p. 869.        |
-|                                                                      |
-| [607] Williamson and Scott, _loc. cit._ p. 876.                      |
-|                                                                      |
-| [608] Renault (93), Pl. XLVII. fig. 4.                               |
-|                                                                      |
-| [609] Stur (87).                                                     |
-|                                                                      |
-| [610] The term _primary ray_ may be conveniently restricted to the   |
-| truly primary interfascicular tissue, and the term _principal ray_   |
-| may be used for the outward extension of the primary rays by the     |
-| cambium [Williamson and Scott (94), p. 878].                         |
-|                                                                      |
-| [611] Binney (68).                                                   |
-|                                                                      |
-| [612] Ettingshausen (55).                                            |
-|                                                                      |
-| [613] The sections of fossil plants described by Binney were         |
-| presented to the Woodwardian Museum, Cambridge, by his son (Mr J.    |
-| Binney).                                                             |
-|                                                                      |
-| [614] _Vide_ footnote, p. 311.                                       |
-|                                                                      |
-| [615] Williamson (83²), Pl. XXXIII. fig. 19.                         |
-|                                                                      |
-| [616] Williamson (78), p. 323, Pl. XX. figs. 14 and 15.              |
-|                                                                      |
-| [617] Williamson and Scott (94), p. 888.                             |
-|                                                                      |
-| [618] Hartig (94), pp. 149, 297, _etc._                              |
-|                                                                      |
-| [619] Renault (96), p. 91.                                           |
-|                                                                      |
-| [620] Williamson and Scott, _loc. cit._ p. 893. _Vide_ specimens     |
-| 133*–135* in the Williamson Collection.                              |
-|                                                                      |
-| [621] _E.g._ specimen 132*** in the Williamson Collection.           |
-|                                                                      |
-| [622] _Vide_ Williamson (71), Pl. XXVIII. fig. 38; (71²), Pl. IV.    |
-| fig. 15; (78), Pl. XXI. figs. 26–28. Williamson and Scott (94), Pl.  |
-| LXXII. figs. 5 and 6. Renault (93), Pl. XLV. figs. 4–6, etc. Felix   |
-| (96), Pl. IV. figs. 2 and 3.                                         |
-|                                                                      |
-| [623] Strasburger (91), Pl. II. fig. 40.                             |
-|                                                                      |
-| [624] Williamson (78).                                               |
-|                                                                      |
-| [625] Williamson (71), p. 507.                                       |
-|                                                                      |
-| [626] Williamson (71²), Pl. I. fig. 1; (78), Pl. XXI. fig. 31.       |
-|                                                                      |
-| [627] Lyell (55), p. 368.                                            |
-|                                                                      |
-| [628] Williamson (96), p. 194.                                       |
-|                                                                      |
-| [629] _Vide_ specimens 15–17, etc. in the Williamson Collection.     |
-|                                                                      |
-| [630] The stem of fig. 83 is an example of _Arthrodendron_, but the  |
-| appearance of the secondary xylem agrees with that in some forms of  |
-| _Arthropitys_.                                                       |
-|                                                                      |
-| [631] For figures of this type of stem _vide_ Göppert (64); Cotta    |
-| (50), Pl. XV. (specimens 13787 in the British Museum Collection);    |
-| Mougeot (52), Pl. V.; Stur (87), pp. 27–31; Renault (93), Pls.       |
-| XLIV. and XLV. etc.                                                  |
-|                                                                      |
-| [632] Williamson (71), (71²), (87), fig. 5.                          |
-|                                                                      |
-| [633] Williamson and Scott (94), p. 879                              |
-|                                                                      |
-| [634] _Vide_ Williamson (87²). In this paper Williamson compares     |
-| the three subgenera of Calamite stems. Renault and Zeiller (88),     |
-| Pl. LXXV. Renault (93), Pls. LVIII. and LIX.                         |
-|                                                                      |
-| [635] Renault (96), p. 125; (93), Pl. LIX. fig. 2.                   |
-|                                                                      |
-| [636] Lindley and Hutton (31), Pls. CXIV., CXC. etc. Most of the     |
-| specimens figured by these authors are in the Newcastle Natural      |
-| History Museum. For notes on the type-specimens of Lindley and       |
-| Hutton, _vide_ Howse (88) and Kidston (90²).                         |
-|                                                                      |
-| [637] Weiss (88), Stur (87), _etc._                                  |
-|                                                                      |
-| [638] _Vide_, p. 367.                                                |
-|                                                                      |
-| [639] _Ante_, p. 260.                                                |
-|                                                                      |
-| [640] Hick (95).                                                     |
-|                                                                      |
-| [641] Brongniart (22), p. 235.                                       |
-|                                                                      |
-| [642] Schlotheim (20).                                               |
-|                                                                      |
-| [643] Brongniart (28), p. 159.                                       |
-|                                                                      |
-| [644] Lindley and Hutton (31), Pl. CXC.                              |
-|                                                                      |
-| [645] Ettingshausen (55).                                            |
-|                                                                      |
-| [646] Schimper (69), p. 323.                                         |
-|                                                                      |
-| [647] Grand’Eury (90).                                               |
-|                                                                      |
-| [648] Martin (09), Pl. XX. figs. 4 and 6.                            |
-|                                                                      |
-| [649] Schlotheim (20), p. 397.                                       |
-|                                                                      |
-| [650] Sternberg (25), p. xxviii.                                     |
-|                                                                      |
-| [651] Brongniart (28), p. 154.                                       |
-|                                                                      |
-| [652] Lindley and Hutton (31), Pl. CXCI.                             |
-|                                                                      |
-| [653] Ettingshausen (55), p. 28.                                     |
-|                                                                      |
-| [654] Schimper (69), Pls. XXII. and XXVI. fig. 1.                    |
-|                                                                      |
-| [655] For other lists and synonyms, _vide_ Zeiller (88), p. 368,     |
-| and Kidston (86), p. 38 and (93), p. 316, also Potonié (93), p. 162. |
-|                                                                      |
-| [656] Sternberg (20).                                                |
-|                                                                      |
-| [657] Brongniart (28), p. 155.                                       |
-|                                                                      |
-| [658] Lehmann (1756), p. 127. _Vide_ also Volkmanns (1720), Pl.      |
-| _XV._ p. 113.                                                        |
-|                                                                      |
-| [659] Potonié (93), pp. 169 _et seq._, Pl. XXIV.                     |
-|                                                                      |
-| [660] Dawson (71).                                                   |
-|                                                                      |
-| [661] Nicholson (69) Pl. XVIII. _B._ Nicholson’s specimens are in    |
-| the Woodwardian Museum, Cambridge.                                   |
-|                                                                      |
-| [662] Schlotheim (20), p. 397.                                       |
-|                                                                      |
-| [663] Sternberg (26), p. xxviii.                                     |
-|                                                                      |
-| [664] Brongniart (28), p. 156.                                       |
-|                                                                      |
-| [665] Lindley and Hutton (31), Pl. CXXIV.                            |
-|                                                                      |
-| [666] Binney (68), Pl. VI. fig. 3.                                   |
-|                                                                      |
-| [667] Stur (87), Pl. XVI b, and Pls. IV b and XIII.                  |
-|                                                                      |
-| [668] Scheuchzer (1723), p. 63, Pl. XIII. fig. 3.                    |
-|                                                                      |
-| [669] Potonié (93), p. 166.                                          |
-|                                                                      |
-| [670] _Vide_ pp. 351 _et seq._                                       |
-|                                                                      |
-| [671] Renault (96), p. 66; (93), Pl. XXVIII.                         |
-|                                                                      |
-| [672] One of the finest specimens of _Annularia stellata_ is         |
-| figured by Stur (87), Pl. XVI b; it is in the Leipzig Museum. VIDE   |
-| also Schenk (83), Pl. XXXIX.; Germar (44), Pl. IX.; Renault and      |
-| Zeiller (88), Pls. XLV. and XLVI. There are some well-preserved      |
-| impressions of _A. stellata_ in the British Museum from Radstock,    |
-| Newcastle and elsewhere.                                             |
-|                                                                      |
-| [673] Zenker (33), Pl. V. pp. 6–9.                                   |
-|                                                                      |
-| [674] Heer (65), fig. 6, p. 9, and other authors.                    |
-|                                                                      |
-| [675] Weiss (76), p. 27, Pl. III. fig. 2.                            |
-|                                                                      |
-| [676] Lhwyd (1699), Pl. V. fig. 202.                                 |
-|                                                                      |
-| [677] Sterzel (82).                                                  |
-|                                                                      |
-| [678] _Vide_ Weiss (76), Pl. III. and Weiss (84), p. 178.            |
-|                                                                      |
-| [679] Williamson (71), p. 487, Pls. XXV. and XXVI.                   |
-|                                                                      |
-| [680] _Ibid._ (78), p. 319, Pl. XIX.                                 |
-|                                                                      |
-| [681] Cash and Hick (81), p. 400.                                    |
-|                                                                      |
-| [682] Williamson (81), _vide_ also Spencer (81).                     |
-|                                                                      |
-| [683] Spencer (83), p. 459.                                          |
-|                                                                      |
-| [684] Williamson (83), p. 459, Pls. XXVII.–XXX.                      |
-|                                                                      |
-| [685] Renault (85).                                                  |
-|                                                                      |
-| [686] Lindley and Hutton (31), Pls. LXXVIII. and LXXIX. (The         |
-| specimens are figured in a reversed position.)                       |
-|                                                                      |
-| [687] Binney (68), p. 5, fig. 1.                                     |
-|                                                                      |
-| [688] Grand’Eury (77), Pls. I. and II.; (87), Pls. XXVII., XXVIII.   |
-|                                                                      |
-| [689] Weiss (84), Pls. II.–IV., VIII. and IX.                        |
-|                                                                      |
-| [690] Stur (87), Pls. III., VI., VII., _etc._; Zeiller (86), Pl.     |
-| LIV.                                                                 |
-|                                                                      |
-| [691] Weiss (76), (84).                                              |
-|                                                                      |
-| [692] For references, _vide_ Kidston (86), p. 58.                    |
-|                                                                      |
-| [693] Artis (25), Pl. V.                                             |
-|                                                                      |
-| [694] Williamson and Scott (95), p. 694.                             |
-|                                                                      |
-| [695] Williamson (83²), Pl. XXIX. fig. 7.                            |
-|                                                                      |
-| [696] Williamson and Scott (95), Pls. XV.–XVII.                      |
-|                                                                      |
-| [697] For figures _vide_ Williamson, _loc. cit._, Williamson and     |
-| Scott, and Renault (85), (93).                                       |
-|                                                                      |
-| [698] _E.g._ Schenk (90) in Zittel’s _Handbuch_, p. 237.             |
-|                                                                      |
-| [699] Williamson and Scott, _loc. cit._ p. 689.                      |
-|                                                                      |
-| [700] de Bary (84), p. 474; van Tieghem (91), p. 720.                |
-|                                                                      |
-| [701] Renault (96), pp. 118, 126; (93), Pl. LV.                      |
-|                                                                      |
-| [702] Carruthers (67), Pl. LXX.                                      |
-|                                                                      |
-| [703] Sternberg (25), Pl. XLVIII. and LI.                            |
-|                                                                      |
-| [704] Brongniart (49), p. 51.                                        |
-|                                                                      |
-| [705] Binney (68), p. 23, Pls. IV. and V.                            |
-|                                                                      |
-| [706] Schimper (69), p. 330.                                         |
-|                                                                      |
-| [707] For figures and descriptions of this type of cone _vide_       |
-| Williamson (73), (80), (89); Hick (93), (94) and Williamson and      |
-| Scott (94).                                                          |
-|                                                                      |
-| [708] Weiss (84), Pls. XXII.—XXIV.                                   |
-|                                                                      |
-| [709] Williamson and Scott (94), p. 911, Pls. LXXXI. and LXXXII.     |
-|                                                                      |
-| [710] _Vide_ Heinricher (82); Bower (94), p. 495; Campbell (95),     |
-| pp. 396, 503.                                                        |
-|                                                                      |
-| [711] Williamson (81), Pl. LIV.                                      |
-|                                                                      |
-| [712] An excellent figure illustrating the co-existence of           |
-| heterospory and secondary thickening is given by Williamson and      |
-| Scott, _loc. cit._, Pl. LXXXII. fig. 36.                             |
-|                                                                      |
-| [713] Weiss (76), p. 103.                                            |
-|                                                                      |
-| [714] Williamson (71²).                                              |
-|                                                                      |
-| [715] _Ibid._ (88²).                                                 |
-|                                                                      |
-| [716] Williamson and Scott (94), p. 900.                             |
-|                                                                      |
-| [717] Weiss (84), Pl. XXI. fig. 4.                                   |
-|                                                                      |
-| [718] Williamson (74), Pl. V. fig. 32.                               |
-|                                                                      |
-| [719] Williamson (88²), Pl. IX. fig. 20.                             |
-|                                                                      |
-| [720] _E.g._ Renault (82), Pl. XIX. fig. 1; (96), Pl. XXIX. figs. 1  |
-| and 4.                                                               |
-|                                                                      |
-| [721] Williamson (88²), Pl. VIII. figs. 1 and 4.                     |
-|                                                                      |
-| [722] Renault (93), Pl. XXIX. fig. 7.                                |
-|                                                                      |
-| [723] Solms-Laubach (91), p. 325.                                    |
-|                                                                      |
-| [724] Weiss (84) p. 161. Solms-Laubach, _loc. cit._ p. 326.          |
-|                                                                      |
-| [725] _E.g._ _Volkmannia Ludwigi_ Carr., also _Volkmannia elongata_  |
-| Presl. [Solms (91), p. 332 and Weiss (76), p. 108].                  |
-|                                                                      |
-| [726] _E.g._ _Brukmannia Grand’Euryi_ Ren. [Renault (76)].           |
-|                                                                      |
-| [727] Weiss (84), p. 190.                                            |
-|                                                                      |
-| [728] Weiss (76), p. 1.                                              |
-|                                                                      |
-| [729] Weiss (84), p. 161.                                            |
-|                                                                      |
-| [730] Renault (82), p. 139; (76).                                    |
-|                                                                      |
-| [731] Solms-Laubach (91), p. 330.                                    |
-|                                                                      |
-| [732] Schenk (88), p. 132; (83), p. 232.                             |
-|                                                                      |
-| [733] Weiss (84), p. 161.                                            |
-|                                                                      |
-| [734] _E.g._ _Volkmannia gracilis_ Sternb. [Renault (76), Pl. II.].  |
-|                                                                      |
-| [735] Schimper (69), p. 332. _Vide_ also Renault and Zeiller (88),   |
-| p. 420.                                                              |
-|                                                                      |
-| [736] Renault (82), p. 120, Pl. XIX.; (93), Pl. XXIX. figs. 8–14;    |
-| (96), p. 77.                                                         |
-|                                                                      |
-| [737] Weiss (84), p. 98, Pl. XX. etc.                                |
-|                                                                      |
-| [738] Sterzel (82).                                                  |
-|                                                                      |
-| [739] Renault and Zeiller (88), Pl. XLVI. fig. 7.                    |
-|                                                                      |
-| [740] Kidston (86), p. 47; (93), p. 319. _Vide_ also Renault (93),   |
-| Pl. XXVIII.                                                          |
-|                                                                      |
-| [741] Renault and Zeiller (88), Pl. XLV.                             |
-|                                                                      |
-| [742] Solms-Laubach (91), p. 339. Weiss (84), p. 159.                |
-|                                                                      |
-| [743] Weiss (84), Pl. XX. fig. 6.                                    |
-|                                                                      |
-| [744] Weiss (84), Pl. XX. fig. 7; Pl. XXI. fig. 4.                   |
-|                                                                      |
-| [745] _Ibid._ Pls. XIV. and XV. _Cf._ also Stur (87), Pls. VI. and   |
-| VII b, and Lesquereux (84), Pl. XC. fig. 1.                          |
-|                                                                      |
-| [746] Grand’Eury (90), pp. 205, 208. Renault and Zeiller (88), Pl.   |
-| LI.                                                                  |
-|                                                                      |
-| [747] _Vide_ Unger (50), p. 63.                                      |
-|                                                                      |
-| [748] Weiss, _loc. cit._                                             |
-|                                                                      |
-| [749] Solms-Laubach (91), p. 328.                                    |
-|                                                                      |
-| [750] Schenk (83), p. 234.                                           |
-|                                                                      |
-| [751] Weiss (76), p. 88; (84), p. 162. Solms-Laubach, _loc. cit._    |
-| p. 334, fig. 47.                                                     |
-|                                                                      |
-| [752] Renault (96), p. 132.                                          |
-|                                                                      |
-| [753] Zeiller (88), Pl. LIV. fig. 4.                                 |
-|                                                                      |
-| [754] Stur (87), p. 17.                                              |
-|                                                                      |
-| [755] Lindley and Hutton (31), Pl. CXLII B. The original specimen    |
-| is in the University College Collection, London.                     |
-|                                                                      |
-| [756] Nathorst (94), p. 56, Pl. XV. figs. 1 and 2.                   |
-|                                                                      |
-| [757] Seward (88).                                                   |
-|                                                                      |
-| [758] Weiss (84), p. 54.                                             |
-|                                                                      |
-| [759] Zeiller (88), p. 329.                                          |
-|                                                                      |
-| [760] Weiss (76), p. 117; (84), p. 55.                               |
-|                                                                      |
-| [761] Weiss (84), p. 93, Pl. XI. fig. 1.                             |
-|                                                                      |
-| [762] _Vide_ Weiss (84), Pl. XXV. fig. 2; Pl. XVI _a_, etc.          |
-|                                                                      |
-| [763] Weiss (76), Pl. XVII. fig. 1.                                  |
-|                                                                      |
-| [764] Weiss (84), Pl. I.                                             |
-|                                                                      |
-| [765] Grand’Eury (90), p. 208, and (77), Pl. V.                      |
-|                                                                      |
-| [766] Lindley and Hutton (31), Pl. CXC.                              |
-|                                                                      |
-| [767] Stur (87), Pl. V. fig. 1.                                      |
-|                                                                      |
-| [768] Grand’Eury (77), Pl. IV.                                       |
-|                                                                      |
-| [769] Stur (87), Pl. XVII.                                           |
-|                                                                      |
-| [770] Renault (82), Pl. XVII. fig. 2.                                |
-|                                                                      |
-| [771] Renault and Zeiller (88), Pt. II. p. 434, Pls. LII. and LIII.  |
-|                                                                      |
-| [772] Stur (87), p. 37, fig. 17. _Vide_ also Grand’Eury (90), p.     |
-| 208.                                                                 |
-|                                                                      |
-| [773] Stur, _loc. cit._                                              |
-|                                                                      |
-| [774] Weiss (84), p. 61.                                             |
-|                                                                      |
-| [775] _Vide_ Grand’Eury (77), Pl. V. fig. 5.                         |
-|                                                                      |
-| [776] Weiss, _loc. cit._ Pl. XXI. fig. 5.                            |
-|                                                                      |
-| [777] Stur (87), Pl. XI. fig. 1.                                     |
-|                                                                      |
-| [778] Renault and Zeiller (88), Pt. II. Pl. LI. p. 423.              |
-|                                                                      |
-| [779] Lindley and Hutton (31), Pl. CXIV. and Pl. CXC. The original   |
-| specimens are in the Natural History Museum, Newcastle-on-Tyne.      |
-|                                                                      |
-| [780] _Ibid._ Pl. CXXX. and Feistmantel (75), Pl. I. fig. 8.         |
-|                                                                      |
-| [781] Lesquereux (79), Pl. XIII. fig. 14.                            |
-|                                                                      |
-| [782] Salter (63), figs. 6 and 7. _Vide_ also Carruthers in          |
-| Woodward, H. (72), p. 168.                                           |
-|                                                                      |
-| [783] Grand’Eury (69); _vide_ also (77) and (90).                    |
-|                                                                      |
-| [784] Renault and Zeiller (88), Pt. II. Pls. LII. and CIII.          |
-|                                                                      |
-| [785] _Ibid._ Pl. LI.                                                |
-|                                                                      |
-| [786] Sternberg (21), Pl. XII.                                       |
-|                                                                      |
-| [787] Weiss (84), p. 61.                                             |
-|                                                                      |
-| [788] Ettingshausen (55), Pl. I. fig. 4.                             |
-|                                                                      |
-| [789] Ettingshausen, _loc. cit._                                     |
-|                                                                      |
-| [790] Grand’Eury (69), p. 709.                                       |
-|                                                                      |
-| [791] Feistmantel (75), Pl. I. fig. 8.                               |
-|                                                                      |
-| [792] Williamson (74), Pl. VII. fig. 45.                             |
-|                                                                      |
-| [793] Weiss (76), Pl. XVII. figs. 1 and 2.                           |
-|                                                                      |
-| [794] Weiss (84), Pl. XVI a. figs. 10 and 11.                        |
-|                                                                      |
-| [795] _Ibid._ Pl. XXV. fig. 2.                                       |
-|                                                                      |
-| [796] Stur (87), Pl. II. etc.                                        |
-|                                                                      |
-| [797] Zeiller (88), p. 363, Pl. LVII. fig. 1.                        |
-|                                                                      |
-| [798] Steinhauer (18), Pl. VI. fig. 1.                               |
-|                                                                      |
-| [799] Kidston (93), p. 311, Pl. II.                                  |
-|                                                                      |
-| [800] Kidston (94), p. 248.                                          |
-|                                                                      |
-| [801] Weiss (84), p. 119.                                            |
-|                                                                      |
-| [802] Steinhauer (18), Pl. V. figs. 1 and 2.                         |
-|                                                                      |
-| [803] Artis (25), Pl. XXIV.                                          |
-|                                                                      |
-| [804] Brongniart (28²), Pls. XV. and XVI.                            |
-|                                                                      |
-| [805] Lindley and Hutton (31), Pl. LXXIX.                            |
-|                                                                      |
-| [806] Kidston (93), p. 314; (86), p. 24.                             |
-|                                                                      |
-| [807] Zeiller (88), p. 333.                                          |
-|                                                                      |
-| [808] Lindley and Hutton (31), Pl. LXXIX.                            |
-|                                                                      |
-| [809] Weiss (84), Pl. IV. fig. 1.                                    |
-|                                                                      |
-| [810] Renault and Zeiller (88), p. 385.                              |
-|                                                                      |
-| [811] Grand’Eury (90), p. 214.                                       |
-|                                                                      |
-| [812] Stur (87), p. 160, Pl. IX. fig. 2.                             |
-|                                                                      |
-| [813] Kidston (94), p. 249.                                          |
-|                                                                      |
-| [814] Grand’Eury (89), p. 1087.                                      |
-|                                                                      |
-| [815] Zeiller (88), p. 355.                                          |
-|                                                                      |
-| [816] Weiss (84), p. 96.                                             |
-|                                                                      |
-| [817] Sterzel (93), p. 66.                                           |
-|                                                                      |
-| [818] Zeiller, _loc. cit._ p. 353.                                   |
-|                                                                      |
-| [819] Sternberg (25), Pl. XLIX. fig. 5.                              |
-|                                                                      |
-| [820] Brongniart (28²), p. 128, Pl. XIX.                             |
-|                                                                      |
-| [821] Germar and Kaulfuss (31), p. 221, Pl. XLV. fig. 1.             |
-|                                                                      |
-| [822] Lindley and Hutton (31), Pl. CCXVI.                            |
-|                                                                      |
-| [823] Grand’Eury (77), p. 293.                                       |
-|                                                                      |
-| [824] Zeiller (80), Pl. CLXXIV. (expl. plates) fig. 3.               |
-|                                                                      |
-| [825] Weiss (84), pp. 112, 113, 114.                                 |
-|                                                                      |
-| [826] Zeiller (88), p. 353.                                          |
-|                                                                      |
-| [827] Kidston (94), p. 249.                                          |
-|                                                                      |
-| [828] Grand’Eury (90), p. 216 (expl. plates).                        |
-|                                                                      |
-| [829] Stur (87), p. 68.                                              |
-|                                                                      |
-| [830] Stur (87), Pl. X.                                              |
-|                                                                      |
-| [831] Artis (25), Pl. II.                                            |
-|                                                                      |
-| [832] Weiss, _loc. cit._ Pls. V. VI. and X.                          |
-|                                                                      |
-| [833] Grand’Eury (77), (90).                                         |
-|                                                                      |
-| [834] _Vide_ Stur (75), _etc._ for remarks on the course of the      |
-| vascular strands.                                                    |
-|                                                                      |
-| [835] For good figures of the leaves _vide_ Stur (75), Rothpletz     |
-| (80), Ettingshausen (66), Solms (96).                                |
-|                                                                      |
-| [836] Renault (96), p. 80; (93), Pls. XLII. and XLIII. Since         |
-| the above was written an account of the internal structure of        |
-| _Archaeocalamites_ has been published by Solms-Laubach (97); he      |
-| describes the wood as being of the _Arthropitys_ type.               |
-|                                                                      |
-| [837] Renault, _loc. cit._ Pl. XLII. figs. 6 and 7.                  |
-|                                                                      |
-| [838] Stur (75), p. 2, Pls. II.–V.                                   |
-|                                                                      |
-| [839] An examination of the specimens in the Museum of the Austrian  |
-| Geology Survey did not enable me to satisfactorily verify the        |
-| features of the cone as described by Stur; the impressions are far   |
-| from clear.                                                          |
-|                                                                      |
-| [840] Kidston (83²).                                                 |
-|                                                                      |
-| [841] _Vide_ Paterson (41); Lyell (67), vol. I. p. 149 _etc._        |
-|                                                                      |
-| [842] Volkmann (1720), p. 93, Pl. VII. fig. 2.                       |
-|                                                                      |
-| [843] Schlotheim (20), p. 402, Pl. XXII. fig. 4.                     |
-|                                                                      |
-| [844] Sternberg (25).                                                |
-|                                                                      |
-| [845] Brongniart (28²), p. 122, Pl. XXVI. figs. 1 and 2.             |
-|                                                                      |
-| [846] Paterson (41), Pl. III.                                        |
-|                                                                      |
-| [847] Göppert (52), Pls. _III._, _V._, _VI._, _VIII._, _XXXVIII._    |
-|                                                                      |
-| [848] Ettingshausen (66), Pls. I.–IV.                                |
-|                                                                      |
-| [849] Feistmantel (73), Pl. XIV. fig. 5.                             |
-|                                                                      |
-| [850] Zeiller (80), p. 17.                                           |
-|                                                                      |
-| [851] Binney (68), p. 7.                                             |
-|                                                                      |
-| [852] Stur (75), p. 3.                                               |
-|                                                                      |
-| [853] Kidston (86), p. 35.                                           |
-|                                                                      |
-| [854] Schimper and Koechlin-Schlumberger (62), Pl. I. The original   |
-| specimens of Schimper’s figures are in the Strassburg Museum.        |
-|                                                                      |
-| [855] Feistmantel (73), p. 491, Pl. XXIV. figs. 3 and 4.             |
-|                                                                      |
-| [856] _Vide_ specimens 20 A, 20 B, 24 in the Williamson Collection.  |
-|                                                                      |
-| [857] Stur (75), p. 17.                                              |
-|                                                                      |
-| [858] Rothpletz (80), p. 8.                                          |
-|                                                                      |
-| [859] Weiss (84), p. 56.                                             |
-|                                                                      |
-| [860] Scheuchzer (1723), p. 19, Pl. IV. fig. 1.                      |
-|                                                                      |
-| [861] Schlotheim (04), Pl. II. fig. 24, p. 57.                       |
-|                                                                      |
-| [862] Sternberg (25), p. 32.                                         |
-|                                                                      |
-| [863] Brongniart (22), Pl. XIII. fig. 8, p. 234.                     |
-|                                                                      |
-| [864] _Ibid._ (28), p. 68.                                           |
-|                                                                      |
-| [865] Dawson (66), p. 153, Pl. XII.                                  |
-|                                                                      |
-| [866] For reference _vide_ an excellent monograph by Coemans and     |
-| Kickx (64), also Potonié (94).                                       |
-|                                                                      |
-| [867] _e.g._ Newberry (91).                                          |
-|                                                                      |
-| [868] Renault (73), (76²), (96).                                     |
-|                                                                      |
-| [869] Williamson (74), (78).                                         |
-|                                                                      |
-| [870] Williamson and Scott (94), p. 919.                             |
-|                                                                      |
-| [871] Specimen 929 in the Williamson Cabinet is a longitudinal       |
-| section of the French _Sphenophyllum_, as described by Renault       |
-| (76²).                                                               |
-|                                                                      |
-| [872] Williamson and Scott (94), p. 926.                             |
-|                                                                      |
-| [873] Williamson (91), p. 18.                                        |
-|                                                                      |
-| [874] Williamson and Scott (94), p. 920.                             |
-|                                                                      |
-| [875] Williamson (91), p. 12.                                        |
-|                                                                      |
-| [876] _Ibid._ (74).                                                  |
-|                                                                      |
-| [877] Felix (86), Pl. VI. fig. 2.                                    |
-|                                                                      |
-| [878] For figures _vide_ Renault (82), Pl. XVI. fig. 1, (76²) Pls.   |
-| VII. and IX.                                                         |
-|                                                                      |
-| [879] Williamson (71²).                                              |
-|                                                                      |
-| [880] Weiss (84), p. 200.                                            |
-|                                                                      |
-| [881] Binney (71).                                                   |
-|                                                                      |
-| [882] Williamson (91²).                                              |
-|                                                                      |
-| [883] Zeiller (93).                                                  |
-|                                                                      |
-| [884] Williamson (92).                                               |
-|                                                                      |
-| [885] Potonié (94), fig. 1.                                          |
-|                                                                      |
-| [886] For a more complete account of this strobilus _vide_ Zeiller   |
-| (93), and Williamson (91²), _etc._                                   |
-|                                                                      |
-| [887] Zeiller (93), p. 37.                                           |
-|                                                                      |
-| [888] Williamson and Scott (94), p. 943.                             |
-|                                                                      |
-| [889] Scott (97), p. 24.                                             |
-|                                                                      |
-| [890] Solms-Laubach (95⁴).                                           |
-|                                                                      |
-| [891] _Ibid._ Pl. X. fig. 6.                                         |
-|                                                                      |
-| [892] Kidston (90).                                                  |
-|                                                                      |
-| [893] I am indebted to my friend Mr Kidston for an opportunity of    |
-| examining these specimens.                                           |
-|                                                                      |
-| [894] _Vide_ Renault (77), (96), p. 158. Zeiller (93), p. 34.        |
-| Williamson and Scott (94), p. 942.                                   |
-|                                                                      |
-| [895] Brongniart (22), p. 234, Pl. II. fig. 8.                       |
-|                                                                      |
-| [896] Brongniart (28), p. 68.                                        |
-|                                                                      |
-| [897] Bischoff (28), Pl. XIII. fig. 1.                               |
-|                                                                      |
-| [898] Römer, F. (62), p. 21, Pl. V. fig. 2.                          |
-|                                                                      |
-| [899] Sterzel (86), pp. 26, 27, etc.                                 |
-|                                                                      |
-| [900] Kidston (93), p. 333.                                          |
-|                                                                      |
-| [901] Zeiller (88), p. 414.                                          |
-|                                                                      |
-| [902] _Ibid._ p. 411.                                                |
-|                                                                      |
-| [903] Weiss (84), p. 201, Pl. XXI. fig. 12.                          |
-|                                                                      |
-| [904] Solms-Laubach (95⁴), p. 232.                                   |
-|                                                                      |
-| [905] Geinitz (55), Pl. XX. fig. 7.                                  |
-|                                                                      |
-| [906] Zeiller (88), Pl. LXIV. figs. 3–5, and (93), p. 24, Pl. II.    |
-| fig. 4.                                                              |
-|                                                                      |
-| [907] Stur (75), p. 108.                                             |
-|                                                                      |
-| [908] Stur (87), Pl. XV. and Kidston (90), p. 59, Pl. I.             |
-|                                                                      |
-| [909] Zeiller (88), Pl. LXII. figs. 2–4.                             |
-|                                                                      |
-| [910] Stur (87); Williamson (74); Seward (89), _etc._                |
-|                                                                      |
-| [911] Renault (82), p. 84, and Newberry (91).                        |
-|                                                                      |
-| [912] Kidston (90), p. 62.                                           |
-|                                                                      |
-| [913] Stur (75), p. 114, Pl. VII.                                    |
-|                                                                      |
-| [914] Zeiller (93), p. 32.                                           |
-|                                                                      |
-| [915] Mahr (68), Pl. VIII.                                           |
-|                                                                      |
-| [916] Zeiller (80), p. 34, Pl. CLXI. fig. 9.                         |
-|                                                                      |
-| [917] Coemans and Kickx (64); Zeiller (80), (88); Schimper (69).     |
-|                                                                      |
-| [918] Royle (39), p. 431.                                            |
-|                                                                      |
-| [919] For other figures of this plant, _vide_ Feistmantel (81),      |
-| Pls. XI. A and XII. A.                                               |
-|                                                                      |
-| [920] Zeiller (91).                                                  |
-|                                                                      |
-| [921] _Vide_ also Zeiller (92²), p. 75.                              |
-|                                                                      |
-| [922] Feistmantel (81), p. 69.                                       |
-|                                                                      |
-| [923] Scott (97).                                                    |
-|                                                                      |
-| [924] Scott (96²), p. 15.                                            |
-|                                                                      |
-| [925] Dawson (61), p. 10, fig. 7.                                    |
-|                                                                      |
-| [926] Kidston (94), p. 250.                                          |
-|                                                                      |
-| [927] Kidston (94), p. 250.                                          |
-|                                                                      |
-| [928] Sterzel (93), p. 143.                                          |
-|                                                                      |
-| [929] Zeiller (94), p. 172.                                          |
-|                                                                      |
-| [930] De Bary (84), p. 499.                                          |
-|                                                                      |
-| [931] Westermaier and Ambronn (81).                                  |
-|                                                                      |
-| [932] Schwendener (74), p. 124. Haberlandt (96), p. 165.             |
-+----------------------------------------------------------------------+
+                              FOOTNOTES:
+
+  [1] Ward (84).
+
+  [2] Göppert (36).
+
+  [3] Parkinson (11), vol. I.
+
+  [4] For an account of the early views on fossils, _v._ Lyell (67),
+  Vol. I. _Vide_ also Leonardo da Vinci (83).
+
+  [5] Woodward, J. (1695), Preface.
+
+  [6] Woodward, J. (1728), p. 59.
+
+  [7] Mendes da Costa (1758), p. 232.
+
+  [8] Scheuchzer (1723), p. 7, Pl. I. fig. 1.
+
+  [9] Parsons (1757), p. 402.
+
+  [10] Plot (1705), p. 125, Pl. VI. fig. 2.
+
+  [11] _Ibid._ Pl. VI. fig. 2.
+
+  [12] Lhwyd (1760).
+
+  [13] Artis (25).
+
+  [14] Steinhauer (18).
+
+  [15] Schlotheim (04).
+
+  [16] Sternberg (20).
+
+  [17] Brongniart (28) (28²) (49).
+
+  [18] Brongniart (39).
+
+  [19] Heer (55) (68) (76).
+
+  [20] Lesquereux (66) (70) (80) etc.
+
+  [21] Zigno (56).
+
+  [22] Massalongo (51).
+
+  [23] Saporta (72) (73).
+
+  [24] Ettingshausen (79). Also numerous papers on fossil plants from
+  Austria and other countries.
+
+  [25] Sprengel (28).
+
+  [26] Witham (33).
+
+  [27] _ibid._, p. 3.
+
+  [28] Witham (33), p. 5.
+
+  [29] Nicol (34). See note by Prof. Jameson on p. 157 of the paper
+  quoted, to the effect that he has long known of this method of
+  preparing sections.
+
+  [30] Limpricht (90) in Rabenhorst, vol. IV. p. 73.
+
+ [31] Knowlton (89).
+
+ [32] Corda (45).
+
+ [33] Binney (68), Introductory remarks.
+
+ [34] Williamson (71), etc.
+
+ [35] Solms-Laubach (95), p. 442.
+
+ [36] Lindley and Hutton (31).
+
+ [37] Woodward (1729), Pt. ii. p. 106.
+
+ [38] Humboldt (48), vol. I. p. 274.
+
+ [39] _Vide_ Hooker, J. D. (81), for references to other writers on
+ this subject; also Darwin (82), ch. XII.
+
+ [40] Darwin (87), vol. III. p. 247.
+
+ [41] Brongniart (49), p. 94.
+
+ [42] Grand’Eury (77), Potonié (96), Kidston (94), &c.
+
+ [43] Ward (92), Knowlton (94), Grand’Eury (90), p. 155.
+
+ [44] Old Persian writer, quoted by E. G. Browne in _A Year among
+ the Persians_, p. 220, London, 1893.
+
+ [45] W. R. W. Stephens, _Life of Freeman_, p. 132, London, 1895.
+
+ [46] Rothpletz (94).
+
+ [47] Heim (78).
+
+ [48] Geikie (93), p. 706.
+
+ [49] Hughes (79), p. 248.
+
+ [50] Whitney and Wadsworth (84).
+
+ [51] Murchison (72), p. 5.
+
+ [52] Kayser and Lake (95), p. 88.
+
+ [53] Kidston (94).
+
+ [54] Geikie (93), p. 825.
+
+ [55] Woodward, H. B. (87), p. 197.
+
+ [56] Hinde and Fox (95), p. 662.
+
+ [57] Kidston (94).
+
+ [58] _Vide_ Zeiller (92) for a list of species of Coal-Measure
+ plants found in the pieces of shale included in the core brought up
+ by the borer.
+
+ [59] Jukes-Browne (86), p. 252.
+
+ [60] Kayser and Lake (95), p. 196.
+
+ [61] Neumayr (83).
+
+ [62] Woodward, H. B. (87), p. 255.
+
+ [63] Kayser and Lake (95), p. 326.
+
+ [64] Huxley (93), p. 27.
+
+ [65] Discussed at greater length in vol. II.
+
+ [66] Woodward, H. B. (95), Figs. 124 and 133 from photographs by Mr
+ Strahan.
+
+ [67] Buckland (37) Pl. LVII.
+
+ [68] Young, Glen, and Kidston (88).
+
+ [69] Gardner (87), p. 279.
+
+ [70] Treub (88).
+
+ [71] Morton (91), p. 228.
+
+ [72] Lyell (45), vol. I. p. 180.
+
+ [73] Mantell (44), vol. I. p. 168.
+
+ [74] Forbes, H. O. (85), p. 254.
+
+ [75] Hooker, J. D. (91), p. 477.
+
+ [76] Hooker, J. D. (91), p. 1. There are several good specimens of
+ the black pyritised nipadite fruits in the British Museum and other
+ collections.
+
+ [77] Rodway (95), p. 106.
+
+ [78] Bates (63), p. 139.
+
+ [79] Bates (63), p. 239.
+
+ [80] Lyell (67) vol. II. p. 361.
+
+ [81] Lyell (67) vol. I. p. 445.
+
+ [82] Darwin (90) p. 443.
+
+ [83] Challenger (85), Narrative, vol. I. Pt. ii. p. 679.
+
+ [84] Bates (63) p. 389.
+
+ [85] Challenger (85), Narrative, vol. I. p. 459.
+
+ [86] Zeiller (82) and Renault (95).
+
+ [87] Heer (76).
+
+ [88] Schimper and Mougeot (44).
+
+ [89] Sharpe, S. (68) p. 563.
+
+ [90] There are still more perfect casts from Sézanne in Prof.
+ Munier-Chalmas’ Geological collection in the Sorbonne. The best
+ examples have not yet been figured.
+
+ [91] Saporta (68).
+
+ [92] Darwin (90) p. 432.
+
+ [93] For figures of fossil plants in amber, _vide_ Göppert and
+ Berendt (45), Conwentz (90), Conwentz (96) &c.
+
+ [94] Thomas (48).
+
+ [95] Adamson (88).
+
+ [96] Williamson (87) Pl. XV. p. 45. A very fine specimen, similar
+ to that in the Manchester Museum, has recently been added to the
+ School of Mines Museum in Berlin; Potonié (90).
+
+ [97] The British Museum collection contains a specimen of
+ _Stigmaria_ preserved in the same manner as the example shown in
+ fig. 12.
+
+ [98] Lyell (45) vol. I. p. 60.
+
+ [99] Lyell (45) vol. I. p. 147.
+
+ [100] Warming (96) p. 170.
+
+ [101] Bornemann (56), Schenk (67), Zeiller (82).
+
+ [102] Solms-Laubach (95²).
+
+ [103] Nathorst (86) p. 9. See also Delgado (86).
+
+ [104] Parkinson (11) vol. I. p. 431.
+
+ [105] The British Museum collection contains many good examples of
+ the Solenhofen plants.
+
+ [106] There is a splendid silicified tree stem from Tasmania of
+ Tertiary age several feet in height in the National Museum.
+
+ [107] Darwin (90) p. 317.
+
+ [108] Holmes (80) p. 126, fig. 1.
+
+ [109] Marsh (71).
+
+ [110] Conwentz (78).
+
+ [111] A large piece from one of these South African trees is in the
+ Fossil-plant Gallery of the British Museum.
+
+ [112] Barton (1751) p. 58.
+
+ [113] Gardner (84) p. 314.
+
+ [114] Stokes (40) p. 207.
+
+ [115] Witham (81), Christison (76).
+
+ [116] Cole (94), figs. 1 and 3.
+
+ [117] Harker (95) p. 233, fig. 56.
+
+ [118] I am indebted to Dr Renault of Paris for showing to me
+ several preparations illustrating this method of petrifaction.
+
+ [119] Cash and Hick (78).
+
+ [120] Stur (85).
+
+ [121] Thiselton-Dyer (72) Pl. VI.
+
+ [122] Carruthers (70).
+
+ [123] Schultze (55).
+
+ [124] I am indebted to Prof. Lebour of the Durham College of
+ Science for the loan of this letter.
+
+ [125] Seward (97).
+
+ [126] Williamson and Scott (96) Pl. XXIV. fig. 16.
+
+ [127] Bryce (72) p. 126, fig. 23.
+
+ [128] An erroneous interpretation of the Arran stems is given in
+ Lyell’s _Elements of Geology_: Lyell (78) p. 547.
+
+ [129] Guillemard (86) p. 322.
+
+ [130] Heer (55).
+
+ [131] Göppert (36), etc.
+
+ [132] Hirschwald (73).
+
+ [133] Kuntze (80) p. 8.
+
+ [134] Schweinfurth (82).
+
+ [135] Solms-Laubach (91), p. 29.
+
+ [136] Göppert (57). Some of the large silicified trees mentioned by
+ Göppert may be seen in the Breslau Botanic gardens.
+
+ [137] An example referred to by Carruthers (71) p. 444.
+
+ [138] Williamson (71) p. 507.
+
+ [139] Dealt with more fully in vol. II.
+
+ [140] Bentham (70).
+
+ [141] See also Bunbury (83) p. 309.
+
+ [142] Seward (96) p. 208.
+
+ [143] Darwin (90) p. 416.
+
+ [144] Solms-Laubach (91) p. 9.
+
+ [145] Balfour (72) p. 5.
+
+ [146] Grand’Eury (77) Pt. i., p. 3.
+
+ [147] 1 Renault and Zeiller (88) Pl. LX. fig. 1.
+
+ [148] Williamson (73) p. 393, Pl. XXVII. Described in detail in
+ vol. II. See also Solms-Laubach (91) p. 7, fig. 1.
+
+ [149] A good example is figured by Newberry (88) Pl. XXV. as a
+ decorticated coniferous stem of Triassic age.
+
+ [150] Potonié (87).
+
+ [151] Lindley and Hutton (31) vol. III. p. 4. See also Schenk (88)
+ p. 202.
+
+ [152] Saporta (79) (77). _Eopteris_ is included among the ferns
+ in Schimper and Schenk’s volume of Zittel’s _Handbuch der
+ Palaeontologie_ (p. 115), and in some other modern works.
+
+ [153] Reinsch (81).
+
+ [154] Williamson has drawn attention to the occurrence of such
+ borings and coprolites in Coal-Measure plant tissues. _E.g._
+ Williamson (80) Pl. 20, figs. 65 and 66.
+
+ [155] Renault (96) p. 437.
+
+ [156] Slide No. 1923 in the Williamson collection.
+
+ [157] Crépin (81).
+
+ [158] Rules for Zoological Nomenclature, drawn up by the late H. E.
+ Strickland, M.A., F.R.S., London, 1878.
+
+ [159] Lhwyd (1699).
+
+ [160] Knowlton (96) p. 82.
+
+ [161] Thiselton-Dyer (95) p. 846.
+
+ [162] Saporta (75) p. 193.
+
+ [163] Seward (95) p. 173.
+
+ [164] Ward (96) p. 874.
+
+ [165] Challenger (85) p. 934.
+
+ [166] Ehrenberg (36) p. 117, Pl. I. figs. 1 and 4, and Ehrenberg
+ (54) Pl. XXXVII. fig. vii.
+
+ [167] Schütt (96) p. 22.
+
+ [168] Bütschli (83–87) p. 1028.
+
+ [169] Challenger Reports (85) p. 939.
+
+ [170] Challenger Reports (91) p. 257.
+
+ [171] Hensen (92), Schütt (93) p. 44.
+
+ [172] Murray, G., and Blackman, V. H. (97).
+
+ [173] Dixon and Joly (97).
+
+ [174] Sorby (79) p. 78.
+
+ [175] Rothpletz (96), p. 909, Pl. XXIII. fig. 4.
+
+ [176] Challenger (85) _passim_. Schütt (93).
+
+ [177] Phillips W. (93).
+
+ [178] Kippis (78) p. 115.
+
+ [179] Darwin (90) p. 13.
+
+ [180] Rothpletz (92).
+
+ [181] Walther (88).
+
+ [182] Cohn (62).
+
+ [183] Murray, G. (95²).
+
+ [184] Thiselton-Dyer (91) p. 226.
+
+ [185] Nicholson and Etheridge (80) p. 28, Pl. IX. fig. 24.
+
+ [186] Wethered (93) p. 237.
+
+ [187] For figures of the sheaths of Cyanophyceous algae, see Murray
+ (95²), Pl. XIX. fig. 5. Gomont (88) and (92); _etc._
+
+ [188] Brown (94) p. 203.
+
+ [189] For references to the papers of Wethered and others, see
+ Seward (94), p. 24.
+
+ [190] E. G. Bornemann (87), Pl. II.
+
+ [191] Moseley, H. N. (75), p. 321.
+
+ [192] Weed (87–88), _vide_ also Tilden (97).
+
+ [193] Bornet and Flahault (89²) Pl. XI.
+
+ [194] Batters (92).
+
+ [195] Quekett (54), fig. 78.
+
+ [196] Kölliker (59) and (59²); good figures in the latter paper.
+
+ [197] Rose (55), Pl. I.
+
+ [198] For other references _vide_ Bornet and Flahault (89²).
+
+ [199] Duncan (76) and (76²).
+
+ [200] Similar borings are figured by Kölliker (59²), Pl. XVI. 14,
+ in a scale of _Beryx ornatus_ from the Chalk.
+
+ [201] Bornet and Flahault (89²).
+
+ [202] E. G. Wedl (59). Good figures are given in this paper.
+
+ [203] Bornemann (86), p. 126, Pls. V. and VI.
+
+ [204] Renault (96¹) p. 446.
+
+ [205] Treub (88).
+
+ [206] Williamson (88).
+
+ [207] Heer (55) vol. I. p. 21, Pl. IV. fig. 2.
+
+ [208] de Bary (87) p. 9. A good account of the Schizomycetes
+ has lately been written by Migula in Engler and Prantl’s
+ _Pflanzenfamilien_, Leipzig, 1896.
+
+ [209] 1 µ = 0·001 millimetres.
+
+ [210] James (98²), translation of a paper by M. Ferry in the _Revue
+ Mycologique_, 1893.
+
+ [211] Zeiller (82).
+
+ [212] Renault (95¹), (96¹) p. 478, (96²) p. 106. (Several figures
+ of the cuticles are given in these publications.)
+
+ [213] Renault (96¹) p. 492.
+
+ [214] Renault (95²), (96¹), (96²).
+
+ [215] Renault and Bertrand (94). See also Renault (95²) p. 3, (96¹)
+ p. 449, Pl. LXXXIX. (96²) p. 94, and (96³) p. 280, fig. 3.
+
+ [216] Renault (95²) p. 17, fig. 9, (96¹) p. 460, fig. 102, and
+ (96³) p. 292, fig. 10.
+
+ [217] Renault (96³) p. 297, fig. 14.
+
+ [218] Van Tieghem (77).
+
+ [219] Van Tieghem (79).
+
+ [220] Vogelsang (74). _Vide_ also Rutley (92).
+
+ [221] I am indebted to Prof. Kanthack for calling my attention
+ to an interesting account of Bacilli in small stones found in
+ gall-bladders; a manner of occurrence comparable to that of the
+ fossil forms in petrified tissues. _Vide_ Naunyn (96) p. 51.
+
+ [222] Renault (96³) p. 277.
+
+ [223] Hooker, J. D. (44) p. 457. Pls. CLXVII. CLXVIII. and CLXXI. D.
+
+ [224] An American writer has recently discussed the literature and
+ history of _Fucoides_; he gives a list of 85 species. It is very
+ doubtful if such work as this is worth the labour. (James [93].)
+
+ [225] Wille (97) p. 136, also Murray, G. (95) p. 121.
+
+ [226] Linnarsson (69) Pl. XI. fig. 3. There are many good specimens
+ of this fossil in the Geological Survey Museum, Stockholm.
+
+ [227] Nathorst (81²), and (96).
+
+ [228] Nathorst (81) p. 14.
+
+ [229] Mantell (33) p. 166. _Vide_ also Morris (54) p. 6.
+
+ [230] Bateson (88).
+
+ [231] Nathorst (81), (86) &c. Dawson (88) p. 26 _et seq._ Dawson
+ (90) Delgado (86) Williamson (85) Hughes (84) Zeiller (84) Saporta
+ (81) (82) (84) (86) Fuchs (95) Rothpletz (96).
+
+ [232] Kinahan (58).
+
+ [233] Sollas (86).
+
+ [234] Barrois (88). References to other records of this genus may
+ be found in Barrois’ paper.
+
+ [235] Zeiller (84). _Phymatoderma_ is probably a horny sponge
+ (_vide_ p. 154).
+
+ [236] Newberry (88) p. 82, Pl. XXI. There are some large specimens
+ of this supposed alga in the National Museum, Washington; they are
+ undoubtedly of the nature of rill-marks.
+
+ [237] _Vide_ Williamson (85).
+
+ [238] Dawson (90) p. 615.
+
+ [239] Salter (78) p. 99.
+
+ [240] Lapworth (81) p. 176, Pl. VII. fig. 7.
+
+ [241] Rothpletz (96).
+
+ [242] A term applied to a certain facies of Eocene and Oligocene
+ rocks in Central Europe.
+
+ [243] Hall (47) Pl. LXVIII. 1 and 2, p. 261.
+
+ [244] Nathorst (83) p. 453.
+
+ [245] Seward (94²) p. 4.
+
+ [246] Kidston (83) Pl. XXXII. fig. 2. Specimens of this form may be
+ seen in the British Museum collection.
+
+ [247] _Cf._ Matthew, G. F. (89). Hall called attention in 1852 to
+ the prevalent habit of describing ‘algae’ from the older strata,
+ without any evidence for a vegetable origin. (Hall [52] p. 18.)
+
+ [248] Credner (87) p. 431.
+
+ [249] Saporta (84) p. 45, Pl. VII.
+
+ [250] Solms-Laubach (91) p. 51.
+
+ [251] A monograph on the Diatomaceae has recently been written by
+ Schütt for Engler and Prantl’s systematic work. See also Murray, G.
+ (97) and Pfitzer (71).
+
+ [252] Darwin (90) p. 5.
+
+ [253] Weed (87).
+
+ [254] Wilson (87).
+
+ [255] Ehrenberg (54).
+
+ [256] Noll (95) p. 248.
+
+ [257] Hooker, J. D. (44) vol. I. p. 503.
+
+ [258] Murray, J. and Renard (91) p. 208.
+
+ [259] Nansen, Daily Chronicle, Nov. 2, 1896.
+
+ [260] Schütt (93) p. 10.
+
+ [261] Ehrenberg (36) p. 77.
+
+ [262] Cayeux (92), (97).
+
+ [263] Shrubsole and Kitton (81).
+
+ [264] I am indebted to Mr Murton Holmes for specimens of these
+ London Clay Diatoms.
+
+ [265] Rothpletz (96) p. 910, fig. 3, Pl. XXIII. fig. 203.
+
+ [266] Schütt (96) p. 62.
+
+ [267] Castracane (76).
+
+ [268] Heer (76) p. 66, Pl. XXIII. and (53) p. 117, Pl. VI.
+
+ [269] Stefani (82) p. 103.
+
+ [270] The Chlorophyceae have recently been exhaustively dealt with
+ by Wille (97) in Engler and Prantl’s _Pflanzenfamilien_.
+
+ [271] _Vide_ p. 142.
+
+ [272] Murray G. (95) p. 123.
+
+ [273] Göppert (60) p. 439. Pl. XXXIV. fig. 8.
+
+ [274] Zeiller (84).
+
+ [275] Murray G. (92) p. 11; also (95) p. 127.
+
+ [276] Damon (88) Pl. XIX. fig. 12.
+
+ [277] _Vide_ also Rothpletz (96) p. 894.
+
+ [278] Ellis (1755) Pl. XXXIII. α p. 86.
+
+ [279] Fuchs (96) Pl. VIII. fig. 3.
+
+ [280] Murray G. (95) Pl. III. figs. 1 and 2.
+
+ [281] Rothpletz (90), and (91) Pls. XV. and XVI.
+
+ [282] Bornemann (87) p. 17, Pl. II. pp. 1–4.
+
+ [283] Lamouroux (21) Pl. XXV. fig. 5, p. 23.
+
+ [284] Munier-Chalmas (79).
+
+ [285] For references to genera of calcareous algae previously
+ referred to Foraminifera, _vide_ Sherborn (93).
+
+ [286] Lamarck (16) p. 193.
+
+ [287] Defrance (26) Pl. XLVIII. fig. 2, and Pl. L. fig. 6.
+
+ [288] Carpenter (62) p. 179, Pl. XII. figs. 9 and 10.
+
+ [289] Michelin (40–47) Pl. XLVI. fig. 24.
+
+ [290] Munier-Chalmas (79).
+
+ [291] Lamouroux (21) Pl. XXV. fig. 6, p. 23.
+
+ [292] Harvey (58) Vol. I. Pl. XXII. fig. 3.
+
+ [293] Fuchs (94).
+
+ [294] Lamouroux gives a figure of _Acetabularia_, and includes this
+ genus with several other algae in the animal kingdom (Lamouroux
+ [21] p. 19), Pl. LXIX.).
+
+ [295] Solms-Laubach (95³).
+
+ [296] D’Archiac (43) p. 386, Pl. XXV. fig. 8.
+
+ [297] Solms-Laubach _loc. cit._ p. 33, Pl. III.
+
+ [298] D’Archiac (43) p. 386, Pl. XXV. fig. 8.
+
+ [299] Michelin (40) p. 176, Pl. XLVI. fig. 14.
+
+ [300] Carpenter (62) p. 137, Pl. XI. figs. 27–82.
+
+ [301] Solms-Laubach _loc. cit._ p. 32.
+
+ [302] _Ibid._ p. 34, Pl. III. fig. 13.
+
+ [303] Andrussow (87).
+
+ [304] Solms-Laubach (95³) p. 11.
+
+ [305] Carpenter (62) Pl. XI. fig. 32.
+
+ [306] Reuss (61) p. 8, figs. 5–8.
+
+ [307] Ellis (1755) Pl. XXV. C.
+
+ [308] Solms-Laubach (91) p. 38 gives a detailed description with
+ two figures of a recent species of _Cymopolia_.
+
+ [309] Murray G. (95).
+
+ [310] Wille (97).
+
+ [311] Munier-Chalmas (77).
+
+ [312] Cramer (87) (90).
+
+ [313] Solms-Laubach (91) (93) (95³).
+
+ [314] Church (95).
+
+ [315] Gümbel (71).
+
+ [316] Benecke (76).
+
+ [317] Defrance (26) p. 453.
+
+ [318] Munier-Chalmas (77) p. 815.
+
+ [319] Munier-Chalmas _ibid._
+
+ [320] Defrance (26) Pl. XLVIII. fig. 1.
+
+ [321] Stolley (93).
+
+ [322] Deecke (83).
+
+ [323] Benecke (76) Pl. XXIII.
+
+ [324] Solms-Laubach (91) p. 42.
+
+ [325] Rothpletz (94) p. 24.
+
+ [326] Lamarck (16) p. 188.
+
+ [327] Carpenter (62) Pl. X.
+
+ [328] Gümbel (71). _Vide_ also Solms-Laubach (91) p. 39.
+
+ [329] Stolley (93).
+
+ [330] Schlüter (79).
+
+ [331] Saporta (91) Pl. XXXII. &c.
+
+ [332] Solms-Laubach (93), Pl. IX. figs. 1, 8.
+
+ [333] Cramer (90).
+
+ [334] Rothpletz (92²) p. 235.
+
+ [335] Steinmann (80).
+
+ [336] Solms-Laubach (91), p. 40. fig. 3. _Vide_ also Deecke (83)
+ Pl. I. fig. 12.
+
+ [337] Brongniart (28) p. 211.
+
+ [338] Bornemann (91) p. 485. Pls. 42 and 43.
+
+ [339] Seward (95²) p. 367.
+
+ [340] Report of the Trial (62).
+
+ [341] Bertrand and Renault (92) p. 29.
+
+ [342] Bertrand (93), Bertrand and Renault (92) (94), Bertrand (96),
+ Renault (96). Additional references may be found in these memoirs.
+
+ [343] Batters (92). _Vide_ also Schmitz (97) p. 315.
+
+ [344] Hauck (85) in Rabenhorst’s _Kryptogamen Flora_, vol. II.
+
+ [345] Kent (93) p. 140.
+
+ [346] Agassiz (88) vol. I. p. 82.
+
+ [347] Walther (85).
+
+ [348] _Ibid._ (88) p. 478.
+
+ [349] Philippi (37) p. 387.
+
+ [350] Rosanoff(66) Pl. VI. fig. 10.
+
+ [351] Rothpletz (91) Pl. XVII. fig. 4.
+
+ [352] Früh (90) fig. 12.
+
+ [353] Kjellman (83).
+
+ [354] Holmes and Batters (90) p. 102.
+
+ [355] Hauck (85). Rosanoff (66). Rosenvinge (93) p. 779. Kjellman
+ (83) p. 88. Solms-Laubach (81).
+
+ [356] Unger (58).
+
+ [357] A microscopic section of the Vienna Leithakalk is figured in
+ Nicholson and Lydekker’s _Manual of Palæontology_ (89) vol. II. p.
+ 1497.
+
+ [358] Gümbel (71) Pl. II. fig. 7, p. 41.
+
+ [359] Hauck (85) p. 272.
+
+ [360] Rothpletz (91) Pl. XVII. fig. 4.
+
+ [361] _Vide_ Walther (88) p. 499; also Jukes-Browne and Harrison
+ (91) _passim_. I am indebted to Mr G. F. Franks, who has studied
+ the Barbadian reefs, for the opportunity of examining sections of
+ West-Indian coral-rock.
+
+ [362] Brown A. (94).
+
+ [363] Brown A. (94) p. 147.
+
+ [364] _ibid._ p. 200.
+
+ [365] _e.g._ Saporta (82) p. 12.
+
+ [366] Turner (11) vol. II. p. 51.
+
+ [367] Rothpletz (96).
+
+ [368] Penhallow (96) p. 45.
+
+ [369] Dawson (59).
+
+ [370] _Vide_ ‘Academy’ 1870, p. 16.
+
+ [371] Carruthers (72).
+
+ [372] Penhallow (89).
+
+ [373] Barber (92).
+
+ [374] Solms-Laubach (95²).
+
+ [375] Penhallow (96).
+
+ [376] _loc. cit._ p. 83.
+
+ [377] Dawson (59), also (71) p. 17.
+
+ [378] Penhallow (89) and (96) p. 46.
+
+ [379] Barber (92) p. 336.
+
+ [380] Penhallow (89) and (93).
+
+ [381] Dawson (81) p. 302.
+
+ [382] Barber (92).
+
+ [383] Hicks (81) p. 490.
+
+ [384] Lake (95) p. 22.
+
+ [385] Solms-Laubach (95²).
+
+ [386] A similar method of fossilisation has been noted by Rothpletz
+ in the case of the Lower Devonian alga _Hostinella_. [Rothpletz
+ (96) p. 896.]
+
+ [387] Penhallow (96) p. 47.
+
+ [388] Carruthers (72) p. 162 regards this species as identical with
+ _N. Logani_.
+
+ [389] Seward (95³).
+
+ [390] Strickland and Hooker (53).
+
+ [391] Hicks (81) p. 484.
+
+ [392] Dawson (82) p. 104.
+
+ [393] Barber (89) and (90).
+
+ [394] Murray G. (95³).
+
+ [395] Hooker J. D. (89).
+
+ [396] _loc. cit._
+
+ [397] Solms-Laubach (95²) p. 81.
+
+ [398] Seward (94²) p. 4.
+
+ [399] An excellent monograph on the Mycetozoa has lately been
+ issued by the Trustees of the British Museum under the authorship
+ of Mr A. Lister (94). _Vide_ also Schröter (89) in Engler and
+ Prantl’s _Natürlichen Pflanzenfamilien_.
+
+ [400] Renault (96) p. 422, figs. 75 and 76.
+
+ [401] Schröter (89) p. 32, fig. 18 B.
+
+ [402] Cash and Hick (78²) Pl. VI. fig. 3.
+
+ [403] Göppert and Menge (83) Pl. XIII. fig. 106.
+
+ [404] Harper (95).
+
+ [405] _e.g._ Ludwig (57) Pl. XVI. fig. 1.
+
+ [406] Potonié (93) p. 27, Pl. I. fig. 8.
+
+ [407] References are given by Potonié to illustrations by Zeiller
+ (92²) Pl. XV. fig. 6, Grand’ Eury (77) Pl. XXXIII. fig. 7, and
+ others in which possible fungi are represented.
+
+ [408] Engelhardt (87).
+
+ [409] For figures of the Coccineae, see Comstock (88), Maskell
+ (87), Judeich and Nitsche (95) &c.
+
+ [410] Massalongo (59) Pl. I. fig. 1, p. 87.
+
+ [411] Meschinelli (92).
+
+ [412] James, J. F. (93²).
+
+ [413] Lesquereux (87).
+
+ [414] Herzer (93).
+
+ [415] Conwentz (90) Pl. XII. fig. 5.
+
+ [416] Feilden, H. W. (96); Seward (96²) p. 62, appendix to
+ Feilden’s paper. I am indebted to Dr Bonney for an opportunity of
+ examining the plant remains from the Feilden collection.
+
+ [417] Hartig (78).
+
+ [418] Conwentz (80) Pl. V. fig. 17.
+
+ [419] Carruthers (70) Pl. XXV. fig. 3.
+
+ [420] Renault (96) p. 427, fig. 80, _d_.
+
+ [421] _ibid._ p. 427, fig. 80, _a–c_.
+
+ [422] p. 127.
+
+ [423] Etheridge (92) Pl. VII.
+
+ [424] Hartig (78) and (94), Göppert and Menge (83).
+
+ [425] Renault (96) p. 425, fig. 78.
+
+ [426] Fischer in Rabenhorst, vol. i. (92) p. 144.
+
+ [427] Carruthers (76) p. 22, fig. 1.
+
+ [428] Smith, W. O. (77) p. 499.
+
+ [429] Williamson (81) Pl. XLVIII. p. 301.
+
+ [430] Renault (96) p. 439, figs. 88 and 89.
+
+ [431] Cash and Hick (78²).
+
+ [432] Cash and Hick, Pl. VI. fig. 3.
+
+ [433] Felix (94) p. 276, Pl. XIX. fig. 1.
+
+ [434] _ibid._ p. 274, Pl. XIX. figs. 5 and 6.
+
+ [435] Williamson (78) and (80).
+
+ [436] Conwentz (90) p. 119, Pl. XI. pp. 2, 3, Pl. XV. fig. 8.
+
+ [437] Migula (90) in Rabenhorst’s _Kryptogamen Flora_, vol. V.
+
+ [438] Vaillant (1719) p. 17.
+
+ [439] Migula (90) p. 53.
+
+ [440] Knowlton (89²).
+
+ [441] Meek (73) p. 219.
+
+ [442] Saporta (73) p. 214, Pl. IX. figs. 8–11.
+
+ [443] Seward (94²) p. 13, fig. 1.
+
+ [444] Woodward, H. B. (95) pp, 234, 261, _etc._
+
+ [445] Forbes, E. (56) p. 160, Pl. VII.
+
+ [446] _Vide_ p. 69, fig. 10.
+
+ [447] Lyell (29).
+
+ [448] Skertchly (77) p. 60.
+
+ [449] Schiffner and Müller in Engler and Prantl (95), Campbell
+ (95), Dixon and Jameson (96) are among the best of modern writers
+ on the Bryophyta.
+
+ [450] Hooker, J. D. (91) p. 513.
+
+ [451] Schiffner (95) p. 140.
+
+ [452] Hooker, W. J. (20) Pl. CLXIII.
+
+ [453] Bennett and Brown (38), Pl. V.
+
+ [454] Bennett and Brown (38) p. 35.
+
+ [455] Nathorst (90) Pl. II. fig. 3.
+
+ [456] Lindenberg (39) Pl. IX. fig. 1.
+
+ [457] Zeiller (92²) Pl. I. figs. 7 and 8.
+
+ [458] Fliche and Bleicher (81).
+
+ [459] Brongniart (49) p. 12.
+
+ [460] Seward (94²) p. 17.
+
+ [461] Leckenby (64) Pl. XI. fig. 3.
+
+ [462] Seward _loc. cit._ p. 18, Pl. I. fig. 3.
+
+ [463] Raciborski (94) p. 10, Pl. VII. figs. 1–3.
+
+ [464] Brongniart (49) p. 12.
+
+ [465] Saporta (68) p. 308, Pl. I. figs. 1–8. _Vide_ also Watelet
+ (66) p. 40, Pl. XI. fig. 6.
+
+ [466] Göppert and Berendt (45) Pl. VI. and (53).
+
+ [467] Gottsche (86).
+
+ [468] Schimper (65) Pl. III.
+
+ [469] Greville (47) Pl. XII.
+
+ [470] Brown, R. (11) Pl. XXIII.
+
+ [471] Hooker, W. J. (20) Pl. CLXII.
+
+ [472] Limpricht (90) p. 67.
+
+ [473] Brongniart (28²) p. 93.
+
+ [474] Renault and Zeiller (88) p. 84, Pl. XLI. figs. 2–4.
+
+ [475] Solms-Laubach (91) p. 186.
+
+ [476] Lesquereux (79) Pl. LXII. fig. 1.
+
+ [477] Heer (65) p. 89.
+
+ [478] Buckman (50) 1.
+
+ [479] Gardner (86) p. 203.
+
+ [480] Ludwig (59) p. 165, Pl. LXIII. fig. 9.
+
+ [481] Schimper and Schenk (90) p. 75.
+
+ [482] _e.g._ the Fern _Trichomanes Goebelianum_ Gies. Giesenhagen
+ (92) p. 157.
+
+ [483] Scott (96) a text-book for elementary students; a full
+ account is given of _Equisetum_ and other genera of primary
+ importance. Vines (95) Part iii. Campbell (95), Luerssen (89) in
+ Rabenhorst’s _Kryptogamen-Flora_, vol. III., Van Tieghem (91), de
+ Bary (84), Baker (87).
+
+ [484] Wallace (86) p. 117.
+
+ [485] Baker (87) p. 4. Hooker, W. J. (61) Pl. LXXIV. _Vide_ also
+ Milde (67) for figures of _Equisetum_.
+
+ [486] Seeman (65).
+
+ [487] Duval-Jouve (64) Pl. I. fig. 5.
+
+ [488] Milde (67) Pl. XIX. fig. 8.
+
+ [489] _ibid._ Pl. XXXI. fig. 3.
+
+ [490] Cormack (93) p. 71.
+
+ [491] Williamson and Scott (94) p. 877. These authors, in referring
+ to Cormack’s description of the secondary nodal wood of _E.
+ maximum_, express doubts as to the existence of such secondary
+ growth in _all_ species of the genus.
+
+ [492] Pfitzer (67).
+
+ [493] Strasburger (91) p. 443.
+
+ [494] Strasburger (91) p. 435.
+
+ [495] Bower (94) p. 495.
+
+ [496] Sternberg (38) p. 43.
+
+ [497] Scott (97). This genus will be described in Volume II.
+
+ [498] Potonié (93) Pl. XXV. fig. 1_a_.
+
+ [499] _ibid._ p. 179. _Vide_ also Potonié (92).
+
+ [500] Zeiller (92²) p. 56, Pl. XII. Other similar leaf-sheaths have
+ been figured by Germar (44) Pl. X., Schimper (74) Pl. XVII. and
+ others.
+
+ [501] Grand’Eury (90) p. 223, Pl. XV. fig. 16.
+
+ [502] Renault (93) Pl. XLII. figs. 6 and 7.
+
+ [503] Kidston (92).
+
+ [504] Zeiller (95).
+
+ [505] Potonié (93) p. 179, Pl. XXV. figs. 2–4.
+
+ [506] Renault and Zeiller (88) p. 396, Pl. LVII. fig. 7.
+
+ [507] Lindley and Hutton (31) Pl. CXIV.
+
+ [508] Schoenlein and Schenk (65) Pl. V. fig. 1.
+
+ [509] Schimper and Mougeot (44) p. 58, Pl. XXIX.
+
+ [510] Jäger (27).
+
+ [511] Schimper (74) Pls. IX–XI.
+
+ [512] Schimper and Koechlin-Schlumberger (62).
+
+ [513] Schoenlein and Schenk (65) Pls. I–IV.
+
+ [514] Brongniart (28) p. 115, Pl. XIII.
+
+ [515] Young and Bird (22) p. 185, Pl. III. fig. 3.
+
+ [516] König, in Murchison (29) p. 293, Pl. XXXII.
+
+ [517] Murchison (29) p. 368.
+
+ [518] Bunbury (51) p. 189.
+
+ [519] Schimper (69) p. 267.
+
+ [520] Zigno (56) Pl. III. fig. 1, p. 45.
+
+ [521] Gardner (86) Pl. IX. fig. 3.
+
+ [522] Williamson (83) p. 4.
+
+ [523] Williamson and Scott (94) p. 889, Pl. LXXIX. fig. 19.
+
+ [524] Phillips J. (29) Pl. X. fig. 13.
+
+ [525] Lindley and Hutton (31) Pl. CLXXXVI.
+
+ [526] Bunbury (51) p. 189.
+
+ [527] Zigno (56) Pl. III. fig. 3, p. 46.
+
+ [528] Heer (77) p. 43, Pl. IV.
+
+ [529] Schimper (69) p. 284. _Vide_ also Nathorst (80) p. 54.
+
+ [530] Andrae (53) Pl. VI. figs. 1–5.
+
+ [531] Solms-Laubach (91) p. 180.
+
+ [532] _cf._ p. 283.
+
+ [533] There is a similar specimen in the Oxford Museum.
+
+ [534] Since this was written I have found a specimen of
+ _Equisetites lateralis_ in the Woodwardian Museum, in which a
+ diaphragm like that in fig. 64, C, occurs in the centre of a
+ flattened leaf-sheath similar to that of fig. 64, B.
+
+ [535] Buckman (50) p. 414.
+
+ [536] Schenk (67).
+
+ [537] Tenison-Woods (83), Pl. VI. figs. 5 and 6. Specimen no. V.
+ 3358 in the British Museum.
+
+ [538] Dunker (46) p. 2, Pl. V. fig. 7.
+
+ [539] Seward (94²) p. 30.
+
+ [540] Seward (94²) p. 33.
+
+ [541] Heer (55) vol. III. p. 158, Pl. CXLV.
+
+ [542] Heer (77) p. 99, Pl. XXII.
+
+ [543] _Vide_ Saporta (73) p. 227.
+
+ [544] The distribution will be dealt with in Volume II.
+
+ [545] Brongniart (28) p. 151.
+
+ [546] Schmalhausen (79) p. 12, Pl. I. figs. 1–3.
+
+ [547] Solms-Laubach (91) p. 181.
+
+ [548] Zeiller (96).
+
+ [549] Zeiller (96²).
+
+ [550] _ibid._ (96).
+
+ [551] Letter, July 30, 1897.
+
+ [552] On this character of Annularian leaves, _vide_ p. 337.
+
+ [553] Göppert (45) p. 379, Pl. XXV. figs. 1, 2.
+
+ [554] Schmalhausen (79) p. 12.
+
+ [555] McCoy (47) Pl. XI. fig. 7.
+
+ [556] Bunbury (61) Pl. XI. fig. 1.
+
+ [557] Seward (97²) p. 324, Pl. XXIV. fig. 1.
+
+ [558] Feistmantel (81) Pl. IX. A. fig. 7, &c.
+
+ [559] _ibid._ (90) Pl. XIV. fig. 5.
+
+ [560] Bunbury (61) Pl. XI. fig. 1.
+
+ [561] Solms-Laubach (91) p. 181, fig. 17.
+
+ [562] Heer (82) p. 9.
+
+ [563] Potonié (96²) p. 115, fig. 3.
+
+ [564] Zigno (56) Pl. VII. p. 59.
+
+ [565] Bunbury (61).
+
+ [566] Feistmantel (81), Pl. XII. A.
+
+ [567] Brongniart (28) p. 152.
+
+ [568] Bunbury (61).
+
+ [569] Grand’Eury (90) p. 221.
+
+ [570] Etheridge (95).
+
+ [571] Weiss (76) p. 88.
+
+ [572] Heer (77) p. 43, Pl. IV. (78) p. 4, Pl. I.
+
+ [573] Tenison-Woods (83) Pl. IX. fig. 2.
+
+ [574] Brongniart (28) p. 128.
+
+ [575] Schimper and Mougeot (44) p. 48, Pls. XXIV–XXVI.
+
+ [576] Feistmantel (81) p. 59, Pls. I. A–X. A.
+
+ [577] _ante_, p. 284.
+
+ [578] Schimper and Mougeot (44) p. 50, Pls. XXIV–XXVI.
+
+ [579] Seward (97²).
+
+ [580] Scheuchzer (1723), p. 19, Pl. IV. fig. 1.
+
+ [581] Volkmann (1720), p. 110, Pl. XIII. fig. 7.
+
+ [582] Woodward, J. (1728), Pt. II. p. 10.
+
+ [583] Schulze, C. F. (1755), Pl. II. fig. 1.
+
+ [584] Suckow (1784), p. 363.
+
+ [585] Steinhauer (18), Pls. V. and VI.
+
+ [586] Martin (09), Pls. VIII. XXV. and XXVI.
+
+ [587] Artie (25).
+
+ [588] Brongniart (22), p. 218.
+
+ [589] Brongniart (28), p. 34.
+
+ [590] Lindley and Hutton (31).
+
+ [591] Cotta (50). I am indebted to Prof. Stenzel of Breslau for
+ calling my attention to the fact that Cotta’s work appeared in
+ 1832, but in 1850 the same work was sold with a new title-page
+ bearing this date.
+
+ [592] Unger (40).
+
+ [593] Petzholdt (41).
+
+ [594] Unger (44).
+
+ [595] Brongniart (49), p. 49.
+
+ [596] E.g. _Isoetes_, _Botrychium_, &c.
+
+ [597] Mougeot (52).
+
+ [598] Göppert (64), p. 183.
+
+ [599] ἄρθρον, joint; πίτυς, Pine-tree.
+
+ [600] The original specimens described by Göppert are in the rich
+ palaeobotanical Collection of the Breslau Museum.
+
+ [601] Williamson (71³), p. 174.
+
+ [602] _vide_ Solms-Laubach (96).
+
+ [603] Letter, November 1897.
+
+ [604] _Vide_ p. 310.
+
+ [605] Hick (94), Pl. IX. fig. 1.
+
+ [606] On this point _vide_ Williamson and Scott (94), p. 869.
+
+ [607] Williamson and Scott, _loc. cit._ p. 876.
+
+ [608] Renault (93), Pl. XLVII. fig. 4.
+
+ [609] Stur (87).
+
+ [610] The term _primary ray_ may be conveniently restricted to the
+ truly primary interfascicular tissue, and the term _principal ray_
+ may be used for the outward extension of the primary rays by the
+ cambium [Williamson and Scott (94), p. 878].
+
+ [611] Binney (68).
+
+ [612] Ettingshausen (55).
+
+ [613] The sections of fossil plants described by Binney were
+ presented to the Woodwardian Museum, Cambridge, by his son (Mr J.
+ Binney).
+
+ [614] _Vide_ footnote, p. 311.
+
+ [615] Williamson (83²), Pl. XXXIII. fig. 19.
+
+ [616] Williamson (78), p. 323, Pl. XX. figs. 14 and 15.
+
+ [617] Williamson and Scott (94), p. 888.
+
+ [618] Hartig (94), pp. 149, 297, _etc._
+
+ [619] Renault (96), p. 91.
+
+ [620] Williamson and Scott, _loc. cit._ p. 893. _Vide_ specimens
+ 133*–135* in the Williamson Collection.
+
+ [621] _E.g._ specimen 132*** in the Williamson Collection.
+
+ [622] _Vide_ Williamson (71), Pl. XXVIII. fig. 38; (71²), Pl. IV.
+ fig. 15; (78), Pl. XXI. figs. 26–28. Williamson and Scott (94), Pl.
+ LXXII. figs. 5 and 6. Renault (93), Pl. XLV. figs. 4–6, etc. Felix
+ (96), Pl. IV. figs. 2 and 3.
+
+ [623] Strasburger (91), Pl. II. fig. 40.
+
+ [624] Williamson (78).
+
+ [625] Williamson (71), p. 507.
+
+ [626] Williamson (71²), Pl. I. fig. 1; (78), Pl. XXI. fig. 31.
+
+ [627] Lyell (55), p. 368.
+
+ [628] Williamson (96), p. 194.
+
+ [629] _Vide_ specimens 15–17, etc. in the Williamson Collection.
+
+ [630] The stem of fig. 83 is an example of _Arthrodendron_, but the
+ appearance of the secondary xylem agrees with that in some forms of
+ _Arthropitys_.
+
+ [631] For figures of this type of stem _vide_ Göppert (64); Cotta
+ (50), Pl. XV. (specimens 13787 in the British Museum Collection);
+ Mougeot (52), Pl. V.; Stur (87), pp. 27–31; Renault (93), Pls.
+ XLIV. and XLV. etc.
+
+ [632] Williamson (71), (71²), (87), fig. 5.
+
+ [633] Williamson and Scott (94), p. 879
+
+ [634] _Vide_ Williamson (87²). In this paper Williamson compares
+ the three subgenera of Calamite stems. Renault and Zeiller (88),
+ Pl. LXXV. Renault (93), Pls. LVIII. and LIX.
+
+ [635] Renault (96), p. 125; (93), Pl. LIX. fig. 2.
+
+ [636] Lindley and Hutton (31), Pls. CXIV., CXC. etc. Most of the
+ specimens figured by these authors are in the Newcastle Natural
+ History Museum. For notes on the type-specimens of Lindley and
+ Hutton, _vide_ Howse (88) and Kidston (90²).
+
+ [637] Weiss (88), Stur (87), _etc._
+
+ [638] _Vide_, p. 367.
+
+ [639] _Ante_, p. 260.
+
+ [640] Hick (95).
+
+ [641] Brongniart (22), p. 235.
+
+ [642] Schlotheim (20).
+
+ [643] Brongniart (28), p. 159.
+
+ [644] Lindley and Hutton (31), Pl. CXC.
+
+ [645] Ettingshausen (55).
+
+ [646] Schimper (69), p. 323.
+
+ [647] Grand’Eury (90).
+
+ [648] Martin (09), Pl. XX. figs. 4 and 6.
+
+ [649] Schlotheim (20), p. 397.
+
+ [650] Sternberg (25), p. xxviii.
+
+ [651] Brongniart (28), p. 154.
+
+ [652] Lindley and Hutton (31), Pl. CXCI.
+
+ [653] Ettingshausen (55), p. 28.
+
+ [654] Schimper (69), Pls. XXII. and XXVI. fig. 1.
+
+ [655] For other lists and synonyms, _vide_ Zeiller (88), p. 368,
+ and Kidston (86), p. 38 and (93), p. 316, also Potonié (93), p. 162.
+
+ [656] Sternberg (20).
+
+ [657] Brongniart (28), p. 155.
+
+ [658] Lehmann (1756), p. 127. _Vide_ also Volkmanns (1720), Pl.
+ _XV._ p. 113.
+
+ [659] Potonié (93), pp. 169 _et seq._, Pl. XXIV.
+
+ [660] Dawson (71).
+
+ [661] Nicholson (69) Pl. XVIII. _B._ Nicholson’s specimens are in
+ the Woodwardian Museum, Cambridge.
+
+ [662] Schlotheim (20), p. 397.
+
+ [663] Sternberg (26), p. xxviii.
+
+ [664] Brongniart (28), p. 156.
+
+ [665] Lindley and Hutton (31), Pl. CXXIV.
+
+ [666] Binney (68), Pl. VI. fig. 3.
+
+ [667] Stur (87), Pl. XVI b, and Pls. IV b and XIII.
+
+ [668] Scheuchzer (1723), p. 63, Pl. XIII. fig. 3.
+
+ [669] Potonié (93), p. 166.
+
+ [670] _Vide_ pp. 351 _et seq._
+
+ [671] Renault (96), p. 66; (93), Pl. XXVIII.
+
+ [672] One of the finest specimens of _Annularia stellata_ is
+ figured by Stur (87), Pl. XVI b; it is in the Leipzig Museum. VIDE
+ also Schenk (83), Pl. XXXIX.; Germar (44), Pl. IX.; Renault and
+ Zeiller (88), Pls. XLV. and XLVI. There are some well-preserved
+ impressions of _A. stellata_ in the British Museum from Radstock,
+ Newcastle and elsewhere.
+
+ [673] Zenker (33), Pl. V. pp. 6–9.
+
+ [674] Heer (65), fig. 6, p. 9, and other authors.
+
+ [675] Weiss (76), p. 27, Pl. III. fig. 2.
+
+ [676] Lhwyd (1699), Pl. V. fig. 202.
+
+ [677] Sterzel (82).
+
+ [678] _Vide_ Weiss (76), Pl. III. and Weiss (84), p. 178.
+
+ [679] Williamson (71), p. 487, Pls. XXV. and XXVI.
+
+ [680] _Ibid._ (78), p. 319, Pl. XIX.
+
+ [681] Cash and Hick (81), p. 400.
+
+ [682] Williamson (81), _vide_ also Spencer (81).
+
+ [683] Spencer (83), p. 459.
+
+ [684] Williamson (83), p. 459, Pls. XXVII.–XXX.
+
+ [685] Renault (85).
+
+ [686] Lindley and Hutton (31), Pls. LXXVIII. and LXXIX. (The
+ specimens are figured in a reversed position.)
+
+ [687] Binney (68), p. 5, fig. 1.
+
+ [688] Grand’Eury (77), Pls. I. and II.; (87), Pls. XXVII., XXVIII.
+
+ [689] Weiss (84), Pls. II.–IV., VIII. and IX.
+
+ [690] Stur (87), Pls. III., VI., VII., _etc._; Zeiller (86), Pl.
+ LIV.
+
+ [691] Weiss (76), (84).
+
+ [692] For references, _vide_ Kidston (86), p. 58.
+
+ [693] Artis (25), Pl. V.
+
+ [694] Williamson and Scott (95), p. 694.
+
+ [695] Williamson (83²), Pl. XXIX. fig. 7.
+
+ [696] Williamson and Scott (95), Pls. XV.–XVII.
+
+ [697] For figures _vide_ Williamson, _loc. cit._, Williamson and
+ Scott, and Renault (85), (93).
+
+ [698] _E.g._ Schenk (90) in Zittel’s _Handbuch_, p. 237.
+
+ [699] Williamson and Scott, _loc. cit._ p. 689.
+
+ [700] de Bary (84), p. 474; van Tieghem (91), p. 720.
+
+ [701] Renault (96), pp. 118, 126; (93), Pl. LV.
+
+ [702] Carruthers (67), Pl. LXX.
+
+ [703] Sternberg (25), Pl. XLVIII. and LI.
+
+ [704] Brongniart (49), p. 51.
+
+ [705] Binney (68), p. 23, Pls. IV. and V.
+
+ [706] Schimper (69), p. 330.
+
+ [707] For figures and descriptions of this type of cone _vide_
+ Williamson (73), (80), (89); Hick (93), (94) and Williamson and
+ Scott (94).
+
+ [708] Weiss (84), Pls. XXII.—XXIV.
+
+ [709] Williamson and Scott (94), p. 911, Pls. LXXXI. and LXXXII.
+
+ [710] _Vide_ Heinricher (82); Bower (94), p. 495; Campbell (95),
+ pp. 396, 503.
+
+ [711] Williamson (81), Pl. LIV.
+
+ [712] An excellent figure illustrating the co-existence of
+ heterospory and secondary thickening is given by Williamson and
+ Scott, _loc. cit._, Pl. LXXXII. fig. 36.
+
+ [713] Weiss (76), p. 103.
+
+ [714] Williamson (71²).
+
+ [715] _Ibid._ (88²).
+
+ [716] Williamson and Scott (94), p. 900.
+
+ [717] Weiss (84), Pl. XXI. fig. 4.
+
+ [718] Williamson (74), Pl. V. fig. 32.
+
+ [719] Williamson (88²), Pl. IX. fig. 20.
+
+ [720] _E.g._ Renault (82), Pl. XIX. fig. 1; (96), Pl. XXIX. figs. 1
+ and 4.
+
+ [721] Williamson (88²), Pl. VIII. figs. 1 and 4.
+
+ [722] Renault (93), Pl. XXIX. fig. 7.
+
+ [723] Solms-Laubach (91), p. 325.
+
+ [724] Weiss (84) p. 161. Solms-Laubach, _loc. cit._ p. 326.
+
+ [725] _E.g._ _Volkmannia Ludwigi_ Carr., also _Volkmannia elongata_
+ Presl. [Solms (91), p. 332 and Weiss (76), p. 108].
+
+ [726] _E.g._ _Brukmannia Grand’Euryi_ Ren. [Renault (76)].
+
+ [727] Weiss (84), p. 190.
+
+ [728] Weiss (76), p. 1.
+
+ [729] Weiss (84), p. 161.
+
+ [730] Renault (82), p. 139; (76).
+
+ [731] Solms-Laubach (91), p. 330.
+
+ [732] Schenk (88), p. 132; (83), p. 232.
+
+ [733] Weiss (84), p. 161.
+
+ [734] _E.g._ _Volkmannia gracilis_ Sternb. [Renault (76), Pl. II.].
+
+ [735] Schimper (69), p. 332. _Vide_ also Renault and Zeiller (88),
+ p. 420.
+
+ [736] Renault (82), p. 120, Pl. XIX.; (93), Pl. XXIX. figs. 8–14;
+ (96), p. 77.
+
+ [737] Weiss (84), p. 98, Pl. XX. etc.
+
+ [738] Sterzel (82).
+
+ [739] Renault and Zeiller (88), Pl. XLVI. fig. 7.
+
+ [740] Kidston (86), p. 47; (93), p. 319. _Vide_ also Renault (93),
+ Pl. XXVIII.
+
+ [741] Renault and Zeiller (88), Pl. XLV.
+
+ [742] Solms-Laubach (91), p. 339. Weiss (84), p. 159.
+
+ [743] Weiss (84), Pl. XX. fig. 6.
+
+ [744] Weiss (84), Pl. XX. fig. 7; Pl. XXI. fig. 4.
+
+ [745] _Ibid._ Pls. XIV. and XV. _Cf._ also Stur (87), Pls. VI. and
+ VII b, and Lesquereux (84), Pl. XC. fig. 1.
+
+ [746] Grand’Eury (90), pp. 205, 208. Renault and Zeiller (88), Pl.
+ LI.
+
+ [747] _Vide_ Unger (50), p. 63.
+
+ [748] Weiss, _loc. cit._
+
+ [749] Solms-Laubach (91), p. 328.
+
+ [750] Schenk (83), p. 234.
+
+ [751] Weiss (76), p. 88; (84), p. 162. Solms-Laubach, _loc. cit._
+ p. 334, fig. 47.
+
+ [752] Renault (96), p. 132.
+
+ [753] Zeiller (88), Pl. LIV. fig. 4.
+
+ [754] Stur (87), p. 17.
+
+ [755] Lindley and Hutton (31), Pl. CXLII B. The original specimen
+ is in the University College Collection, London.
+
+ [756] Nathorst (94), p. 56, Pl. XV. figs. 1 and 2.
+
+ [757] Seward (88).
+
+ [758] Weiss (84), p. 54.
+
+ [759] Zeiller (88), p. 329.
+
+ [760] Weiss (76), p. 117; (84), p. 55.
+
+ [761] Weiss (84), p. 93, Pl. XI. fig. 1.
+
+ [762] _Vide_ Weiss (84), Pl. XXV. fig. 2; Pl. XVI _a_, etc.
+
+ [763] Weiss (76), Pl. XVII. fig. 1.
+
+ [764] Weiss (84), Pl. I.
+
+ [765] Grand’Eury (90), p. 208, and (77), Pl. V.
+
+ [766] Lindley and Hutton (31), Pl. CXC.
+
+ [767] Stur (87), Pl. V. fig. 1.
+
+ [768] Grand’Eury (77), Pl. IV.
+
+ [769] Stur (87), Pl. XVII.
+
+ [770] Renault (82), Pl. XVII. fig. 2.
+
+ [771] Renault and Zeiller (88), Pt. II. p. 434, Pls. LII. and LIII.
+
+ [772] Stur (87), p. 37, fig. 17. _Vide_ also Grand’Eury (90), p.
+ 208.
+
+ [773] Stur, _loc. cit._
+
+ [774] Weiss (84), p. 61.
+
+ [775] _Vide_ Grand’Eury (77), Pl. V. fig. 5.
+
+ [776] Weiss, _loc. cit._ Pl. XXI. fig. 5.
+
+ [777] Stur (87), Pl. XI. fig. 1.
+
+ [778] Renault and Zeiller (88), Pt. II. Pl. LI. p. 423.
+
+ [779] Lindley and Hutton (31), Pl. CXIV. and Pl. CXC. The original
+ specimens are in the Natural History Museum, Newcastle-on-Tyne.
+
+ [780] _Ibid._ Pl. CXXX. and Feistmantel (75), Pl. I. fig. 8.
+
+ [781] Lesquereux (79), Pl. XIII. fig. 14.
+
+ [782] Salter (63), figs. 6 and 7. _Vide_ also Carruthers in
+ Woodward, H. (72), p. 168.
+
+ [783] Grand’Eury (69); _vide_ also (77) and (90).
+
+ [784] Renault and Zeiller (88), Pt. II. Pls. LII. and CIII.
+
+ [785] _Ibid._ Pl. LI.
+
+ [786] Sternberg (21), Pl. XII.
+
+ [787] Weiss (84), p. 61.
+
+ [788] Ettingshausen (55), Pl. I. fig. 4.
+
+ [789] Ettingshausen, _loc. cit._
+
+ [790] Grand’Eury (69), p. 709.
+
+ [791] Feistmantel (75), Pl. I. fig. 8.
+
+ [792] Williamson (74), Pl. VII. fig. 45.
+
+ [793] Weiss (76), Pl. XVII. figs. 1 and 2.
+
+ [794] Weiss (84), Pl. XVI a. figs. 10 and 11.
+
+ [795] _Ibid._ Pl. XXV. fig. 2.
+
+ [796] Stur (87), Pl. II. etc.
+
+ [797] Zeiller (88), p. 363, Pl. LVII. fig. 1.
+
+ [798] Steinhauer (18), Pl. VI. fig. 1.
+
+ [799] Kidston (93), p. 311, Pl. II.
+
+ [800] Kidston (94), p. 248.
+
+ [801] Weiss (84), p. 119.
+
+ [802] Steinhauer (18), Pl. V. figs. 1 and 2.
+
+ [803] Artis (25), Pl. XXIV.
+
+ [804] Brongniart (28²), Pls. XV. and XVI.
+
+ [805] Lindley and Hutton (31), Pl. LXXIX.
+
+ [806] Kidston (93), p. 314; (86), p. 24.
+
+ [807] Zeiller (88), p. 333.
+
+ [808] Lindley and Hutton (31), Pl. LXXIX.
+
+ [809] Weiss (84), Pl. IV. fig. 1.
+
+ [810] Renault and Zeiller (88), p. 385.
+
+ [811] Grand’Eury (90), p. 214.
+
+ [812] Stur (87), p. 160, Pl. IX. fig. 2.
+
+ [813] Kidston (94), p. 249.
+
+ [814] Grand’Eury (89), p. 1087.
+
+ [815] Zeiller (88), p. 355.
+
+ [816] Weiss (84), p. 96.
+
+ [817] Sterzel (93), p. 66.
+
+ [818] Zeiller, _loc. cit._ p. 353.
+
+ [819] Sternberg (25), Pl. XLIX. fig. 5.
+
+ [820] Brongniart (28²), p. 128, Pl. XIX.
+
+ [821] Germar and Kaulfuss (31), p. 221, Pl. XLV. fig. 1.
+
+ [822] Lindley and Hutton (31), Pl. CCXVI.
+
+ [823] Grand’Eury (77), p. 293.
+
+ [824] Zeiller (80), Pl. CLXXIV. (expl. plates) fig. 3.
+
+ [825] Weiss (84), pp. 112, 113, 114.
+
+ [826] Zeiller (88), p. 353.
+
+ [827] Kidston (94), p. 249.
+
+ [828] Grand’Eury (90), p. 216 (expl. plates).
+
+ [829] Stur (87), p. 68.
+
+ [830] Stur (87), Pl. X.
+
+ [831] Artis (25), Pl. II.
+
+ [832] Weiss, _loc. cit._ Pls. V. VI. and X.
+
+ [833] Grand’Eury (77), (90).
+
+ [834] _Vide_ Stur (75), _etc._ for remarks on the course of the
+ vascular strands.
+
+ [835] For good figures of the leaves _vide_ Stur (75), Rothpletz
+ (80), Ettingshausen (66), Solms (96).
+
+ [836] Renault (96), p. 80; (93), Pls. XLII. and XLIII. Since
+ the above was written an account of the internal structure of
+ _Archaeocalamites_ has been published by Solms-Laubach (97); he
+ describes the wood as being of the _Arthropitys_ type.
+
+ [837] Renault, _loc. cit._ Pl. XLII. figs. 6 and 7.
+
+ [838] Stur (75), p. 2, Pls. II.–V.
+
+ [839] An examination of the specimens in the Museum of the Austrian
+ Geology Survey did not enable me to satisfactorily verify the
+ features of the cone as described by Stur; the impressions are far
+ from clear.
+
+ [840] Kidston (83²).
+
+ [841] _Vide_ Paterson (41); Lyell (67), vol. I. p. 149 _etc._
+
+ [842] Volkmann (1720), p. 93, Pl. VII. fig. 2.
+
+ [843] Schlotheim (20), p. 402, Pl. XXII. fig. 4.
+
+ [844] Sternberg (25).
+
+ [845] Brongniart (28²), p. 122, Pl. XXVI. figs. 1 and 2.
+
+ [846] Paterson (41), Pl. III.
+
+ [847] Göppert (52), Pls. _III._, _V._, _VI._, _VIII._, _XXXVIII._
+
+ [848] Ettingshausen (66), Pls. I.–IV.
+
+ [849] Feistmantel (73), Pl. XIV. fig. 5.
+
+ [850] Zeiller (80), p. 17.
+
+ [851] Binney (68), p. 7.
+
+ [852] Stur (75), p. 3.
+
+ [853] Kidston (86), p. 35.
+
+ [854] Schimper and Koechlin-Schlumberger (62), Pl. I. The original
+ specimens of Schimper’s figures are in the Strassburg Museum.
+
+ [855] Feistmantel (73), p. 491, Pl. XXIV. figs. 3 and 4.
+
+ [856] _Vide_ specimens 20 A, 20 B, 24 in the Williamson Collection.
+
+ [857] Stur (75), p. 17.
+
+ [858] Rothpletz (80), p. 8.
+
+ [859] Weiss (84), p. 56.
+
+ [860] Scheuchzer (1723), p. 19, Pl. IV. fig. 1.
+
+ [861] Schlotheim (04), Pl. II. fig. 24, p. 57.
+
+ [862] Sternberg (25), p. 32.
+
+ [863] Brongniart (22), Pl. XIII. fig. 8, p. 234.
+
+ [864] _Ibid._ (28), p. 68.
+
+ [865] Dawson (66), p. 153, Pl. XII.
+
+ [866] For reference _vide_ an excellent monograph by Coemans and
+ Kickx (64), also Potonié (94).
+
+ [867] _e.g._ Newberry (91).
+
+ [868] Renault (73), (76²), (96).
+
+ [869] Williamson (74), (78).
+
+ [870] Williamson and Scott (94), p. 919.
+
+ [871] Specimen 929 in the Williamson Cabinet is a longitudinal
+ section of the French _Sphenophyllum_, as described by Renault
+ (76²).
+
+ [872] Williamson and Scott (94), p. 926.
+
+ [873] Williamson (91), p. 18.
+
+ [874] Williamson and Scott (94), p. 920.
+
+ [875] Williamson (91), p. 12.
+
+ [876] _Ibid._ (74).
+
+ [877] Felix (86), Pl. VI. fig. 2.
+
+ [878] For figures _vide_ Renault (82), Pl. XVI. fig. 1, (76²) Pls.
+ VII. and IX.
+
+ [879] Williamson (71²).
+
+ [880] Weiss (84), p. 200.
+
+ [881] Binney (71).
+
+ [882] Williamson (91²).
+
+ [883] Zeiller (93).
+
+ [884] Williamson (92).
+
+ [885] Potonié (94), fig. 1.
+
+ [886] For a more complete account of this strobilus _vide_ Zeiller
+ (93), and Williamson (91²), _etc._
+
+ [887] Zeiller (93), p. 37.
+
+ [888] Williamson and Scott (94), p. 943.
+
+ [889] Scott (97), p. 24.
+
+ [890] Solms-Laubach (95⁴).
+
+ [891] _Ibid._ Pl. X. fig. 6.
+
+ [892] Kidston (90).
+
+ [893] I am indebted to my friend Mr Kidston for an opportunity of
+ examining these specimens.
+
+ [894] _Vide_ Renault (77), (96), p. 158. Zeiller (93), p. 34.
+ Williamson and Scott (94), p. 942.
+
+ [895] Brongniart (22), p. 234, Pl. II. fig. 8.
+
+ [896] Brongniart (28), p. 68.
+
+ [897] Bischoff (28), Pl. XIII. fig. 1.
+
+ [898] Römer, F. (62), p. 21, Pl. V. fig. 2.
+
+ [899] Sterzel (86), pp. 26, 27, etc.
+
+ [900] Kidston (93), p. 333.
+
+ [901] Zeiller (88), p. 414.
+
+ [902] _Ibid._ p. 411.
+
+ [903] Weiss (84), p. 201, Pl. XXI. fig. 12.
+
+ [904] Solms-Laubach (95⁴), p. 232.
+
+ [905] Geinitz (55), Pl. XX. fig. 7.
+
+ [906] Zeiller (88), Pl. LXIV. figs. 3–5, and (93), p. 24, Pl. II.
+ fig. 4.
+
+ [907] Stur (75), p. 108.
+
+ [908] Stur (87), Pl. XV. and Kidston (90), p. 59, Pl. I.
+
+ [909] Zeiller (88), Pl. LXII. figs. 2–4.
+
+ [910] Stur (87); Williamson (74); Seward (89), _etc._
+
+ [911] Renault (82), p. 84, and Newberry (91).
+
+ [912] Kidston (90), p. 62.
+
+ [913] Stur (75), p. 114, Pl. VII.
+
+ [914] Zeiller (93), p. 32.
+
+ [915] Mahr (68), Pl. VIII.
+
+ [916] Zeiller (80), p. 34, Pl. CLXI. fig. 9.
+
+ [917] Coemans and Kickx (64); Zeiller (80), (88); Schimper (69).
+
+ [918] Royle (39), p. 431.
+
+ [919] For other figures of this plant, _vide_ Feistmantel (81),
+ Pls. XI. A and XII. A.
+
+ [920] Zeiller (91).
+
+ [921] _Vide_ also Zeiller (92²), p. 75.
+
+ [922] Feistmantel (81), p. 69.
+
+ [923] Scott (97).
+
+ [924] Scott (96²), p. 15.
+
+ [925] Dawson (61), p. 10, fig. 7.
+
+ [926] Kidston (94), p. 250.
+
+ [927] Kidston (94), p. 250.
+
+ [928] Sterzel (93), p. 143.
+
+ [929] Zeiller (94), p. 172.
+
+ [930] De Bary (84), p. 499.
+
+ [931] Westermaier and Ambronn (81).
+
+ [932] Schwendener (74), p. 124. Haberlandt (96), p. 165.
 
 
                          Transcriber’s Notes:
