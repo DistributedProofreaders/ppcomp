@@ -9,3 +9,5 @@ pp_test.*
 .idea/
 .vscode/
 __pycache__/
+doc/
+info/
