@@ -7,7 +7,7 @@ program dwdiff.
 
 Copyright (C) 2012-2013, 2021 bibimbop at pgdp
 
-Updated 2022 by Robert Tonsing
+Modified March 2022 by Robert Tonsing, per GPL section 5
 
 Originally written as the standalone program comp_pp.py by bibimbop at PGDP as part of his PPTOOLS
 program. It is used as part of the PP Workbench with permission.
