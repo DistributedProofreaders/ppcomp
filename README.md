@@ -13,22 +13,47 @@ Introduction
 Used to compare 2 files and generate a summary of the differences. Its goal is to look for discrepancies between the text and html versions produced at PGDP, ignoring many formatting and spacing differences.
 
 The sources can be:
-  - A post-processed text version.
-  - A post-processed html version.
-  - An unprocessed text version coming from the P or F rounds.
-  - A text or html coming from an external source.
+  - A post-processed text file.
+  - A post-processed html file.
+  - An unprocessed text file coming from the Px or Fx rounds.
+  - A text or html file coming from an external source.
 
-The text versions are identified by the .txt extension, html by the .htm or .html extension, and the Px or Fx version by its "projectID" prefix.
+The text files are identified by the .txt extension, html files by the .htm or .html extension, and a Px or Fx file by its "projectID" prefix.
 
-It applies various transformations according to program options before passing the files to the Linux program dwdiff. There does not seem to be any Windows equivalent of dwdiff.
+It applies various transformations according to program options before passing the files to the Linux program **dwdiff**. There does not seem to be any Windows equivalent of dwdiff.
+
+## Usage:
+
+| Option                       | File type | Description                                                  |
+| ---------------------------- | --------- | ------------------------------------------------------------ |
+| -h                           |           | Show usage                                                   |
+| --ignore-case                | All       | Ignore case when comparing                                   |
+| --extract-footnotes          | All       | Extract and process footnotes separately                     |
+| --suppress-footnote-tags     | Text      | Suppress **\[Footnote ?: ...]** marks                        |
+| --suppress-illustration-tags | Text      | Suppress **\[Illustration: ...]** marks                      |
+| --suppress-sidenote-tags     | Text      | Suppress **\[Sidenote: ]** marks                             |
+| --ignore-format              | Rounds    | Silence formatting differences (**\<i>**, **\<b>**)          |
+| --suppress-proofers-notes    | Rounds    | Remove **\[\*\*proofreaders notes]**                         |
+| --regroup-split-words        | Rounds    | Regroup split **wo-* *rds**                                  |
+| --txt-cleanup-type *TYPE*    | Rounds    | Type of text cleaning -- (**b**)est effort \[default], (**n**)one, (**p**)roofers |
+| --css-add-illustration       | HTML      | Add **\[Illustration: ...]** tags                            |
+| --css-add-sidenote           | HTML      | Add **\[Sidenote: ...]** tags                                |
+| --css-smcap *TYPE*           | HTML      | Transform small caps into uppercase (**U**), lowercase (**L**) or title case (**T**) |
+| --css-bold *STR*             | HTML      | Surround bold strings with this string [default '**=**']     |
+| --css *CSS*                  | HTML      | Insert custom transformation CSS (can be multiple)           |
+| --css-no-default             | HTML      | Do not use default transformation CSS                        |
+| --suppress-nbsp-num          | HTML      | Suppress non-breakable spaces (U+00A0) between numbers       |
+| --ignore-0-space             | HTML      | Suppress zero width space (U+200B)                           |
+| --css-greek-title-plus       | HTML      | Use Greek transliteration from title attribute               |
+| --simple-html                | HTML      | Process an html file and print the output (debug)            |
 
 Requirements
 ------------
 ppcomp needs python 3 (not 2) to run, as well as the following packages:
   - lxml
-  - dwdiff             (http://os.ghalkes.nl/dwdiff.html)
-  - python tinycss 0.3 (https://pypi.python.org/pypi/tinycss)
-  - python cssselect   (https://pypi.python.org/pypi/cssselect)
+  - dwdiff
+  - tinycss
+  - cssselect
 
 Installation
 ------------
