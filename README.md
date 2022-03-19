@@ -1,0 +1,150 @@
+=================================
+ppcomp - Compare 2 files for Distributed Proofreaders (https://www.pgdp.net).
+=================================
+
+------
+
+**(Under revision)**
+
+------
+
+Introduction
+------------
+Used to compare 2 files and generate a summary of the differences. Its goal is to look for discrepancies between the text and html versions produced at PGDP, ignoring many formatting and spacing differences.
+
+The sources can be:
+  - A post-processed text version.
+  - A post-processed html version.
+  - An unprocessed text version coming from the P or F rounds.
+  - A text or html coming from an external source.
+
+The text versions are identified by the .txt extension, html by the .htm or .html extension, and the Px or Fx version by its "projectID" prefix.
+
+It applies various transformations according to program options before passing the files to the Linux program dwdiff. There does not seem to be any Windows equivalent of dwdiff.
+
+Requirements
+------------
+ppcomp needs python 3 (not 2) to run, as well as the following packages:
+  - lxml
+  - dwdiff             (http://os.ghalkes.nl/dwdiff.html)
+  - python tinycss 0.3 (https://pypi.python.org/pypi/tinycss)
+  - python cssselect   (https://pypi.python.org/pypi/cssselect)
+
+Installation
+------------
+
+On Debian /  Ubuntu
+~~~~~~~~~~~~~~~~~~~~
+To install on Linux (Debian or Ubuntu):
+
+  sudo apt-get install w3c-dtd-xhtml python3-lxml dwdiff
+
+tinycss and cssselect are not present on these distributions yet for python 3. Use pip to install them. Fist install pip for python3 if it's not already installed:
+::
+
+  sudo apt-get install python3-pip
+
+then install the missing packages:
+::
+
+  pip3 install tinycss
+  pip3 install cssselect
+
+Usage
+-----
+
+Comparing two files is easy:
+  **./comp_pp2.py file1.txt file2.html > result.html**
+or
+  **python comp_pp2.py file1.txt file2.html > result.html**
+
+Internally, comp_pp will transform both files to make them closer to each other. For instance, <i></i> in the html version will be transformed to "_" so that will not generate a diff. Internally, a CSS transformation engine will take care of the html. The transformations to a text version are currently hardcoded.
+
+Once both files are transformed, the diff happens (using dwdiff), then its output is transformed into html. This html result is then sent to the standard output where it can be redirected and finally loaded in a browser. There is a small notice at the top explaining the diffs.
+
+Footnotes
+~~~~~~~~~
+
+If the two versions have footnotes, but they are not placed in the same spot (i.e. after each paragraph for the text, and at the end of the book for the html), they can be extracted and compared separately:
+
+  --extract-footnotes
+
+
+Tuning
+~~~~~~
+
+By default, there are a few reasonnable rules applied to the html (See the definition of self.mycss in the source code). However, it may be necessary to go further in order to reduce the amount of noise.
+
+Currently a few CSS targets are supported:
+::
+
+  :before  -- add a content before the tag
+  :after   -- add a content after the tag
+
+Some transformations are also supported:
+::
+
+  text-transform  -- transform the content to uppercase, lowercase or title
+  _replace_with_attr -- replace the whole content with the value of an attribute
+  text-replace    -- replace a string inside a content with another
+
+Here are few command line arguments samples.
+
+Illustrations
+.............
+
+If the diffs complain about a disppearing "Illustration" tag in the
+html, add the following rule (adapt the CSS selector):
+::
+
+  --css '.figcenter:before { content: "[Illustration: "; }'
+  --css '.figcenter:after { content: "]"; }'
+  --css '.figcenter:before { content: "[Illustration: "; }'
+
+Anchors
+.......
+
+By default anchors are expected to be surrounded by brackets. If it is
+not the case in the html, this can be easily fixed with the following:
+
+  --css '.fnanchor:before { content: "["; } .fnanchor:after { content: "]"; }'
+
+Small caps
+..........
+
+Small caps can be transformed to look like the same in the text (upper
+case). This can considerably reduce the noise in a document.
+
+  --css '.smcap {  text-transform:uppercase; }'
+
+Greek
+.....
+
+By default, if there is some greek and the text version has
+transliterration only (i.e. it's in latin1), and if the html also has
+the transliteration in the title attribute, the following is applied:
+::
+
+  --css 'body *[lang=grc] { _replace_with_attr: "title"; }'
+  --css 'body *[lang=grc]:before, body *[lang=grc]:after { content: "+"; }'
+
+Something like <p>φαγέδαινα</p> would become <p>+phagedaina+</p>
+instead before the comparison takes place.
+
+Footnotes
+.........
+
+In many document, the semantic of a footnote is html is lost because
+they are put at the end of the file and look like any other
+paragraph. A future version will add some extensions to deal with
+that.
+
+
+
+
+
+
+
+
+
+~~~~~~
