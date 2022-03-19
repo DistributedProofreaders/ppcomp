@@ -1,15 +1,8 @@
-=================================
-ppcomp - Compare 2 files for Distributed Proofreaders (https://www.pgdp.net).
-=================================
+# ppcomp
 
-------
+Compare 2 files for [Distributed Proofreaders](https://www.pgdp.net).
 
-**(Under revision)**
-
-------
-
-Introduction
-------------
+## Introduction
 Used to compare 2 files and generate a summary of the differences. Its goal is to look for discrepancies between the text and html versions produced at PGDP, ignoring many formatting and spacing differences.
 
 The sources can be:
@@ -20,10 +13,9 @@ The sources can be:
 
 The text files are identified by the .txt extension, html files by the .htm or .html extension, and a Px or Fx file by its "projectID" prefix.
 
-It applies various transformations according to program options before passing the files to the Linux program **dwdiff**. There does not seem to be any Windows equivalent of dwdiff.
+It applies various transformations according to program options before passing the files to the Linux program `dwdiff`. There does not seem to be any Windows equivalent of `dwdiff`.
 
-## Usage:
-
+## Usage
 | Option                       | File type | Description                                                  |
 | ---------------------------- | --------- | ------------------------------------------------------------ |
 | -h                           |           | Show usage                                                   |
@@ -47,129 +39,119 @@ It applies various transformations according to program options before passing t
 | --css-greek-title-plus       | HTML      | Use Greek transliteration from title attribute               |
 | --simple-html                | HTML      | Process an html file and print the output (debug)            |
 
-Requirements
-------------
-ppcomp needs python 3 (not 2) to run, as well as the following packages:
+## Requirements
+
+ppcomp needs python 3 (not 2) to run, as well as the following python packages:
   - lxml
-  - dwdiff
   - tinycss
   - cssselect
+  - html5lib (used by lxml)
 
-Installation
-------------
+And the following command line tool:
+  - dwdiff
 
-On Debian /  Ubuntu
-~~~~~~~~~~~~~~~~~~~~
+
+## Installation
 To install on Linux (Debian or Ubuntu):
+```bash
+sudo apt-get install w3c-dtd-xhtml python3-lxml dwdiff
+```
 
-  sudo apt-get install w3c-dtd-xhtml python3-lxml dwdiff
+`tinycss` and `cssselect` are not present on these distributions yet for python 3.
+Use pip to install them. First install pip for python3 if it's not already installed:
 
-tinycss and cssselect are not present on these distributions yet for python 3. Use pip to install them. Fist install pip for python3 if it's not already installed:
-::
-
-  sudo apt-get install python3-pip
+```bash
+sudo apt-get install python3-pip
+```
 
 then install the missing packages:
-::
 
-  pip3 install tinycss
-  pip3 install cssselect
+```bash
+pip3 install tinycss
+pip3 install cssselect
+```
 
-Usage
------
-
+## Usage
 Comparing two files is easy:
-  **./comp_pp2.py file1.txt file2.html > result.html**
+```bash
+./ppcomp/ppcomp.py file1.txt file2.html > result.html
+```
 or
-  **python comp_pp2.py file1.txt file2.html > result.html**
+```bash
+python ppcomp/ppcomp.py file1.txt file2.html > result.html
+```
 
-Internally, comp_pp will transform both files to make them closer to each other. For instance, <i></i> in the html version will be transformed to "_" so that will not generate a diff. Internally, a CSS transformation engine will take care of the html. The transformations to a text version are currently hardcoded.
+Internally, ppcomp will transform both files to make them closer to each other. For instance, in the html version `<i>` and `</i>` will be transformed to "\_" so that will not generate a diff. Internally, a CSS transformation engine will take care of the html. The transformations to a text version are currently hardcoded.
 
-Once both files are transformed, the diff happens (using dwdiff), then its output is transformed into html. This html result is then sent to the standard output where it can be redirected and finally loaded in a browser. There is a small notice at the top explaining the diffs.
+Once both files are transformed, the diff happens (using `dwdiff`), then its output is transformed into html. This html result is then sent to the standard output where it can be redirected and finally loaded in a browser. There is a small notice at the top explaining the diffs.
 
-Footnotes
-~~~~~~~~~
-
+## Footnotes
 If the two versions have footnotes, but they are not placed in the same spot (i.e. after each paragraph for the text, and at the end of the book for the html), they can be extracted and compared separately:
 
-  --extract-footnotes
+```
+--extract-footnotes
+```
 
-
-Tuning
-~~~~~~
-
-By default, there are a few reasonnable rules applied to the html (See the definition of self.mycss in the source code). However, it may be necessary to go further in order to reduce the amount of noise.
+## Tuning
+By default, there are a few reasonable rules applied to the html (See the definition of self.mycss in the source code). However, it may be necessary to go further in order to reduce the amount of noise.
 
 Currently a few CSS targets are supported:
-::
-
-  :before  -- add a content before the tag
-  :after   -- add a content after the tag
+```
+:before  -- add a content before the tag
+:after   -- add a content after the tag
+```
 
 Some transformations are also supported:
-::
+```
+text-transform  -- transform the content to uppercase, lowercase or title
+_replace_with_attr -- replace the whole content with the value of an attribute
+text-replace    -- replace a string inside a content with another
+```
 
-  text-transform  -- transform the content to uppercase, lowercase or title
-  _replace_with_attr -- replace the whole content with the value of an attribute
-  text-replace    -- replace a string inside a content with another
-
+## Examples
 Here are few command line arguments samples.
 
-Illustrations
-.............
-
+### Illustrations
 If the diffs complain about a disppearing "Illustration" tag in the
 html, add the following rule (adapt the CSS selector):
-::
 
-  --css '.figcenter:before { content: "[Illustration: "; }'
-  --css '.figcenter:after { content: "]"; }'
-  --css '.figcenter:before { content: "[Illustration: "; }'
+```
+--css '.figcenter:before { content: "[Illustration: "; }'
+--css '.figcenter:after { content: "]"; }'
+--css '.figcenter:before { content: "[Illustration: "; }'
+```
 
-Anchors
-.......
-
+### Anchors
 By default anchors are expected to be surrounded by brackets. If it is
 not the case in the html, this can be easily fixed with the following:
 
-  --css '.fnanchor:before { content: "["; } .fnanchor:after { content: "]"; }'
+```
+--css '.fnanchor:before { content: "["; } .fnanchor:after { content: "]"; }'
+```
 
-Small caps
-..........
-
+### Small caps
 Small caps can be transformed to look like the same in the text (upper
 case). This can considerably reduce the noise in a document.
 
-  --css '.smcap {  text-transform:uppercase; }'
+```
+--css '.smcap {  text-transform:uppercase; }'
+```
 
-Greek
-.....
-
+### Greek
 By default, if there is some greek and the text version has
 transliterration only (i.e. it's in latin1), and if the html also has
 the transliteration in the title attribute, the following is applied:
-::
 
-  --css 'body *[lang=grc] { _replace_with_attr: "title"; }'
-  --css 'body *[lang=grc]:before, body *[lang=grc]:after { content: "+"; }'
+```
+--css 'body *[lang=grc] { _replace_with_attr: "title"; }'
+--css 'body *[lang=grc]:before, body *[lang=grc]:after { content: "+"; }'
+```
 
-Something like <p>φαγέδαινα</p> would become <p>+phagedaina+</p>
+Something like `φαγέδαινα` would become `+phagedaina+`
 instead before the comparison takes place.
 
-Footnotes
-.........
-
+### Footnotes
 In many document, the semantic of a footnote is html is lost because
 they are put at the end of the file and look like any other
 paragraph. A future version will add some extensions to deal with
 that.
-
-
-
-
-
-
-
-
-
-~~~~~~
