@@ -999,9 +999,6 @@ class PPComp:
         This is used for instance if one version uses curly quotes while the other uses straight.
         In that case, we need to convert one into the other, to get a smaller diff.
         """
-        if not PgdpFile.pgdp_file:
-            return
-
         character_checks = {
             '’': "'",  # close curly single quote to straight
             '‘': "'",  # open curly single quote to straight
