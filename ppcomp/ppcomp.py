@@ -132,6 +132,28 @@ SUBSCRIPTS = {
 }
 
 
+def to_superscript(text):
+    """Convert to unicode superscripts"""
+    result = ''
+    for char in text:
+        try:
+            result += SUPERSCRIPTS[char]
+        except KeyError:
+            return text  # can't convert, just leave it
+    return result
+
+
+def to_subscript(text):
+    """Convert to unicode subscripts"""
+    result = ''
+    for char in text:
+        try:
+            result += SUBSCRIPTS[char]
+        except KeyError:
+            return text  # can't convert, just leave it
+    return result
+
+
 class PgdpFile:
     """Base class: Store and process a DP text or html file"""
     pgdp_file = False  # flag that one file is from proofing rounds
@@ -274,6 +296,24 @@ class PgdpFileText(PgdpFile):
         if self.args.ignore_format or self.args.suppress_sidenote_tags:
             self.text = re.sub(r"\[Sidenote:([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
 
+    @staticmethod
+    def match_to_superscript(match):
+        """Convert regex match to subscript"""
+        return to_superscript(match.group(1))
+
+    def superscripts(self):
+        """Convert ^{} tagged text"""
+        self.text = re.sub(r"\^{?([\w\d]+)}?", PgdpFileText.match_to_superscript, self.text)
+
+    @staticmethod
+    def match_to_subscript(match):
+        """Convert regex match to subscript"""
+        return to_subscript(match.group(1))
+
+    def subscripts(self):
+        """Convert _{} tagged text"""
+        self.text = re.sub(r"_{([\w\d]+)}", PgdpFileText.match_to_subscript, self.text)
+
     def cleanup(self):
         """Perform cleanup for this type of file"""
         if self.from_pgdp_rounds:
@@ -303,6 +343,8 @@ class PgdpFileText(PgdpFile):
             self.suppress_footnote_tags()
         self.suppress_illustration_tags()
         self.suppress_sidenote_tags()
+        self.superscripts()
+        self.subscripts()
 
     def extract_footnotes_pgdp(self):
         """ Extract the footnotes from an F round
@@ -554,34 +596,6 @@ class PgdpFileHtml(PgdpFile):
         if self.args.css_greek_title_plus:
             self.mycss += '*[lang=grc] { content: "+" attr(title) "+"; }'
 
-    @staticmethod
-    def css_superscript(text):
-        """Convert <sup> tagged text"""
-        if PgdpFile.pgdp_file:  # to ^1 or ^{10} - comparing to proof file
-            if len(text) == 1:
-                return '^' + text
-            return '^{' + text + '}'
-        result = ''  # to unicode superscripts
-        for char in text:
-            try:
-                result += SUPERSCRIPTS[char]
-            except KeyError:
-                return text  # can't convert, just leave it, may be footnote tag '[1]'
-        return result
-
-    @staticmethod
-    def css_subscript(text):
-        """Convert <sub> tagged text"""
-        if PgdpFile.pgdp_file:  # to _{1}
-            return '_{' + text + '}'
-        result = ''
-        for char in text:  # to unicode subscripts
-            try:
-                result += SUBSCRIPTS[char]
-            except KeyError:
-                result += char  # can't convert, just leave it
-        return result
-
     def css_custom_css(self):
         """--css can be present multiple times, so it's a list"""
         for css in self.args.css:
@@ -637,9 +651,9 @@ class PgdpFileHtml(PgdpFile):
             if value == 'capitalize':
                 return lambda x: x.title()
             if value == 'superscript':
-                return lambda x: PgdpFileHtml.css_superscript(x)
+                return lambda x: to_superscript(x)
             if value == 'subscript':
-                return lambda x: PgdpFileHtml.css_subscript(x)
+                return lambda x: to_subscript(x)
             errors += [(val.line, val.column,
                         val.name + " accepts only 'uppercase', 'lowercase', 'capitalize',"
                                    " 'superscript', or 'subscript'")]
