@@ -156,8 +156,6 @@ def to_subscript(text):
 
 class PgdpFile:
     """Base class: Store and process a DP text or html file"""
-    pgdp_file = False  # flag that one file is from proofing rounds
-
     def __init__(self, args):
         self.args = args
         self.basename = ''
@@ -210,8 +208,6 @@ class PgdpFileText(PgdpFile):
             raise SyntaxError("Not a text file: " + filename)
         super().load(filename)
         from_pgdp_rounds = self.basename.startswith('projectID')
-        if from_pgdp_rounds:
-            PgdpFile.pgdp_file = True
 
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from the text if present."""

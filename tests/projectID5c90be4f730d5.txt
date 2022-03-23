@@ -3198,7 +3198,7 @@ who loved a fine suit of armour almost as much as a
 handsome woman, had a number of skilled armourers sent
 -----File: 131.png---------------------------------------------------------
 
-[Illustration: <i>Nurembery Armour (XVI.^{th} Century.)</i>]
+[Illustration: <i>Nurembery Armour (XVI_{th} Century.)</i>]
 -----File: 132.png---------------------------------------------------------
 [Blank Page]
 -----File: 133.png---------------------------------------------------------
@@ -3453,7 +3453,7 @@ the Conqueror remains little altered in outward form from
 what it was eight centuries ago.
 -----File: 143.png---------------------------------------------------------
 
-[Illustration: <i>Horse and Foot Armour (XVII^th. Century.)</i>]
+[Illustration: <i>Horse and Foot Armour (XVII^{th}. Century.)</i>]
 -----File: 144.png---------------------------------------------------------
 [Blank Page]
 -----File: 145.png---------------------------------------------------------
