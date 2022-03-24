@@ -327,7 +327,7 @@ class PgdpFileText(PgdpFile):
         else:  # processed text file
             self.strip_pg_boilerplate()
             self.ignore_format()
-            #self.remove_thought_breaks()
+            self.remove_thought_breaks()
 
         # all text files
         if self.args.extract_footnotes:
