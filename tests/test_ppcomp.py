@@ -296,36 +296,40 @@ def test_no_default_css():
 
 
 def test_superscript_to_unicode():
-    PgdpFile.pgdp_file = False
-    x = PgdpFileHtml.css_superscript('123ab')
+    x = to_superscript('123ab')
     assert x == '¹²³ᵃᵇ'
-    x = PgdpFileHtml.css_superscript('3')
+    x = to_superscript('3')
     assert x == '³'
 
 
-def test_superscript_to_text():
-    PgdpFile.pgdp_file = True
-    x = PgdpFileHtml.css_superscript('123')
-    assert x == '^{123}'
-    x = PgdpFileHtml.css_superscript('3')
-    assert x == '^3'
-
-
 def test_subscript_to_unicode():
-    PgdpFile.pgdp_file = False
-    x = PgdpFileHtml.css_subscript('123')
+    x = to_subscript('123')
     assert x == '₁₂₃'
-    x = PgdpFileHtml.css_subscript('3')
+    x = to_subscript('3')
     assert x == '₃'
 
 
-def test_subscript_to_text():
-    PgdpFile.pgdp_file = True
-    x = PgdpFileHtml.css_subscript('123')
-    assert x == '_{123}'
-    x = PgdpFileHtml.css_subscript('3')
-    assert x == '_{3}'
+def test_superscript_match():
+    text_file = PgdpFileText(load_args(myargs))
+    text_file.load('projectID5c90be4f730d5.txt')
+    assert -1 < text_file.text.find('(XVI.^{th} Century')
+    assert -1 < text_file.text.find("S.^t John's Chapel")
+    text_file.superscripts()
+    assert -1 == text_file.text.find('(XVI.^{th} Century')
+    assert -1 == text_file.text.find("S.^t John's Chapel")
+    assert -1 < text_file.text.find('(XVI.ᵗʰ Century')
+    assert -1 < text_file.text.find("S.ᵗ John's Chapel")
 
+
+def test_subscript_match():
+    text_file = PgdpFileText(load_args(myargs))
+    text_file.load('projectID5c90be4f730d5.txt')
+    assert -1 < text_file.text.find("(XVI_{th} Century.)")
+    text_file.subscripts()
+    assert -1 == text_file.text.find("(XVI_{th} Century")
+    assert -1 < text_file.text.find("(XVIₜₕ Century.)")
+
+# "(XVI._{th} Century.)"
 
 ########## Both files ##########
 
