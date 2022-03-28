@@ -75,8 +75,6 @@ def test_remove_block_markup():
     text_file.remove_block_markup()
     for txt in markup:
         assert -1 == text_file.text.find(txt)
-#    with open('outfile.txt', 'w', encoding='utf-8') as f:
-#        f.write(text_file.text)
 
 
 def test_remove_paging():
@@ -132,15 +130,12 @@ def test_regroup_split_words():
     assert -1 < text_file.text.find("storehouses")
 
 
-#@pytest.mark.skip
 def test_suppress_footnote_tags():
     args = myargs + ['--suppress-footnote-tags']
     text_file = PgdpFileText(load_args(args))
     text_file.load('projectID5c90be4f730d5.txt')
     text_file.suppress_footnote_tags()
     assert -1 == text_file.text.find("[Footnote")
-    # with open('outfile.txt', 'w', encoding='utf-8') as f:
-    #     f.write(text_file.text)
 
 
 def test_suppress_illustration_tags():
@@ -148,8 +143,6 @@ def test_suppress_illustration_tags():
     text_file = PgdpFileText(load_args(args))
     text_file.load('projectID5c90be4f730d5.txt')
     text_file.suppress_illustration_tags()
-    # with open('outfile.txt', 'w', encoding='utf-8') as f:
-    #     f.write(text_file.text)
     assert -1 == text_file.text.find("[Illustration")
 
 
@@ -167,8 +160,6 @@ def test_text_extract_footnotes_pgdp():
     text_file.load('projectID5cbe8b633145d.txt')
     text_file.extract_footnotes_pgdp()
     length = len(text_file.footnotes.splitlines())
-    # with open('tmpoutfile.txt', 'w', encoding='utf-8') as f:
-    #     f.write(text_file.footnotes)
     assert length == 86
 
 
@@ -197,7 +188,6 @@ def test_strip_pg_boilerplate_html():
     html_file.load('tower.htm')
     html_file.strip_pg_boilerplate()
     length = len(html_file.text.splitlines())
-    #dumptree(html_file.tree)
     assert length == 8963
     assert html_file.start_line == 308
 
@@ -240,8 +230,6 @@ def test_html_extract_footnotes():
     html_file.load('fossilplants1.html')
     html_file.extract_footnotes()
     length = len(html_file.footnotes.splitlines())
-    # with open('tmpoutfoot.txt', 'w', encoding='utf-8') as f:
-    #     f.write(html_file.footnotes)
     assert length == 2093
 
 
