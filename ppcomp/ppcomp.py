@@ -343,44 +343,32 @@ class PgdpFileText(PgdpFile):
         self.subscripts()
 
     def extract_footnotes_pgdp(self):
-        """ Extract the footnotes from an F round
-        Start with [Footnote ... and finish with ] at the end of a line
+        """ Extract the footnotes from an F round text file
+        Start with [Footnote #: and finish with ] at the end of a line
         """
-        # Note: this is really dirty code. Should rewrite. Don't use current_fnote[0].
         in_footnote = False  # currently processing a footnote
-        current_fnote = []  # keeping current footnote
         text = []  # new text without footnotes
         footnotes = []
 
         for line in self.text.splitlines():
-            # New footnote?
-            if '[Footnote' in line:
+            if '[Footnote' in line:  # New footnote?
                 in_footnote = True
-                if '*[Footnote' in line:
-                    # Join to previous - Remove the last from the existing footnotes.
-                    line = line.replace('*[Footnote: ', '')
-                    current_fnote, footnotes = footnotes[-1], footnotes[:-1]
-                else:
-                    line = re.sub(r'\[Footnote \d+: ', '', line)
-                    current_fnote = [-1, '']
-            # Inside a footnote?
-            if in_footnote:
-                current_fnote[1] = "\n".join([current_fnote[1], line])
-                # End of footnote? We don't try to regroup yet
-                if line.endswith(']'):
-                    current_fnote[1] = current_fnote[1][:-1]
-                    footnotes.append(current_fnote)
+                if '*[Footnote' not in line:  # Join to previous?
+                    footnotes.append('')  # start new footnote
+                line = re.sub(r'\*?\[Footnote\s?[\w\d]*:\s?', '', line)
+            if in_footnote:  # Inside a footnote?
+                footnotes[-1] = '\n'.join([footnotes[-1], line])
+                if line.endswith(']'):  # End of footnote?
+                    footnotes[-1] = footnotes[-1][:-1]
                     in_footnote = False
                 elif line.endswith(']*'):  # Footnote continuation
-                    current_fnote[1] = current_fnote[1][:-2]
-                    footnotes.append(current_fnote)
+                    footnotes[-1] = footnotes[-1][:-2]
                     in_footnote = False
             else:
                 text.append(line)
 
-        # Rebuild text, now without footnotes
-        self.text = '\n'.join(text)
-        self.footnotes = '\n'.join([x[1] for x in footnotes])
+        self.text = '\n'.join(text)  # Rebuild text, now without footnotes
+        self.footnotes = '\n'.join(footnotes)
 
     def extract_footnotes_pp(self):
         """Extract footnotes from a PP text file. Text is iterable. Returns the text as an iterable,
