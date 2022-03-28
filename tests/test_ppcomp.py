@@ -164,12 +164,12 @@ def test_suppress_sidenote_tags():
 def test_text_extract_footnotes_pgdp():
     args = myargs + ['--extract-footnotes']
     text_file = PgdpFileText(load_args(args))
-    text_file.load('projectID5c90be4f730d5.txt')
+    text_file.load('projectID5cbe8b633145d.txt')
     text_file.extract_footnotes_pgdp()
     length = len(text_file.footnotes.splitlines())
-    with open('tmpoutfile.txt', 'w', encoding='utf-8') as f:
-        f.write(text_file.footnotes)
-    assert length == 113
+    # with open('tmpoutfile.txt', 'w', encoding='utf-8') as f:
+    #     f.write(text_file.footnotes)
+    assert length == 86
 
 
 ########## HTML file ##########

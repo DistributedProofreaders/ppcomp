@@ -355,7 +355,7 @@ class PgdpFileText(PgdpFile):
                 in_footnote = True
                 if '*[Footnote' not in line:  # Join to previous?
                     footnotes.append('')  # start new footnote
-                line = re.sub(r'\*?\[Footnote [\w\d]+:', '', line)
+                line = re.sub(r'\*?\[Footnote\s?[\w\d]*:\s?', '', line)
             if in_footnote:  # Inside a footnote?
                 footnotes[-1] = '\n'.join([footnotes[-1], line])
                 if line.endswith(']'):  # End of footnote?
