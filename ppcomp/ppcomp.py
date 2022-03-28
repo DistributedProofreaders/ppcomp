@@ -346,9 +346,8 @@ class PgdpFileText(PgdpFile):
         """ Extract the footnotes from an F round
         Start with [Footnote ... and finish with ] at the end of a line
         """
-        # Note: this is really dirty code. Should rewrite. Don't use current_fnote[0].
         in_footnote = False  # currently processing a footnote
-        current_fnote = []  # keeping current footnote
+        current_fnote = ''  # keeping current footnote
         text = []  # new text without footnotes
         footnotes = []
 
@@ -362,17 +361,17 @@ class PgdpFileText(PgdpFile):
                     current_fnote, footnotes = footnotes[-1], footnotes[:-1]
                 else:
                     line = re.sub(r'\[Footnote [\w\d]+:', '', line)
-                    current_fnote = [-1, '']
+                    current_fnote = ''
             # Inside a footnote?
             if in_footnote:
-                current_fnote[1] = "\n".join([current_fnote[1], line])
+                current_fnote = "\n".join([current_fnote, line])
                 # End of footnote? We don't try to regroup yet
                 if line.endswith(']'):
-                    current_fnote[1] = current_fnote[1][:-1]
+                    current_fnote = current_fnote[:-1]
                     footnotes.append(current_fnote)
                     in_footnote = False
                 elif line.endswith(']*'):  # Footnote continuation
-                    current_fnote[1] = current_fnote[1][:-2]
+                    current_fnote = current_fnote[:-2]
                     footnotes.append(current_fnote)
                     in_footnote = False
             else:
@@ -380,7 +379,7 @@ class PgdpFileText(PgdpFile):
 
         # Rebuild text, now without footnotes
         self.text = '\n'.join(text)
-        self.footnotes = '\n'.join([x[1] for x in footnotes])
+        self.footnotes = '\n'.join(footnotes)
 
     def extract_footnotes_pp(self):
         """Extract footnotes from a PP text file. Text is iterable. Returns the text as an iterable,
