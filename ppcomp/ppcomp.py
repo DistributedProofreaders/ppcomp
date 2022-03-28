@@ -361,7 +361,7 @@ class PgdpFileText(PgdpFile):
                     line = line.replace('*[Footnote: ', '')
                     current_fnote, footnotes = footnotes[-1], footnotes[:-1]
                 else:
-                    line = re.sub(r'\[Footnote \d+: ', '', line)
+                    line = re.sub(r'\[Footnote [\w\d]+:', '', line)
                     current_fnote = [-1, '']
             # Inside a footnote?
             if in_footnote:

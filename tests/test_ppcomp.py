@@ -161,16 +161,15 @@ def test_suppress_sidenote_tags():
     assert -1 == text_file.text.find("[Sidenote:")
 
 
-@pytest.mark.skip
 def test_text_extract_footnotes_pgdp():
     args = myargs + ['--extract-footnotes']
     text_file = PgdpFileText(load_args(args))
-    text_file.load('tower.txt')
+    text_file.load('projectID5c90be4f730d5.txt')
     text_file.extract_footnotes_pgdp()
     length = len(text_file.footnotes.splitlines())
     with open('tmpoutfile.txt', 'w', encoding='utf-8') as f:
         f.write(text_file.footnotes)
-    assert length == 2093
+    assert length == 113
 
 
 ########## HTML file ##########
@@ -329,7 +328,6 @@ def test_subscript_match():
     assert -1 == text_file.text.find("(XVI_{th} Century")
     assert -1 < text_file.text.find("(XVIₜₕ Century.)")
 
-# "(XVI._{th} Century.)"
 
 ########## Both files ##########
 
