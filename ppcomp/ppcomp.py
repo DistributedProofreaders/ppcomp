@@ -207,7 +207,6 @@ class PgdpFileText(PgdpFile):
         if not filename.lower().endswith('.txt'):
             raise SyntaxError("Not a text file: " + filename)
         super().load(filename)
-        from_pgdp_rounds = self.basename.startswith('projectID')
 
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from the text if present."""
@@ -277,7 +276,7 @@ class PgdpFileText(PgdpFile):
     def suppress_footnote_tags(self):
         """Remove footnote tags"""
         if self.args.ignore_format or self.args.suppress_footnote_tags:
-            self.text = re.sub(r"[\[]*Footnote ([\d\w]+):\s([^]]*?)[\]]*", r"\1 \2", self.text,
+            self.text = re.sub(r"[\[]*Footnote ([\d\w]+):\s([^]]*?)[]]*", r"\1 \2", self.text,
                                flags=re.MULTILINE)
             self.text = re.sub(r"\*\[Footnote:\s([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
 
@@ -551,12 +550,11 @@ class PgdpFileHtml(PgdpFile):
 
     def css_smallcaps(self):
         """Transform small caps"""
-        if self.args.css_smcap == 'U':
-            self.mycss += ".smcap { text-transform:uppercase; }"
-        elif self.args.css_smcap == 'L':
-            self.mycss += ".smcap { text-transform:lowercase; }"
-        elif self.args.css_smcap == 'T':
-            self.mycss += ".smcap { text-transform:capitalize; }"
+        transforms = {'U': 'uppercase',
+                      'L': 'lowercase',
+                      'T': 'capitalize'}
+        if self.args.css_smcap in transforms:
+            self.mycss += f".smcap {{ text-transform:{transforms[self.args.css_smcap]}; }}"
 
     def css_bold(self):
         """Surround bold strings with this string"""
