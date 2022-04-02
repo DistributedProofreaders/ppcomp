@@ -276,7 +276,7 @@ class PgdpFileText(PgdpFile):
     def suppress_footnote_tags(self):
         """Remove footnote tags"""
         if self.args.ignore_format or self.args.suppress_footnote_tags:
-            self.text = re.sub(r"[\[]*Footnote ([\d\w]+):\s([^]]*?)[]]*", r"\1 \2", self.text,
+            self.text = re.sub(r"[\[]*Footnote ([\d\w]+):\s([^]]*?)[\]]*", r"\1 \2", self.text,
                                flags=re.MULTILINE)
             self.text = re.sub(r"\*\[Footnote:\s([^]]*?)]", r'\1', self.text, flags=re.MULTILINE)
 
