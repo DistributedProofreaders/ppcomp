@@ -36,7 +36,7 @@ It applies various transformations according to program options before passing t
 | --css-no-default             | HTML      | Do not use default transformation CSS                        |
 | --suppress-nbsp-num          | HTML      | Suppress non-breakable spaces (U+00A0) between numbers       |
 | --ignore-0-space             | HTML      | Suppress zero width space (U+200B)                           |
-| --css-greek-title-plus       | HTML      | By default, if there is some Greek and the text version has the transliteration only (i.e. it's in latin1), and if the HTML also has the transliteration in the title attribute, then that text is applied |
+| --css-greek-title-plus       | HTML      | Use Greek transliteration from the title attribute           |
 | --simple-html                | HTML      | Process an html file and print the output (debug)            |
 
 ## Requirements
