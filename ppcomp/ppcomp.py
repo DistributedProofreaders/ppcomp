@@ -509,7 +509,7 @@ class PgdpFileHtml(PgdpFile):
             raise SyntaxError('File cannot be parsed: ' + filename) from ex
         if errors:
             for error in errors:
-                print(error, file=sys.stderr)
+                print(error)
             raise SyntaxError('Parsing errors in document: ' + filename)
 
         # save line number of <body> tag - actual text start
