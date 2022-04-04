@@ -13,7 +13,7 @@ The sources can be:
 
 The text files are identified by the `.txt` extension, html files by the `.htm` or `.html` extension, and a Px or Fx file by its `"projectID"` prefix.
 
-It applies various transformations according to program options before passing the files to the Linux program `dwdiff`. There does not seem to be any Windows equivalent of `dwdiff`.
+It applies various transformations according to program options before passing the files to the Linux program `dwdiff`. There does not seem to be any Windows equivalent of `dwdiff`, it can only be run in a Windows Subsystem for Linux console.
 
 ## Usage
 | Option                       | File type | Description                                                  |
@@ -25,7 +25,7 @@ It applies various transformations according to program options before passing t
 | --suppress-illustration-tags | Text      | Suppress **\[Illustration: ...]** marks                      |
 | --suppress-sidenote-tags     | Text      | Suppress **\[Sidenote: ]** marks                             |
 | --ignore-format              | Rounds    | Silence formatting differences (**\<i>**, **\<b>**)          |
-| --suppress-proofers-notes    | Rounds    | Remove **\[\*\*proofreaders notes]**                         |
+| --suppress-proofers-notes    | Rounds    | Suppress **\[\*\*proofreaders notes]**                       |
 | --regroup-split-words        | Rounds    | Regroup split **wo-* *rds**                                  |
 | --txt-cleanup-type *TYPE*    | Rounds    | Type of text cleaning -- (**b**)est effort \[default], (**n**)one, (**p**)roofers |
 | --css-add-illustration       | HTML      | Add **\[Illustration: ...]** tags                            |
@@ -36,7 +36,7 @@ It applies various transformations according to program options before passing t
 | --css-no-default             | HTML      | Do not use default transformation CSS                        |
 | --suppress-nbsp-num          | HTML      | Suppress non-breakable spaces (U+00A0) between numbers       |
 | --ignore-0-space             | HTML      | Suppress zero width space (U+200B)                           |
-| --css-greek-title-plus       | HTML      | Use Greek transliteration from title attribute               |
+| --css-greek-title-plus       | HTML      | Use Greek transliteration from the title attribute           |
 | --simple-html                | HTML      | Process an html file and print the output (debug)            |
 
 ## Requirements
@@ -54,21 +54,22 @@ And the following command line tool:
 ## Installation
 To install on Linux (Debian or Ubuntu):
 ```bash
-sudo apt-get install w3c-dtd-xhtml python3-lxml dwdiff
+sudo apt-get install dwdiff
 ```
 
-`tinycss` and `cssselect` are not present on these distributions yet for python 3.
-Use pip to install them. First, install pip for python3 if it's not already installed:
+Use pip to install the packages. First, install pip for python3 if it's not already installed:
 
 ```bash
 sudo apt-get install python3-pip
 ```
 
-then install the missing packages:
+then install the needed packages:
 
 ```bash
-pip3 install tinycss
-pip3 install cssselect
+pip install tinycss
+pip install cssselect
+pip install lxml
+pip install html5lib
 ```
 
 ## Usage
@@ -83,7 +84,7 @@ python ppcomp/ppcomp.py file1.txt file2.html > result.html
 
 Internally, ppcomp will transform both files to reduce insignificant differences. For instance, in the HTML version `<i>` and `</i>` will be transformed to "\_" so that will not generate a diff. Internally, a CSS transformation engine will take care of the HTML.
 
-Once both files are transformed, the diff happens (using `dwdiff`), then its output is transformed into HTML. This HTML result is then sent to the standard output where it can be redirected and finally loaded in a browser. There is a small notification at the top explaining the diffs.
+Once both files are transformed, the diff happens (using `dwdiff`), then its output is transformed into HTML. This HTML result is then sent to the standard output where it can be redirected and finally loaded into a browser. There is a small notification at the top explaining the diffs.
 
 ## Footnotes
 If the two versions have footnotes, but they are not placed in the same spot (i.e., after each paragraph for the text, and at the end of the book for the HTML), they can be extracted and compared separately:
@@ -92,7 +93,7 @@ If the two versions have footnotes, but they are not placed in the same spot (i.
 --extract-footnotes
 ```
 
-Note that formatting of footnotes by processors varies widely, only some variations are supported.
+Note that formatting of footnotes by processors varies widely, only a few variations are supported.
 
 ## Tuning
 
@@ -100,8 +101,8 @@ By default, there are a few reasonable rules applied to the HTML (See the defini
 
 Currently, a few CSS targets are supported:
 ```
-:before  -- add content before the tag
-:after   -- add content after the tag
+::before  -- add content before the tag
+::after   -- add content after the tag
 ```
 
 Some transformations are also supported:,
@@ -111,37 +112,10 @@ _replace_with_attr -- replace the whole content with the value of an attribute
 text-replace -- replace a string inside content with another
 ```
 
-## Examples
-Here are a few command-line argument samples.
-
-### Illustrations
-If the diffs complain about a disappearing "Illustration" tag in the html, add the following rule (adapt the CSS selector):
-
-```
---css '.figcenter:before { content: "[Illustration: "; }'
---css '.figcenter:after { content: "]"; }'
-```
-
-### Anchors
-By default anchors are expected to be surrounded by brackets. If it is not the case in the html, this can be easily fixed with the following:
+## --css Example
+### Footnote Anchors
+By default footnote anchors are expected to be surrounded by brackets. If it is not the case in the HTML, this can be easily fixed with the following:
 
 ```
 --css '.fnanchor:before { content: "["; } .fnanchor:after { content: "]"; }'
 ```
-
-### Small caps
-Small caps can be transformed to look the same in the text (usually upper case). This can considerably reduce the noise in a document.
-
-```
---css '.smcap {  text-transform:uppercase; }'
-```
-
-### Greek
-By default, if there is some Greek and the text version has transliteration only (i.e. it's in latin1), and if the html also has the transliteration in the title attribute, the following is applied:
-
-```
---css 'body *[lang=grc] { _replace_with_attr: "title"; }'
---css 'body *[lang=grc]:before, body *[lang=grc]:after { content: "+"; }'
-```
-
-Something like `φαγέδαινα` would become `+phagedaina+` instead before the comparison takes place.
