@@ -31,7 +31,6 @@ import argparse
 import os
 import re
 import subprocess
-import sys
 import tempfile
 import warnings
 
@@ -156,6 +155,7 @@ def to_subscript(text):
 
 class PgdpFile:
     """Base class: Store and process a DP text or html file"""
+
     def __init__(self, args):
         self.args = args
         self.basename = ''
@@ -493,11 +493,15 @@ class PgdpFileHtml(PgdpFile):
         """Parse a non-HTML5 doc"""
         myparser = etree.HTMLParser()
         tree = etree.fromstring(self.text, parser=myparser)
-        return tree.getroottree(), myparser.error_log
+        # HTML parser rejects tags with both id and name: (513 == DTD_ID_REDEFINED)
+        # even though https://www.w3.org/TR/html4/struct/links.html#edef-A says it is OK
+        errors = [x for x in myparser.error_log
+                  if myparser.error_log[0].type != 513]
+        return tree.getroottree(), errors
 
     def load(self, filename):
         """Load the file. If parsing succeeded, then self.tree is set, and parser.errors is []"""
-        if not filename.lower().endswith(('.html', '.htm')):
+        if not filename.lower().endswith(('.html', '.htm', '.xhtml')):
             raise SyntaxError('Not an html file: ' + filename)
         super().load(filename)
         try:
@@ -859,7 +863,7 @@ class PPComp:
         """Main routine: load & process the files"""
         files = [None, None]
         for i, fname in enumerate(self.args.filename):
-            if fname.lower().endswith(('.html', '.htm')):
+            if fname.lower().endswith(('.html', '.htm', '.xhtml')):
                 files[i] = PgdpFileHtml(self.args)
             else:
                 files[i] = PgdpFileText(self.args)
