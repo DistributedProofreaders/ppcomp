@@ -376,7 +376,7 @@ class PgdpFileText(PgdpFile):
         (regex, fn_type) that identify the beginning and end of a footnote. The fn_type is 1 when
         a ] terminates it, or 2 when a new block terminates it.
         """
-        fn_regexes = [(r"\s*\[([\w-]+)\]\s*(.*)", 1),
+        fn_regexes = [(r"(\s*)\[([\w-]+)\](.*)", 1),
                       (r"(\s*)\[Note (\d+):( .*|$)", 2),
                       (r"(      )Note (\d+):( .*|$)", 1)]
         regex_count = [0] * len(fn_regexes)  # i.e. [0, 0, 0]
@@ -410,12 +410,12 @@ class PgdpFileText(PgdpFile):
                             # as part of text or footnote.
                             continue
                         next_fn_type = fn_type
+                        next_fn_indent = matches.group(1)
                         # Update first line of block, because we want the number outside.
                         block[0] = matches.group(3)
                         break
 
             # Try to close previous footnote
-            next_fn_indent = None
             if cur_fn_type:
                 if next_fn_type:
                     # New block is footnote, so it ends the previous footnote
