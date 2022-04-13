@@ -446,7 +446,6 @@ class PgdpFileText(PgdpFile):
             if not cur_fn_type:
                 # Add to text, with white lines
                 text += (block or []) + [''] * empty_lines
-                footnotes += [''] * (len(block or []) + empty_lines)
 
             prev_block = block
         # Rebuild text, now without footnotes

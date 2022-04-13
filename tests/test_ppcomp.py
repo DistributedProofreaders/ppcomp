@@ -42,16 +42,13 @@ def test_ignore_format():
     assert -1 < text_file.text.find("His Einleitung")
 
 
-@pytest.mark.skip
 def test_text_extract_footnotes_pp():
     args = myargs + ['--extract-footnotes']
     text_file = PgdpFileText(load_args(args))
     text_file.load('fossilplants1.txt')
     text_file.extract_footnotes_pp()
     length = len(text_file.footnotes.splitlines())
-    with open('tmpoutfile.txt', 'w', encoding='utf-8') as f:
-        f.write(text_file.footnotes)
-    assert length == 19646
+    assert length == 2036
 
 
 ########## Text file from rounds ##########
