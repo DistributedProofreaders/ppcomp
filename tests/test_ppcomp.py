@@ -48,7 +48,7 @@ def test_text_extract_footnotes_pp():
     text_file.load('fossilplants1.txt')
     text_file.extract_footnotes_pp()
     length = len(text_file.footnotes)
-    assert length == 56893
+    assert length == 56895
 
 
 ########## Text file from rounds ##########
