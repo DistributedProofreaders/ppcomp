@@ -270,7 +270,7 @@ class PgdpFileText(PgdpFile):
 
     def remove_thought_breaks(self):
         """Remove thought breaks (4 or more spaced asterisks or dots)"""
-        self.text = re.sub(r"\n(?:[ \t]+[\*•]){4,}", '\n', self.text)
+        self.text = re.sub(r"\n(?:[ \t]+[*•]){4,}", '\n', self.text)
 
     def suppress_footnote_tags(self):
         """Remove footnote tags"""
@@ -378,12 +378,12 @@ class PgdpFileText(PgdpFile):
         text_lines = self.text.splitlines()
 
         # Pick the regex with the most matches
-        regexes = [(r"(\s*)\[([\w-]+)\]( .*|$)", 1),
-                   (r"(\s*)Footnote (\d+):( .*|$)", 1),
-                   (r"(\s*)\[Footnote (\d+):( .*|$)", 2),
-                   (r"(\s*)Note (\d+):( .*|$)", 1),
-                   (r"(\s*)\[Note (\d+):( .*|$)", 2),
-                   (r"(\s*)([⁰¹²³⁴⁵⁶⁷⁸⁹]+)( .*|$)", 1)]
+        regexes = [(r"\s*\[([\w-]+)\]( .*|$)", 1),
+                   (r"\s*Footnote (\d+):( .*|$)", 1),
+                   (r"\s*\[Footnote (\d+):( .*|$)", 2),
+                   (r"\s*Note (\d+):( .*|$)", 1),
+                   (r"\s*\[Note (\d+):( .*|$)", 2),
+                   (r"\s*([⁰¹²³⁴⁵⁶⁷⁸⁹]+)( .*|$)", 1)]
         count = [0] * len(regexes)  # i.e. [0, 0, 0]
         for text_block, _ in self.get_block(text_lines):
             if text_block:
@@ -391,24 +391,24 @@ class PgdpFileText(PgdpFile):
                     if re.match(regex, text_block[0]):
                         count[i] += 1
                         break
-        regex, fn_type = [regexes[count.index(max(count))]][0]
+        max_count = max(count)
+        regex, fn_type = [regexes[count.index(max_count)]][0]
 
         # cur_fn_type == 0 means not in footnote.
-        cur_fn_type, cur_fn_indent = 0, 0
+        cur_fn_type = 0
         footnotes, text = [], []
         prev_block = None
 
         for block, empty_lines in self.get_block(text_lines):
             # Is the block a new footnote?
-            next_fn_type, next_fn_indent = 0, 0
+            next_fn_type = 0
             if block:
                 matches = re.match(regex, block[0])
                 # ignore illustration as part of text or footnote
-                if matches and not matches.group(2).startswith('Illustration'):
+                if matches and not matches.group(1).startswith('Illustration'):
                     next_fn_type = fn_type
-                    next_fn_indent = matches.group(1)
                     # Update first line of block, because we want the number outside.
-                    block[0] = matches.group(3)
+                    block[0] = matches.group(2)
 
             # Try to close previous footnote
             if cur_fn_type:
@@ -416,10 +416,9 @@ class PgdpFileText(PgdpFile):
                     # New block is footnote, so it ends the previous footnote
                     footnotes += prev_block + ['']
                     text += [''] * (len(prev_block) + 1)
-                    cur_fn_type, cur_fn_indent = next_fn_type, next_fn_indent
-                # Todo: this assumes 1st line is indented, but it may only be following lines
-                elif block[0].startswith(cur_fn_indent):
-                    # Same indent or more. This is a continuation. Merge with one empty line.
+                    cur_fn_type = next_fn_type
+                elif block[0].startswith(''):
+                    # indented continuation, merge with one empty line.
                     block = prev_block + [''] + block
                 else:
                     # End of footnote - current block is not a footnote
@@ -428,19 +427,19 @@ class PgdpFileText(PgdpFile):
                     cur_fn_type = 0
             if not cur_fn_type and next_fn_type:
                 # Account for new footnote
-                cur_fn_type, cur_fn_indent = next_fn_type, next_fn_indent
-            if cur_fn_type and( empty_lines >= 2 or
+                cur_fn_type = next_fn_type
+            if cur_fn_type and (empty_lines >= 2 or
                                 (cur_fn_type == 2 and block[-1].endswith(']'))):
-                    # End of footnote
-                    if cur_fn_type == 2 and block[-1].endswith(']'):
-                        # Remove terminal bracket
-                        block[-1] = block[-1][:-1]
-                    footnotes += block
-                    text += [''] * len(block)
-                    cur_fn_type = 0
-                    block = None
+                # End of footnote
+                if cur_fn_type == 2 and block[-1].endswith(']'):
+                    # Remove terminal bracket
+                    block[-1] = block[-1][:-1]
+                footnotes += block
+                text += [''] * len(block)
+                cur_fn_type = 0
+                block = None
             if not cur_fn_type:
-                    # Add to text, with white lines
+                # Add to text, with white lines
                 text += (block or []) + [''] * empty_lines
                 footnotes += [''] * (len(block or []) + empty_lines)
 
@@ -449,6 +448,12 @@ class PgdpFileText(PgdpFile):
         # Rebuild text, now without footnotes
         self.text = '\n'.join(text)
         self.footnotes = '\n'.join(footnotes)
+        with open('newfoot.txt', 'w', encoding='utf-8') as file:
+            file.write(self.footnotes)
+        with open('newtext.txt', 'w', encoding='utf-8') as file:
+            file.write(self.text)
+
+        return max_count
 
     @staticmethod
     def get_block(pp_text):
