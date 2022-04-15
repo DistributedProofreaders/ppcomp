@@ -269,9 +269,8 @@ class PgdpFileText(PgdpFile):
             self.text = re.sub(r"=((.|\n)+?)=", r'\1', self.text)
 
     def remove_thought_breaks(self):
-        """Remove thought breaks (5 spaced asterisks)"""
-        self.text = re.sub(r"\s+\*\s+\*\s+\*\s+\*\s+\*\n", '\n\n\n', self.text)
-        self.text = re.sub(r"\s+•\s+•\s+•\s+•\s+•\n", '\n\n\n', self.text)
+        """Remove thought breaks (4 or more spaced asterisks or dots)"""
+        self.text = re.sub(r"\n(?:[ \t]+[\*•]){4,}", '\n', self.text)
 
     def suppress_footnote_tags(self):
         """Remove footnote tags"""
@@ -379,10 +378,12 @@ class PgdpFileText(PgdpFile):
         text_lines = self.text.splitlines()
 
         # Pick the regex with the most matches
-        regexes = [(r"(\s*)\[([\w-]+)\](.*)", 1),
-                   (r"(\s*)\[Note (\d+):( .*|$)", 2),
+        regexes = [(r"(\s*)\[([\w-]+)\]( .*|$)", 1),
+                   (r"(\s*)Footnote (\d+):( .*|$)", 1),
+                   (r"(\s*)\[Footnote (\d+):( .*|$)", 2),
                    (r"(\s*)Note (\d+):( .*|$)", 1),
-                   (r"(\s*)([⁰¹²³⁴⁵⁶⁷⁸⁹]+)(.*)", 1)]
+                   (r"(\s*)\[Note (\d+):( .*|$)", 2),
+                   (r"(\s*)([⁰¹²³⁴⁵⁶⁷⁸⁹]+)( .*|$)", 1)]
         count = [0] * len(regexes)  # i.e. [0, 0, 0]
         for text_block, _ in self.get_block(text_lines):
             if text_block:
@@ -416,6 +417,7 @@ class PgdpFileText(PgdpFile):
                     footnotes += prev_block + ['']
                     text += [''] * (len(prev_block) + 1)
                     cur_fn_type, cur_fn_indent = next_fn_type, next_fn_indent
+                # Todo: this assumes 1st line is indented, but it may only be following lines
                 elif block[0].startswith(cur_fn_indent):
                     # Same indent or more. This is a continuation. Merge with one empty line.
                     block = prev_block + [''] + block
