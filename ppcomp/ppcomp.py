@@ -411,33 +411,31 @@ class PgdpFileText(PgdpFile):
                     block[0] = matches.group(2)
 
             # Try to close previous footnote
-            if cur_fn_type:
-                if next_fn_type:
-                    # New block is footnote, so it ends the previous footnote
+            if cur_fn_type:  # in current fn
+                if next_fn_type:  # New block is footnote, so it ends the current footnote
                     footnotes += prev_block + ['']
                     text += [''] * (len(prev_block) + 1)
-                    cur_fn_type = next_fn_type
-                elif block[0].startswith(''):
-                    # indented continuation, merge with one empty line.
+                elif block[0].startswith('  '):  # indented continuation, merge with one empty line.
                     block = prev_block + [''] + block
-                else:
+                else:  # in current fn, new block not fn and not indented
                     # End of footnote - current block is not a footnote
                     footnotes += prev_block + ['']
                     text += [''] * (len(prev_block) + 1)
-                    cur_fn_type = 0
-            if not cur_fn_type and next_fn_type:
-                # Account for new footnote
+                    cur_fn_type = 0  # no longer in fn
+
+            elif next_fn_type:  # New block is footnote, not in current
                 cur_fn_type = next_fn_type
+
             if cur_fn_type and (empty_lines >= 2 or
                                 (cur_fn_type == 2 and block[-1].endswith(']'))):
-                # End of footnote
+                # in current fn, 2 empty lines or end ]
                 if cur_fn_type == 2 and block[-1].endswith(']'):
-                    # Remove terminal bracket
-                    block[-1] = block[-1][:-1]
+                    block[-1] = block[-1][:-1]  # Remove terminal bracket
                 footnotes += block
                 text += [''] * len(block)
-                cur_fn_type = 0
+                cur_fn_type = 0  # no longer in fn
                 block = None
+
             if not cur_fn_type:
                 # Add to text, with white lines
                 text += (block or []) + [''] * empty_lines
