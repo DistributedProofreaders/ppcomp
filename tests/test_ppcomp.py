@@ -49,7 +49,7 @@ def test_text_extract_footnotes_pp1():
     text_file.load('fossilplants1.txt')
     count = text_file.extract_footnotes_pp()
     length = len(text_file.footnotes)
-    assert count == 933
+    assert count == 932
     assert length == 56895
 
 
