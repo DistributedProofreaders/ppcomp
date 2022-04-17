@@ -412,16 +412,15 @@ class PgdpFileText(PgdpFile):
 
             # Try to close previous footnote
             if cur_fn_type:  # in current fn
-                if next_fn_type:  # New block is footnote, so it ends the current footnote
-                    footnotes += prev_block + ['']
-                    text += [''] * (len(prev_block) + 1)
-                elif block[0].startswith('  '):  # indented continuation, merge with one empty line.
+                if not next_fn_type and block[0].startswith('  '):
+                    # indented continuation, merge with one empty line
                     block = prev_block + [''] + block
-                else:  # in current fn, new block not fn and not indented
-                    # End of footnote - current block is not a footnote
+                else:
+                    # Add previous block to footnotes, with empty line
                     footnotes += prev_block + ['']
                     text += [''] * (len(prev_block) + 1)
-                    cur_fn_type = 0  # no longer in fn
+                    if not next_fn_type:
+                        cur_fn_type = 0  # no longer in footnote
 
             elif next_fn_type:  # New block is footnote, not in current
                 cur_fn_type = next_fn_type
@@ -437,7 +436,7 @@ class PgdpFileText(PgdpFile):
                 block = None
 
             if not cur_fn_type:
-                # Add to text, with white lines
+                # Add block to text, with empty lines
                 text += (block or []) + [''] * empty_lines
                 footnotes += [''] * (len(block or []) + empty_lines)
 
