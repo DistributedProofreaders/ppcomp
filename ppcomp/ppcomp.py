@@ -400,12 +400,11 @@ class PgdpFileText(PgdpFile):
         prev_block = None
 
         for block, empty_lines in self.get_block(text_lines):
-            # Is the block a new footnote?
             next_fn_type = 0
             if block:
+                # Is the block a new footnote?
                 matches = re.match(regex, block[0])
-                # ignore illustration as part of text or footnote
-                if matches and not matches.group(1).startswith('Illustration'):
+                if matches:
                     next_fn_type = fn_type
                     # Update first line of block, because we want the number outside.
                     block[0] = matches.group(2)
