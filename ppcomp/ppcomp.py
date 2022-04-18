@@ -407,10 +407,9 @@ class PgdpFileText(PgdpFile):
 
             if current_fn_type:  # in current footnote?
                 if not next_fn_type and new_block[0].startswith('  '):
-                    # indented continuation, merge with one empty line
+                    # new block is indented continuation, merge in current block
                     new_block = current_block + [''] + new_block
-                else:
-                    # Add current block to footnotes, with empty line
+                else:  # new footnote or unindented block, end current footnote, add to footnotes
                     footnotes += current_block + ['']
                     new_text += [''] * (len(current_block) + 1)
                     if not next_fn_type:
@@ -424,12 +423,11 @@ class PgdpFileText(PgdpFile):
                 # in current fn, 2 empty lines or end ]
                 if current_fn_type == 2 and new_block[-1].endswith(']'):
                     new_block[-1] = new_block[-1][:-1]  # Remove terminal bracket
-                footnotes += new_block
-                new_text += [''] * len(new_block)
+                footnotes += new_block + [''] * empty_lines
+                new_text += [''] * (len(new_block) + empty_lines)
                 current_fn_type = 0  # no longer in fn
-                new_block = None
 
-            if not current_fn_type:
+            elif not current_fn_type:
                 # Add block to text, with empty lines
                 footnotes += [''] * (len(new_block or []) + empty_lines)
                 new_text += (new_block or []) + [''] * empty_lines
