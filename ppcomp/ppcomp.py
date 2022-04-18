@@ -414,23 +414,20 @@ class PgdpFileText(PgdpFile):
                     new_text += [''] * (len(current_block) + 1)
                     if not next_fn_type:
                         current_fn_type = 0  # no longer in footnote
-
-            elif next_fn_type:  # New block is footnote, not in one currently
+            else:
                 current_fn_type = next_fn_type
 
-            if current_fn_type and (empty_lines >= 2 or
-                                    (current_fn_type == 2 and new_block[-1].endswith(']'))):
-                # in current fn, 2 empty lines or end ]
+            if not current_fn_type:
+                # Add block to text, with empty lines
+                footnotes += [''] * (len(new_block or []) + empty_lines)
+                new_text += (new_block or []) + [''] * empty_lines
+            elif empty_lines >= 2 or (current_fn_type == 2 and new_block[-1].endswith(']')):
+                # in current fn, 2 empty lines or end ] after new_block
                 if current_fn_type == 2 and new_block[-1].endswith(']'):
                     new_block[-1] = new_block[-1][:-1]  # Remove terminal bracket
                 footnotes += new_block + [''] * empty_lines
                 new_text += [''] * (len(new_block) + empty_lines)
                 current_fn_type = 0  # no longer in fn
-
-            elif not current_fn_type:
-                # Add block to text, with empty lines
-                footnotes += [''] * (len(new_block or []) + empty_lines)
-                new_text += (new_block or []) + [''] * empty_lines
 
             current_block = new_block
 
