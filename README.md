@@ -105,7 +105,7 @@ Currently, a few CSS targets are supported:
 ::after   -- add content after the tag
 ```
 
-Some transformations are also supported: attribute text
+Some transformations are also supported:
 ```
 text-transform -- transform the content to uppercase, lowercase, or title case
 _replace_with_attr -- replace the whole content with the value of an attribute
@@ -122,52 +122,70 @@ By default footnote anchors are expected to be surrounded by brackets. If it is 
 
 ## Footnote extraction styles supported
 
-##### html: `class="footnote"`
+**html: class="footnote"**
 
-	<div class="footnote">
-	  <a id="Footnote_926" href="#FNanchor_926" class="label">[926]</a> Kidston (94), p. 250.
-	</div>
+```
+<div class="footnote">
+  <a id="Footnote_926" href="#FNanchor_926" class="label">[926]</a>
+    Kidston (94), p. 250.
+</div>
+```
 
-##### Text output from formatting rounds (`"projectID"` prefix): `[Footnote #:` followed by 1 or more paragraphs, with end bracket, and possible `*[Footnote:` continuation blocks.
+### Text output from formatting rounds (`"projectID"` prefix)
 
-    [Footnote A: The pamphlet has been copied <i>in extenso</i>, and will be found in the Appendix.]
-    
-    Normal paragraph.
-    
-    *[Footnote: foootnote continued.]
+**[Footnote #: followed by 1 or more paragraphs, with end bracket, and possible `*[Footnote:` continuation blocks.**
 
-##### Text PP style 1: `[#]` following empty line (to avoid normal bracketed text), 1 or more paragraphs ending with the next footnote or 2 empty lines.
+```
+[Footnote A: The pamphlet has been copied <i>in extenso</i>, and will be found in the Appendix.]
+    
+Normal paragraph.
+    
+*[Footnote: foootnote continued.]
+```
 
-    Paragraph text.
-    
-    [926] Kidston (94), p. 250.
-    
-    [927] Another footnote.
-    
-    Another footnote paragraph.
-    
-    
-    Normal paragraph.
+### Text PP style 1
 
-##### Text PP style 2: `Footnote #:` followed by 1 or more indented paragraphs, ending with the next footnote or unindented text.
+**[#] following empty line (to avoid normal bracketed text), 1 or more paragraphs ending with the next footnote or 2 empty lines.**
 
-    Paragraph text.
+```
+Paragraph text.
     
-    Footnote 1:
-    
-      The dates given here are those of the Russian calendar.
-      
-      Another footnote paragraph.
-    
-    Normal paragraph.
+[926] Kidston (94), p. 250.
 
-##### Text PP style 3: Superscripted `#:` followed by 1 or more indented paragraphs, ending with the next footnote or unindented text.
+[927] Another footnote.
 
-	 ¹ Cordier, "Mémoire sur les substances dites en masse,
-	   qui entrent dans la composition des Roches Volcaniques," Journ.
-	   de Physique, =83= (1816), 135, 285, and 352.
-	   
-	   See Appendix E.
-	   
-	Normal paragraph
+Another footnote paragraph.
 
+
+Normal paragraph.
+```
+
+### Text PP style 2
+
+**Footnote #: followed by 1 or more indented paragraphs, ending with the next footnote or unindented text.**
+
+```
+Paragraph text.
+
+Footnote 1:
+
+  The dates given here are those of the Russian calendar.
+
+  Another footnote paragraph.
+
+Normal paragraph.
+```
+
+### Text PP style 3
+
+**Superscripted # followed by 1 or more indented paragraphs, ending with the next footnote or unindented text.**
+
+```
+¹ Cordier, "Mémoire sur les substances dites en masse,
+    qui entrent dans la composition des Roches Volcaniques," Journ.
+    de Physique, =83= (1816), 135, 285, and 352.
+
+    See Appendix E.
+
+Normal paragraph
+```
