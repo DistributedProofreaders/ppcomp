@@ -63,7 +63,7 @@ def test_text_extract_footnotes_pp2():
     count = text_file.extract_footnotes_pp()
     length = len(text_file.footnotes)
     assert count == 119
-    assert length == 23045
+    assert length == 23075
 
 
 def test_text_extract_footnotes_pp3():
