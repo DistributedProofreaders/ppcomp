@@ -3,15 +3,15 @@
 Compare 2 files for [Distributed Proofreaders](https://www.pgdp.net) users.
 
 ## Introduction
-Used to compare 2 files and generate a summary of the differences. Its goal is to look for discrepancies between the text and html versions produced at PGDP, ignoring many formatting and spacing differences.
+Used to compare 2 files and generate a summary of the differences. Its goal is to look for discrepancies between the text and HTML versions produced at PGDP, ignoring many formatting and spacing differences.
 
 The sources can be:
   - A post-processed text file.
-  - A post-processed html file.
-  - An unprocessed text file coming from the Px or Fx rounds.
-  - A text or html file coming from an external source.
+  - A post-processed HTML file.
+  - An unprocessed text file from the Px or Fx rounds.
+  - A text or HTML file from an external source.
 
-The text files are identified by the `.txt` extension, html files by the `.htm` or `.html` extension, and a Px or Fx file by its `"projectID"` prefix.
+The text files are identified by the `.txt` extension, HTML files by the `.htm`, `.html`, or `.xhtml` extension, and a Px or Fx file by its `"projectID"` prefix.
 
 It applies various transformations according to program options before passing the files to the Linux program `dwdiff`. There does not seem to be any Windows equivalent of `dwdiff`, it can only be run in a Windows Subsystem for Linux console.
 
@@ -47,7 +47,7 @@ ppcomp needs python 3 (not 2) to run, as well as the following python packages:
   - cssselect
   - html5lib (used by lxml)
 
-And the following command line tool:
+And the following command-line tool:
   - dwdiff
 
 
@@ -97,7 +97,7 @@ Note that formatting of footnotes by processors varies widely, only a few variat
 
 ## Tuning
 
-By default, there are a few reasonable rules applied to the HTML (See the definition of DEFAULT_TRANSFORM_CSS in the source code). However, it may be necessary to go further in order to reduce the amount of noise.
+By default, a few reasonable rules are applied to the HTML (See the definition of DEFAULT_TRANSFORM_CSS in the source code). However, it may be necessary to go further to reduce the amount of noise.
 
 Currently, a few CSS targets are supported:
 ```
@@ -105,7 +105,7 @@ Currently, a few CSS targets are supported:
 ::after   -- add content after the tag
 ```
 
-Some transformations are also supported:,
+Some transformations are also supported: attribute text
 ```
 text-transform -- transform the content to uppercase, lowercase, or title case
 _replace_with_attr -- replace the whole content with the value of an attribute
@@ -119,3 +119,55 @@ By default footnote anchors are expected to be surrounded by brackets. If it is 
 ```
 --css '.fnanchor:before { content: "["; } .fnanchor:after { content: "]"; }'
 ```
+
+## Footnote extraction styles supported
+
+##### html: `class="footnote"`
+
+	<div class="footnote">
+	  <a id="Footnote_926" href="#FNanchor_926" class="label">[926]</a> Kidston (94), p. 250.
+	</div>
+
+##### Text output from formatting rounds (`"projectID"` prefix): `[Footnote #:` followed by 1 or more paragraphs, with end bracket, and possible `*[Footnote:` continuation blocks.
+
+    [Footnote A: The pamphlet has been copied <i>in extenso</i>, and will be found in the Appendix.]
+    
+    Normal paragraph.
+    
+    *[Footnote: foootnote continued.]
+
+##### Text PP style 1: `[#]` following empty line (to avoid normal bracketed text), 1 or more paragraphs ending with the next footnote or 2 empty lines.
+
+    Paragraph text.
+    
+    [926] Kidston (94), p. 250.
+    
+    [927] Another footnote.
+    
+    Another footnote paragraph.
+    
+    
+    Normal paragraph.
+
+##### Text PP style 2: `Footnote #:` followed by 1 or more indented paragraphs, ending with the next footnote or unindented text.
+
+    Paragraph text.
+    
+    Footnote 1:
+    
+      The dates given here are those of the Russian calendar.
+      
+      Another footnote paragraph.
+    
+    Normal paragraph.
+
+##### Text PP style 3: Superscripted `#:` followed by 1 or more indented paragraphs, ending with the next footnote or unindented text.
+
+	 ¹ Cordier, "Mémoire sur les substances dites en masse,
+	   qui entrent dans la composition des Roches Volcaniques," Journ.
+	   de Physique, =83= (1816), 135, 285, and 352.
+	   
+	   See Appendix E.
+	   
+	Normal paragraph
+
