@@ -159,33 +159,3 @@ Another footnote paragraph.
 
 Normal paragraph.
 ```
-
-### Text PP style 2
-
-**Footnote #: followed by 1 or more indented paragraphs, ending with the next footnote or unindented text.**
-
-```
-Paragraph text.
-
-Footnote 1:
-
-  The dates given here are those of the Russian calendar.
-
-  Another footnote paragraph.
-
-Normal paragraph.
-```
-
-### Text PP style 3
-
-**Superscripted # followed by 1 or more indented paragraphs, ending with the next footnote or unindented text.**
-
-```
-¹ Cordier, "Mémoire sur les substances dites en masse,
-    qui entrent dans la composition des Roches Volcaniques," Journ.
-    de Physique, =83= (1816), 135, 285, and 352.
-
-    See Appendix E.
-
-Normal paragraph
-```
