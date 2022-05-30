@@ -53,6 +53,7 @@ def test_text_extract_footnotes_pp1():
     assert length == 56895
 
 
+@pytest.mark.skip
 def test_text_extract_footnotes_pp2():
     # Footnote 1:
     #
@@ -66,6 +67,7 @@ def test_text_extract_footnotes_pp2():
     assert length == 23075
 
 
+@pytest.mark.skip
 def test_text_extract_footnotes_pp3():
     # ¹ See text text text
     args = myargs + ['--extract-footnotes']

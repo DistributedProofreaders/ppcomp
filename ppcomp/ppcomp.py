@@ -406,38 +406,41 @@ class PgdpFileText(PgdpFile):
                     new_block[0] = matches.group(2)  # remove footnote tag
 
             if current_fn_type:  # in current footnote?
-                if not next_fn_type and new_block[0].startswith('  '):
+                if next_fn_type:
+                    # New block is footnote, so it ends the previous footnote
+                    footnotes += current_block + ['']
+                    new_text += [''] * (len(current_block) + 1)
+                    current_fn_type = next_fn_type
+                elif new_block[0].startswith(''):
                     # new block is indented continuation, merge in current block
                     new_block = current_block + [''] + new_block
                 else:  # new footnote or unindented block, end current footnote, add to footnotes
                     footnotes += current_block + ['']
                     new_text += [''] * (len(current_block) + 1)
-                    if not next_fn_type:
-                        current_fn_type = 0  # no longer in footnote
-            else:
+                    current_fn_type = 0  # no longer in footnote
+            if not current_fn_type and next_fn_type:
+                # Account for new footnote
                 current_fn_type = next_fn_type
-
-            if not current_fn_type:
-                # Add block to text, with empty lines
-                footnotes += [''] * (len(new_block or []) + empty_lines)
-                new_text += (new_block or []) + [''] * empty_lines
-            elif empty_lines >= 2 or (current_fn_type == 2 and new_block[-1].endswith(']')):
-                # in current fn, 2 empty lines or end ] after new_block
+            if current_fn_type and (empty_lines >= 2 or
+                                (current_fn_type == 2 and new_block[-1].endswith(']'))):
                 if current_fn_type == 2 and new_block[-1].endswith(']'):
                     new_block[-1] = new_block[-1][:-1]  # Remove terminal bracket
-                footnotes += new_block + [''] * empty_lines
-                new_text += [''] * (len(new_block) + empty_lines)
+
+
+                footnotes += new_block
+                new_text += [''] * len(new_block)
                 current_fn_type = 0  # no longer in fn
+                new_block = None
+            if not current_fn_type:
+                # Add to text, with white lines
+                new_text += (new_block or []) + [''] * empty_lines
+                footnotes += [''] * (len(new_block or []) + empty_lines)
 
             current_block = new_block
 
         # Rebuild text, now without footnotes
         self.text = '\n'.join(new_text)
         self.footnotes = '\n'.join(footnotes)
-        with open('newfoot.txt', 'w', encoding='utf-8') as file:
-            file.write(self.footnotes)
-        with open('newtext.txt', 'w', encoding='utf-8') as file:
-            file.write(self.text)
 
         return footnote_count
 
