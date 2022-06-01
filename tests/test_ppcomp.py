@@ -42,19 +42,44 @@ def test_ignore_format():
     assert -1 < text_file.text.find("His Einleitung")
 
 
-@pytest.mark.skip
-def test_text_extract_footnotes_pp():
+def test_text_extract_footnotes_pp1():
+    # [1] text text text
     args = myargs + ['--extract-footnotes']
     text_file = PgdpFileText(load_args(args))
     text_file.load('fossilplants1.txt')
-    text_file.extract_footnotes_pp()
-    length = len(text_file.footnotes.splitlines())
-    with open('tmpoutfile.txt', 'w', encoding='utf-8') as f:
-        f.write(text_file.footnotes)
-    assert length == 19646
+    count = text_file.extract_footnotes_pp()
+    length = len(text_file.footnotes)
+    assert count == 932
+    assert length == 56895
 
 
-########## Text file from rounds ##########
+@pytest.mark.skip
+def test_text_extract_footnotes_pp2():
+    # Footnote 1:
+    #
+    #   text text text
+    args = myargs + ['--extract-footnotes']
+    text_file = PgdpFileText(load_args(args))
+    text_file.load('footnotes2.txt')
+    count = text_file.extract_footnotes_pp()
+    length = len(text_file.footnotes)
+    assert count == 119
+    assert length == 23075
+
+
+@pytest.mark.skip
+def test_text_extract_footnotes_pp3():
+    # ¹ See text text text
+    args = myargs + ['--extract-footnotes']
+    text_file = PgdpFileText(load_args(args))
+    text_file.load('footnotes3.txt')
+    count = text_file.extract_footnotes_pp()
+    length = len(text_file.footnotes)
+    assert count == 171
+    assert length == 29898
+
+
+######### Text file from rounds ##########
 
 def test_load_pgdp_file():
     text_file = PgdpFileText(load_args(myargs))

@@ -269,9 +269,8 @@ class PgdpFileText(PgdpFile):
             self.text = re.sub(r"=((.|\n)+?)=", r'\1', self.text)
 
     def remove_thought_breaks(self):
-        """Remove thought breaks (5 spaced asterisks)"""
-        self.text = re.sub(r"\n\s+\*\s+\*\s+\*\s+\*\s+\*\s+\n", '\n\n', self.text)
-        self.text = re.sub(r"\n\s+•\s+•\s+•\s+•\s+•\s+", '\n\n', self.text)
+        """Remove thought breaks (4 or more spaced asterisks or dots)"""
+        self.text = re.sub(r"\n(?:[ \t]+[*•]){4,}", '\n', self.text)
 
     def suppress_footnote_tags(self):
         """Remove footnote tags"""
@@ -370,95 +369,87 @@ class PgdpFileText(PgdpFile):
         self.footnotes = '\n'.join(footnotes)
 
     def extract_footnotes_pp(self):
-        """Extract footnotes from a PP text file. Text is iterable. Returns the text as an iterable,
-        without the footnotes, and footnotes as a list of (footnote string id, line number of the
-        start of the footnote, list of strings comprising the footnote). fn_regexes is a list of
-        (regex, fn_type) that identify the beginning and end of a footnote. The fn_type is 1 when
-        a ] terminates it, or 2 when a new block terminates it.
+        """Extract footnotes from a PP text file. Text is iterable. Updates the text without the
+        footnotes, and adds the footnotes to the footnotes string. Empty lines are added to
+        maintain the line numbers. regexes is a list of (regex, fn_type) that identify the
+        beginning and end of a footnote. The fn_type is 2 when a ] terminates it, or 1 when a new
+        block terminates it.
         """
-        fn_regexes = [(r"\s*\[([\w-]+)\]\s*(.*)", 1),
-                      (r"(\s*)\[Note (\d+):( .*|$)", 2),
-                      (r"(      )Note (\d+):( .*|$)", 1)]
-        regex_count = [0] * len(fn_regexes)  # i.e. [0, 0, 0]
-        text_lines = self.text.splitlines()
-        for block, empty_lines in self.get_block(text_lines):
-            if not block:
-                continue
-            for i, (regex, fn_type) in enumerate(fn_regexes):
-                matches = re.match(regex, block[0])
-                if matches:
-                    regex_count[i] += 1
-                    break
         # Pick the regex with the most matches
-        fn_regexes = [fn_regexes[regex_count.index(max(regex_count))]]
-
-        # Different types of footnote. 0 means not in footnote.
-        cur_fn_type, cur_fn_indent = 0, 0
-        footnotes = []
-        text = []
-        prev_block = None
-
-        for block, empty_lines in self.get_block(text_lines):
-            # Is the block a new footnote?
-            next_fn_type = 0
-            if len(block):
-                for (regex, fn_type) in fn_regexes:
-                    matches = re.match(regex, block[0])
-                    if matches:
-                        if matches.group(2).startswith('Illustration'):
-                            # An illustration, possibly inside a footnote. Treat
-                            # as part of text or footnote.
-                            continue
-                        next_fn_type = fn_type
-                        # Update first line of block, because we want the number outside.
-                        block[0] = matches.group(3)
+        regexes = [(r"\s*\[([\w-]{1,4})\]( .*|$)", 1),
+                   (r"\s*Footnote (\d+):( .*|$)", 1),
+                   (r"\s*\[Footnote (\d+):( .*|$)", 2),
+                   (r"\s*Note (\d+):( .*|$)", 1),
+                   (r"\s*\[Note (\d+):( .*|$)", 2),
+                   (r"\s*([⁰¹²³⁴⁵⁶⁷⁸⁹]+)( .*|$)", 1)]
+        match_counts = [0] * len(regexes)  # i.e. [0, 0, 0]
+        for text_block, _ in self.get_block():
+            if text_block:
+                for i, (regex, _) in enumerate(regexes):
+                    if re.match(regex, text_block[0]):
+                        match_counts[i] += 1
                         break
+        footnote_count = max(match_counts)
+        regex, fn_type = [regexes[match_counts.index(footnote_count)]][0]
 
-            # Try to close previous footnote
-            next_fn_indent = None
-            if cur_fn_type:
+        current_fn_type = 0  # 0 means not in footnote.
+        footnotes, new_text = [], []
+        current_block = None
+
+        for new_block, empty_lines in self.get_block():
+            next_fn_type = 0
+            if new_block:
+                # Is the block a new footnote?
+                matches = re.match(regex, new_block[0])
+                if matches:
+                    next_fn_type = fn_type
+                    new_block[0] = matches.group(2)  # remove footnote tag
+
+            if current_fn_type:  # in current footnote?
                 if next_fn_type:
                     # New block is footnote, so it ends the previous footnote
-                    footnotes += prev_block + ['']
-                    text += [''] * (len(prev_block) + 1)
-                    cur_fn_type, cur_fn_indent = next_fn_type, next_fn_indent
-                elif block[0].startswith(cur_fn_indent):
-                    # Same indent or more. This is a continuation. Merge with one empty line.
-                    block = prev_block + [''] + block
-                else:
-                    # End of footnote - current block is not a footnote
-                    footnotes += prev_block + ['']
-                    text += [''] * (len(prev_block) + 1)
-                    cur_fn_type = 0
-            if not cur_fn_type and next_fn_type:
+                    footnotes += current_block + ['']
+                    new_text += [''] * (len(current_block) + 1)
+                    current_fn_type = next_fn_type
+                elif new_block[0].startswith(''):
+                    # new block is indented continuation, merge in current block
+                    new_block = current_block + [''] + new_block
+                else:  # new footnote or unindented block, end current footnote, add to footnotes
+                    footnotes += current_block + ['']
+                    new_text += [''] * (len(current_block) + 1)
+                    current_fn_type = 0  # no longer in footnote
+            if not current_fn_type and next_fn_type:
                 # Account for new footnote
-                cur_fn_type, cur_fn_indent = next_fn_type, next_fn_indent
-            if cur_fn_type and (empty_lines >= 2 or
-                                (cur_fn_type == 2 and block[-1].endswith("]"))):
-                # End of footnote
-                if cur_fn_type == 2 and block[-1].endswith("]"):
-                    # Remove terminal bracket
-                    block[-1] = block[-1][:-1]
-                footnotes += block
-                text += [''] * (len(block))
-                cur_fn_type = 0
-                block = None
-            if not cur_fn_type:
-                # Add to text, with white lines
-                text += (block or []) + [''] * empty_lines
-                footnotes += [''] * (len(block or []) + empty_lines)
+                current_fn_type = next_fn_type
+            if current_fn_type and (empty_lines >= 2 or
+                                (current_fn_type == 2 and new_block[-1].endswith(']'))):
+                if current_fn_type == 2 and new_block[-1].endswith(']'):
+                    new_block[-1] = new_block[-1][:-1]  # Remove terminal bracket
 
-            prev_block = block
+
+                footnotes += new_block
+                new_text += [''] * len(new_block)
+                current_fn_type = 0  # no longer in fn
+                new_block = None
+            if not current_fn_type:
+                # Add to text, with white lines
+                new_text += (new_block or []) + [''] * empty_lines
+                footnotes += [''] * (len(new_block or []) + empty_lines)
+
+            current_block = new_block
+
         # Rebuild text, now without footnotes
-        self.text = '\n'.join(text)
+        self.text = '\n'.join(new_text)
         self.footnotes = '\n'.join(footnotes)
 
-    @staticmethod
-    def get_block(pp_text):
+        return footnote_count
+
+    def get_block(self):
         """Generator to get a block of text, followed by the number of empty lines."""
+        text_lines = self.text.splitlines()
         empty_lines = 0
         block = []
-        for line in pp_text:
+        for line in text_lines:
             if len(line):
                 if empty_lines:  # one or more empty lines will stop a block
                     yield block, empty_lines
