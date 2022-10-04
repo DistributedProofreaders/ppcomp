@@ -208,6 +208,15 @@ def test_load_html5_file():
     assert html_file.start_line == 609
 
 
+def test_load_html5_bom_file():
+    html_file = PgdpFileHtml(load_args(myargs))
+    html_file.load('fossilplants1bom.html')
+    length = len(html_file.text.splitlines())
+    assert length == 85
+    assert html_file.tree
+    assert html_file.start_line == 67
+
+
 def test_strip_pg_boilerplate_html():
     html_file = PgdpFileHtml(load_args(myargs))
     html_file.load('tower.htm')

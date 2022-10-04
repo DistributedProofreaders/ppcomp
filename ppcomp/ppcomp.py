@@ -178,6 +178,10 @@ class PgdpFile:
         try:
             with open(filename, 'r', encoding='utf-8') as file:
                 self.text = file.read()
+                # remove BOM on first line if present
+                t = ":".join("{0:x}".format(ord(c)) for c in self.text[0])
+                if t[0:4] == "feff":
+                    self.text = self.text[1:]
         except UnicodeError:
             with open(filename, 'r', encoding='latin-1') as file:
                 self.text = file.read()
