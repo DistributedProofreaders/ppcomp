@@ -242,6 +242,12 @@ def test_remove_nbspaces():
     assert not re.search(r"(\d)\u00A0(\d)", html_file.text)
     assert 0 <= html_file.text.find("2885")
 
+def test_suppress_word_join():
+    args = myargs + ['--suppress-word-join']
+    html_file = PgdpFileHtml(load_args(args))
+    html_file.load('fossilplants1.html')
+    html_file.remove_nbspaces()
+    assert not re.search(r"(\d)\u2060(\d)", html_file.text)
 
 def test_remove_soft_hyphen():
     html_file = PgdpFileHtml(load_args(myargs))
@@ -401,6 +407,8 @@ def load_args(myargs):
                         help="HTML: do not use default transformation CSS")
     parser.add_argument('--suppress-nbsp-num', action='store_true', default=False,
                         help="HTML: Suppress non-breakable spaces between numbers")
+    parser.add_argument('--suppress-word-join', action='store_true', default=False,
+                        help="HTML: Suppress word join (NoBreak) (U+2060)")
     parser.add_argument('--ignore-0-space', action='store_true', default=False,
                         help='HTML: suppress zero width space (U+200b)')
     parser.add_argument('--css-greek-title-plus', action='store_true', default=False,

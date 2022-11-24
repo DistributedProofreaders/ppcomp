@@ -1121,6 +1121,8 @@ def main():
                         help="HTML: do not use default transformation CSS")
     parser.add_argument('--suppress-nbsp-num', action='store_true', default=False,
                         help="HTML: Suppress non-breakable spaces between numbers")
+    parser.add_argument('--suppress-word-join', action='store_true', default=False,
+                        help="HTML: Suppress word join (NoBreak) (U+2060)")
     parser.add_argument('--ignore-0-space', action='store_true', default=False,
                         help='HTML: suppress zero width space (U+200b)')
     parser.add_argument('--css-greek-title-plus', action='store_true', default=False,
