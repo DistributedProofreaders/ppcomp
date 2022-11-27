@@ -586,13 +586,16 @@ class PgdpFileHtml(PgdpFile):
         """Remove non-breakable spaces between numbers. For instance, a
         text file could have 250000, and the html could have 250 000.
         """
-        # Todo: &nbsp;, &#160;, &#x00A0;?
         if self.args.suppress_nbsp_num:
             self.text = re.sub(r"(\d)\u00A0(\d)", r"\1\2", self.text)
 
+    def remove_wordjoin(self):
+        """Remove word join (NoBreak) (U+2060)."""
+        if self.args.suppress_word_join:
+            self.text = re.sub(r"(\d)\u2060(\d)", r"", self.text)
+
     def remove_soft_hyphen(self):
         """Suppress shy (soft hyphen)"""
-        # Todo: &#173;, &#x00AD;?
         self.text = re.sub(r"\u00AD", r"", self.text)
 
     def cleanup(self):
@@ -617,6 +620,7 @@ class PgdpFileHtml(PgdpFile):
 
         self.remove_nbspaces()
         self.remove_soft_hyphen()
+        self.remove_wordjoin()
 
     @staticmethod
     def _text_transform(val, errors: list):
