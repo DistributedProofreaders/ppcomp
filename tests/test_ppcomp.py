@@ -247,7 +247,7 @@ def test_suppress_word_join():
     html_file = PgdpFileHtml(load_args(args))
     html_file.load('fossilplants1.html')
     html_file.remove_nbspaces()
-    assert not re.search(r"(\d)\u2060(\d)", html_file.text)
+    assert not re.search(r"\u2060", html_file.text)
 
 def test_remove_soft_hyphen():
     html_file = PgdpFileHtml(load_args(myargs))
