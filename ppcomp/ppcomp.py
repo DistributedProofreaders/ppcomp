@@ -593,7 +593,6 @@ class PgdpFileHtml(PgdpFile):
         """Remove word join (NoBreak) (U+2060)."""
         if self.args.suppress_word_join:
             self.text = re.sub(r"\u2060", r"", self.text)
-            # self.text = re.sub(r"&#8288;", r"", self.text)
 
     def remove_soft_hyphen(self):
         """Suppress shy (soft hyphen)"""
