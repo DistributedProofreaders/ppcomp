@@ -586,13 +586,16 @@ class PgdpFileHtml(PgdpFile):
         """Remove non-breakable spaces between numbers. For instance, a
         text file could have 250000, and the html could have 250 000.
         """
-        # Todo: &nbsp;, &#160;, &#x00A0;?
         if self.args.suppress_nbsp_num:
             self.text = re.sub(r"(\d)\u00A0(\d)", r"\1\2", self.text)
 
+    def remove_wordjoin(self):
+        """Remove word join (NoBreak) (U+2060)."""
+        if self.args.suppress_word_join:
+            self.text = re.sub(r"\u2060", r"", self.text)
+
     def remove_soft_hyphen(self):
         """Suppress shy (soft hyphen)"""
-        # Todo: &#173;, &#x00AD;?
         self.text = re.sub(r"\u00AD", r"", self.text)
 
     def cleanup(self):
@@ -617,6 +620,7 @@ class PgdpFileHtml(PgdpFile):
 
         self.remove_nbspaces()
         self.remove_soft_hyphen()
+        self.remove_wordjoin()
 
     @staticmethod
     def _text_transform(val, errors: list):
@@ -1121,6 +1125,8 @@ def main():
                         help="HTML: do not use default transformation CSS")
     parser.add_argument('--suppress-nbsp-num', action='store_true', default=False,
                         help="HTML: Suppress non-breakable spaces between numbers")
+    parser.add_argument('--suppress-word-join', action='store_true', default=False,
+                        help="HTML: Suppress word join (NoBreak) (U+2060)")
     parser.add_argument('--ignore-0-space', action='store_true', default=False,
                         help='HTML: suppress zero width space (U+200b)')
     parser.add_argument('--css-greek-title-plus', action='store_true', default=False,
