@@ -1064,7 +1064,7 @@ def output_html(html_content, filename1, filename2, css):
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Compare""" + filename1 + " and " + filename2 + """</title>
+  <title>Compare """ + filename1 + " and " + filename2 + """</title>
   <style type="text/css">
 """)
     print(DIFF_CSS)
