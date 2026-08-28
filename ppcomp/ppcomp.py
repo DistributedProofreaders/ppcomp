@@ -48,7 +48,7 @@ DEFAULT_TRANSFORM_CSS = '''
 
   /* Add spaces around td tags */
   td::before, td::after { content: " "; }
-  
+
   /* Remove thought breaks */
   .tb { display: none; }
 
@@ -501,7 +501,7 @@ class PgdpFileHtml(PgdpFile):
             raise SyntaxError('Not an html file: ' + filename)
         super().load(filename)
         try:
-            if 0 <= self.text.find('<!DOCTYPE html>', 0, 100):  # limit search
+            if "<!doctype html>" in self.text[:100].lower():  # limit search
                 self.tree, errors = self.parse_html5()
             else:
                 self.tree, errors = self.parse_html()
